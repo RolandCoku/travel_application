@@ -6,17 +6,9 @@ class HomeController extends Controller
 {
     public function index(): void
     {
-        $this->loadView('user/home-page');
+        $this->loadView('user/index');
     }
 
-    public function about(): void
-    {
-        $this->loadView('user/about-page');
-    }
 
-    public function contact(): void
-    {
-        $this->loadView('user/contact-page');
-    }
 
 }
