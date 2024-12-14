@@ -9,13 +9,13 @@ $scriptDir = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT
 define('BASE_URL', $protocol . $host . $scriptDir);
 
 // Function to generate file paths
-function app_path($path = '')
+function app_path($path = ''): string
 {
     return PROJECT_ROOT . ltrim($path, '/');
 }
 
 // Function to generate web URLs
-function base_url($path = '')
+function base_url($path = ''): string
 {
     return BASE_URL . ltrim($path, '/');
 }
