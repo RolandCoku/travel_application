@@ -1,10 +1,30 @@
 <?php
 
 class AuthMiddleware {
+
     public static function handle(): void
     {
         session_start();
-        if (!isset($_SESSION['user'])) {
+
+        // Set timeout duration (30 minutes)
+        $sessionTimeout = 1800;
+
+        // Check if the session is set and validate its lifetime
+        if (isset($_SESSION['last_activity'])) {
+            if (time() - $_SESSION['last_activity'] > $sessionTimeout) {
+                // Session expired
+                session_unset();
+                session_destroy();
+                header("Location: /login");
+                exit;
+            }
+        }
+
+        // Update the last activity timestamp
+        $_SESSION['last_activity'] = time();
+
+        // Protecting a page
+        if (!isset($_SESSION['user_email'])) {
             header("Location: /login");
             exit;
         }

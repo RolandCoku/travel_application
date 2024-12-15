@@ -117,6 +117,19 @@ function seedDatabase($conn): void
         $conn->query($query);
     }
 
+    // Seed images table
+    echo PHP_EOL . "Seeding images table...";
+    for ($i = 0; $i < 50; $i++) {
+        $travelPackageId = mt_rand(1, 50);
+        $imageUrl = "https://example.com/image$i.jpg";
+        $altText = "Image $i";
+        $type = $i % 2 === 0 ? 'main' : 'secondary';
+
+        $query = "INSERT INTO images (travel_package_id, image_url, alt_text, type) 
+                  VALUES ($travelPackageId, '$imageUrl', '$altText', '$type')";
+        $conn->query($query);
+    }
+
     echo PHP_EOL . "Seeding complete.";
 }
 
