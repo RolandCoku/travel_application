@@ -1,5 +1,6 @@
 <?php require_once app_path('includes/layout-header.php'); ?>
 
+<!-- This is only for testing purposes it must be changed to a proper form -->
 <body>
 
     <div class="container">
