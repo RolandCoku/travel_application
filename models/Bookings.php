@@ -34,7 +34,7 @@ class Booking
     return new Booking(null, $user_id, $agency_id, $travel_package_id, $booking_date, $booking_status, null, null);
   }
 
-  public static function fromAssocArray(array $obj): self
+  public static function fromAssocArray(array $obj): ?self
   {
     // $class_fields = array_keys(get_class_vars('Booking'));  // this will have all, cause
     foreach( ["id","user_id", "agency_id", "travel_package_id","booking_date","booking_status", "created_at", "updated_at"] as $key){

@@ -22,7 +22,7 @@ class TravelPackageBookings
     return new TravelPackageBookings(null, $booking_id, $travel_package_id, null, null);
   }
 
-  public static function fromAssocArray(array $obj): self
+  public static function fromAssocArray(array $obj): ?self
   {
     foreach( ["id", "booking_id", "travel_package_id", "created_at", "updated_at"] as $key){
       if(!array_key_exists($key, $obj))
