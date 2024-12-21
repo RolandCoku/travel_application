@@ -47,9 +47,45 @@ class UserController extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             self::loadView('user/register');
         } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = $_POST['name'] . ' ' . $_POST['surname'];
             $email = $_POST['email'];
-            $password = $_POST['password'];
-            
+            $password = $_POST['password'] ?? '';
+            $confirm_password = $_POST['confirm_password'] ?? '';
+            $role = 'user';
+
+
+            // Check if email is already taken
+            if (self::emailExists($email)) {
+                echo "Email already exists";
+                exit;
+            }
+
+            // Check if password and confirm password match
+            if ($password !== $confirm_password) {
+                echo "Passwords do not match";
+                exit;
+            }
+
+            // Hash password
+            $password = password_hash($password, PASSWORD_DEFAULT);
+
+            // Save user to database
+            global $conn;
+
+            // Prepare SQL query to prevent SQL injection
+            $stmt = $conn->prepare("INSERT INTO users (name, email, role, password) VALUES (?, ?, ?, ?)");
+
+            // Bind parameters to the query
+            $stmt->bind_param("ssss", $name, $email, $role, $password);
+
+            // Execute the query
+            if ($stmt->execute()) {
+                echo "User registered successfully";
+                header("Location: /login");
+            } else {
+                echo "Error registering user: " . $conn->error;
+            }
+
         }
     }
 
@@ -96,6 +132,20 @@ class UserController extends Controller
         }
 
         return true;
+    }
+
+    private static function emailExists($email): bool
+    {
+        global $conn;
+
+        // Prepare SQL query to prevent SQL injection
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        return $result->num_rows > 0;
     }
 
 }
