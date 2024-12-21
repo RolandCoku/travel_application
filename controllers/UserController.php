@@ -111,6 +111,19 @@ class UserController extends Controller
     {
         global $conn;
 
+        //Get the email confirmation status
+        $stmt = $conn->prepare("SELECT email_confirmed FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+
+        //Check if email is confirmed and exit if not
+        if (!$user['email_confirmed']) {
+            echo "Email not confirmed";
+            exit;
+        }
+
         // Prepare SQL query to prevent SQL injection
         $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
