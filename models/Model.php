@@ -2,9 +2,9 @@
 
 class Model{
   public function __construct( 
-    private mysqli $conn,
-    private string $table,
-    private array $requiredKeys
+    private readonly mysqli $conn,
+    private readonly string $table,
+    private readonly array $requiredKeys
   ) {}
 
   public function getAll(): array
