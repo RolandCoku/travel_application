@@ -76,6 +76,13 @@ abstract class Model{
     return $updateQuery->execute();
   }
 
+  public function update($data) // this should be fine right?
+  {
+    $id = $data['id'];
+    unset($data['id']);
+    return $this->updateById($id, $data);
+  }
+
   public function delete(int $id)
   {
     $deleteQuery = $this->conn->prepare("
