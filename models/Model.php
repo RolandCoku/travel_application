@@ -1,33 +1,21 @@
 <?php
 
-class Repository{
-  private readonly string $table;
-  private readonly array $keys; // string array for the keys of each table
-  private mysqli $conn;
-  
-  protected function __construct(string $table, array $keys){
-    $this->table = $table;
-    global $conn; // you can declare this global in every method you want to use it, if you don't want to make a field variable
-    if (!isset($conn)) { 
-      require_once __DIR__ . '\..\config\db_connection.php'; // once is less performant but more secure;
-    }
-    $this->conn = $conn;
-    $this->keys = $keys;
+class Model{
+  public function __construct( 
+    private mysqli $conn,
+    private string $table,
+    private array $requiredKeys
+  ) {}
+
+  public function getAll(): array
+  {
+    $sql_select = "SELECT * FROM users";
+    $result = $this->conn->query($sql_select);
+    return $result->fetch_all(MYSQLI_ASSOC);
   }
 
-  public function getAll(): array{
-    $getAllQuery = $this->conn->prepare("
-      SELECT * FROM $this->table;
-    ");
-    $isOk = $getAllQuery->execute();
-    if(!$isOk)
-      return [];
-    $result = $getAllQuery->get_result();
-    $arr = $result->fetch_all();
-    return $arr;
-  }
-
-  public function getById(int $id){
+  public function getById(int $id)
+  {
     $queryString = "
       SELECT * FROM $this->table
       WHERE id=?;
@@ -38,14 +26,14 @@ class Repository{
       WHERE id=?;
     ");
     $getQuery->bind_param('i', $id);
-    if($getQuery->execute() == false)
-      return null;
+    $getQuery->execute();
     $result = $getQuery->get_result();
     return $result->fetch_assoc();
     // fetch_assoc says it's going to return an array, cause it returns an associative array (HashMap)
   }
 
-  public function insert($obj){
+  public function create($obj)
+  {
     if(!$this->confirmInsertSchema($obj))
       return "Bad Object Signature";
     $columns = array_keys($obj);
@@ -61,15 +49,15 @@ class Repository{
       $types.= $this->getParamType($value);
     }
     $insertQuery->bind_param($types, ...$values);
-    $insertQuery->execute();
-    if($insertQuery->affected_rows<1)
-      return "Insertion Unsuccessful";
-    return "Insertion Successful";
+    return $insertQuery->execute();
   }
 
-  public function updateById(int $id, array $obj){
-    if(!$this->confirmUpdateSchema($obj))
-      return "Bad Object Signature";
+  public function updateById(int $id, array $obj)
+  {
+    if(!$this->confirmUpdateSchema($obj)){
+      echo "Bad Object Signature";
+      return false;
+    }
     $columns = array_keys($obj);
     $values = array_values($obj);
     $setStatement = implode("=?, ", $columns) . "=?"; // will make a col1=?, col2=?, ...
@@ -85,27 +73,21 @@ class Repository{
     $types.='i'; // for the id
     $valuesAndId = [...$values, $id]; // adding the id to be binded
     $updateQuery->bind_param($types, ...$valuesAndId);
-    $updateQuery->execute();
-    $this->conn->commit();
-    if($updateQuery->affected_rows<1)
-      return "Update Unsuccessful"; // I might return sth different in the end
-    return "Update Successful";
+    return $updateQuery->execute();
   }
 
-  public function deleteById(int $id){
+  public function delete(int $id)
+  {
     $deleteQuery = $this->conn->prepare("
       DELETE FROM $this->table
       WHERE id=?;
     ");
     $deleteQuery->bind_param('i', $id);
-    $deleteQuery->execute();
-    $this->conn->commit();
-    if($deleteQuery->affected_rows<1)
-      return "Deletion Unsuccessful";
-    return "Deletion Successful";
+    return $deleteQuery->execute();
   }
   
-  private function getParamType($value){
+  private function getParamType($value)
+  {
     if(is_int($value))
       return 'i';
     if(is_float($value))
@@ -115,23 +97,25 @@ class Repository{
     return 'b';
   }
 
-  private function confirmInsertSchema($obj){
+  private function confirmInsertSchema($obj)
+  {
     $obj_keys = array_keys($obj);
-    if(count($obj_keys) !== count($this->keys))
+    if(count($obj_keys) !== count($this->requiredKeys))
       return false;
-    foreach($this->keys as $key){
+    foreach($this->requiredKeys as $key){
       if(!array_key_exists($key, $obj))
         return false;
     }
     return true;
   }
 
-  private function confirmUpdateSchema($obj){
+  private function confirmUpdateSchema($obj)  // we check that the update object keys fit the criteria
+  {
     $obj_keys = array_keys($obj);
-    if(count($obj_keys) > count($this->keys))
+    if(count($obj_keys) > count($this->requiredKeys))
       return false;
     foreach($obj_keys as $key){
-      if(!in_array($key, $this->keys))
+      if(!in_array($key, $this->requiredKeys))
         return false;
     }
     return true;
