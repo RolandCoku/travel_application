@@ -2,12 +2,22 @@
 
 require_once __DIR__ . '/Controller.php';
 require_once __DIR__ . '/../config/db_connection.php';
+require_once __DIR__ . '/../models/User.php';
 
 
 class UserController extends Controller
 {
+    private $user;
+
+    public function __construct()
+    {
+        global $conn;
+        $this->user = new User($conn);
+    }
+
     public static function login(): void
     {
+        global $conn;
         session_start();
 
         if (isset($_SESSION['user_email'])) {
@@ -22,23 +32,21 @@ class UserController extends Controller
             $email = $_POST['email'];
             $password = $_POST['password'] ?? '';
 
-            //Filter email and password for security purposes to prevent SQL injection
-            $email = filter_var($email, FILTER_SANITIZE_EMAIL);
-
-            // Check if email and password are correct
-            if (self::authenticate($email, $password)) {
+            $user = new User($conn);
+            if ($user->authenticate($email, $password)) {
                 $_SESSION['user_email'] = $email;
                 header("Location: /account-dashboard");
                 exit;
             } else {
                 echo "Invalid email or password";
+                header("Location: /login");
             }
-
         }
     }
 
     public static function register(): void
     {
+        global $conn;
         if (isset($_SESSION['user_email'])) {
             header("Location: /account-dashboard");
             exit;
@@ -53,39 +61,32 @@ class UserController extends Controller
             $confirm_password = $_POST['confirm_password'] ?? '';
             $role = 'user';
 
-
-            // Check if email is already taken
-            if (self::emailExists($email)) {
-                echo "Email already exists";
-                exit;
-            }
-
-            // Check if password and confirm password match
             if ($password !== $confirm_password) {
                 echo "Passwords do not match";
                 exit;
             }
 
-            // Hash password
-            $password = password_hash($password, PASSWORD_DEFAULT);
+            $user = new User($conn);
 
-            // Save user to database
-            global $conn;
-
-            // Prepare SQL query to prevent SQL injection
-            $stmt = $conn->prepare("INSERT INTO users (name, email, role, password) VALUES (?, ?, ?, ?)");
-
-            // Bind parameters to the query
-            $stmt->bind_param("ssss", $name, $email, $role, $password);
-
-            // Execute the query
-            if ($stmt->execute()) {
-                echo "User registered successfully";
-                header("Location: /login");
-            } else {
-                echo "Error registering user: " . $conn->error;
+            if ($user->emailExists($email)) {
+                echo "Email already exists";
+                exit;
             }
 
+            $data = [
+                'name' => $name,
+                'email' => $email,
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+                'role' => $role,
+                'email_confirmed' => 1
+            ];
+
+            if ($user->create($data)) {
+                echo "User created successfully";
+                header("Location: /login");
+            } else {
+                echo "Failed to create user";
+            }
         }
     }
 
@@ -106,59 +107,4 @@ class UserController extends Controller
     {
         self::loadView('admin/dashboard');
     }
-
-    private static function authenticate($email, $password): bool
-    {
-        global $conn;
-
-        //Get the email confirmation status
-        $stmt = $conn->prepare("SELECT email_confirmed FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $user = $result->fetch_assoc();
-
-        //Check if email is confirmed and exit if not
-        if (!$user['email_confirmed']) {
-            echo "Email not confirmed";
-            exit;
-        }
-
-        // Prepare SQL query to prevent SQL injection
-        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-
-        //User not found
-        if ($result->num_rows === 0) {
-            return false;
-        }
-
-        // Get user details
-        $user = $result->fetch_assoc();
-
-        // Verify password
-        if (!password_verify($password, $user['password'])) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private static function emailExists($email): bool
-    {
-        global $conn;
-
-        // Prepare SQL query to prevent SQL injection
-        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-
-        return $result->num_rows > 0;
-    }
-
 }
