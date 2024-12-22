@@ -1,6 +1,6 @@
 <?php
 
-class Model{
+abstract class Model{
   public function __construct( 
     private readonly mysqli $conn,
     private readonly string $table,

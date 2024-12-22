@@ -7,4 +7,4 @@ if(!isset($conn)){
 }
 
 $booking = new Booking($conn);
-echo $booking->updateById(10, ['user_id'=>23, 'agency_id'=> 5]);
+echo $booking->updateById(11, ['user_id'=>32, 'agency_id'=> 2]);
