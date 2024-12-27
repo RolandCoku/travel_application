@@ -41,7 +41,7 @@ class EmailHelpers
     {
         $subject = "Confirm your email";
         $body = "<p>Click the link below to confirm your email</p>
-                <a href='http://localhost:8000/confirm-email?token=$token'>Confirm Email</a>";
+                <a href='http://localhost/confirm-email?token=$token'>Confirm Email</a>";
 
         return self::sendEmail($email, $subject, $body);
     }

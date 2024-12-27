@@ -7,7 +7,6 @@ require_once __DIR__ . '/../helpers/EmailHelpers.php';
 
 use JetBrains\PhpStorm\NoReturn;
 use App\Helpers\EmailHelpers;
-use Random\RandomException;
 
 class UserController extends Controller
 {
@@ -61,9 +60,6 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * @throws RandomException
-     */
     public function register(): void
     {
         if (isset($_SESSION['user_email'])) {
