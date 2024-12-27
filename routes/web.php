@@ -26,6 +26,8 @@ if ($route === '/login') {
     $userController->login();
 } elseif ($route === '/register') {
     $userController->register();
+} elseif ($route === '/confirm-email') {
+    $userController->confirmEmail();
 } elseif ($route === '/logout') {
     $userController->logout();
 }

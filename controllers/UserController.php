@@ -1,16 +1,13 @@
 <?php
 
-require __DIR__ . '/../PHPMailer/src/Exception.php';
-require __DIR__ . '/../PHPMailer/src/PHPMailer.php';
-require __DIR__ . '/../PHPMailer/src/SMTP.php';
 require_once __DIR__ . '/Controller.php';
 require_once __DIR__ . '/../config/db_connection.php';
 require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../helpers/EmailHelpers.php';
 
 use JetBrains\PhpStorm\NoReturn;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\SMTP;
+use App\Helpers\EmailHelpers;
+use Random\RandomException;
 
 class UserController extends Controller
 {
@@ -39,7 +36,12 @@ class UserController extends Controller
             $password = $_POST['password'] ?? '';
 
             if (!$this->user->isConfirmed($email)){
-                self::confirmEmail($email);
+
+                $token = $this->user->getByEmail($email)['email_confirmation_token'];
+
+                EmailHelpers::sendConfirmationEmail($email, $token);
+
+                self::loadView('user/confirm_email');
                 exit;
             }
 
@@ -59,6 +61,9 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * @throws RandomException
+     */
     public function register(): void
     {
         if (isset($_SESSION['user_email'])) {
@@ -73,13 +78,13 @@ class UserController extends Controller
             $email = $_POST['email'];
             $password = $_POST['password'] ?? '';
             $confirm_password = $_POST['confirm_password'] ?? '';
+            $email_confirmation_token = bin2hex(random_bytes(16));
             $role = 'user';
 
             if ($password !== $confirm_password) {
                 echo "Passwords do not match";
                 exit;
             }
-
 
             if ($this -> user -> emailExists($email)) {
                 echo "Email already exists";
@@ -91,7 +96,8 @@ class UserController extends Controller
                 'email' => $email,
                 'password' => password_hash($password, PASSWORD_DEFAULT),
                 'role' => $role,
-                'email_confirmed' => 1
+                'email_confirmed' => 0,
+                'email_confirmation_token' => $email_confirmation_token
             ];
 
             if ($this -> user -> create($data)) {
@@ -123,34 +129,26 @@ class UserController extends Controller
         self::loadView('admin/index', ['users' => $users['data'], 'page' => $users['currentPage'], 'totalPages' => $users['totalPages']]);
     }
 
-    private function confirmEmail($email): void
+    public function confirmEmail(): void
     {
-        $mail = new PHPMailer(true);
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-        try {
-            $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = $_ENV['GMAIL_USERNAME'];
-            $mail->Password = $_ENV['GMAIL_PASSWORD'];
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
+            $token = $_GET['token'] ?? null;
 
-            $mail->setFrom('rolandcoku1@gmail.com', 'Roland Coku');
-            $mail->addAddress($email);
+            $user = $this->user->findByConfirmationToken($token);
 
-            $mail->isHTML(true);
-            $mail->Subject = 'Email Confirmation';
-            $mail->Body = 'Click <a href="http://localhost:8000/confirm-email?email=' . $email . '">here</a> to confirm your email';
+            if (!$user) {
+                echo "Invalid or expired token.";
+                exit;
+            }
 
-            $mail->send();
-            echo 'Email has been sent';
+            $this->user->confirmEmail($user['email']);
+
+            //Should add a success message here later
+            header("Location: /login");
             exit;
-        } catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
         }
-
     }
+
 
 }

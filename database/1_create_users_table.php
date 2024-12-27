@@ -24,6 +24,7 @@ function runMigration($conn): void
                 password VARCHAR(255) NOT NULL,
                 role ENUM('admin', 'user') DEFAULT 'user',
                 email_confirmed BOOLEAN DEFAULT FALSE,
+                email_confirmation_token VARCHAR(255) DEFAULT NULL, 
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )

@@ -4,7 +4,7 @@ require_once 'Model.php';
 class User extends Model
 {
 
-    private const KEYS = ['name', 'email', 'password', 'role', 'email_confirmed'];
+    private const KEYS = ['name', 'email', 'password', 'role', 'email_confirmed', 'email_confirmation_token'];
 
     public function __construct(mysqli $conn)
     {
@@ -68,13 +68,21 @@ class User extends Model
         return $result->fetch_assoc();
     }
 
-    public function comfirmEmail(mixed $email)
+    public function confirmEmail(mixed $email): void
     {
         $sql_update = "UPDATE users SET email_confirmed = 1 WHERE email = ?";
 
         $stmt = $this->conn->prepare($sql_update);
         $stmt->bind_param("s", $email);
         $stmt->execute();
+    }
+
+    public function findByConfirmationToken($token): false|array|null
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE email_confirmation_token = ?");
+        $stmt->bind_param('s', $token);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
     }
 
 }
