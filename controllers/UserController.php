@@ -1,23 +1,29 @@
 <?php
 
+require __DIR__ . '/../PHPMailer/src/Exception.php';
+require __DIR__ . '/../PHPMailer/src/PHPMailer.php';
+require __DIR__ . '/../PHPMailer/src/SMTP.php';
 require_once __DIR__ . '/Controller.php';
 require_once __DIR__ . '/../config/db_connection.php';
 require_once __DIR__ . '/../models/User.php';
 
+use JetBrains\PhpStorm\NoReturn;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
 
 class UserController extends Controller
 {
-    private $user;
+    private User $user;
 
     public function __construct()
     {
         global $conn;
-        $this->user = new User($conn);
+        $this -> user = new User($conn);
     }
 
-    public static function login(): void
+    public function login(): void
     {
-        global $conn;
         session_start();
 
         if (isset($_SESSION['user_email'])) {
@@ -32,10 +38,19 @@ class UserController extends Controller
             $email = $_POST['email'];
             $password = $_POST['password'] ?? '';
 
-            $user = new User($conn);
-            if ($user->authenticate($email, $password)) {
+            if (!$this->user->isConfirmed($email)){
+                self::confirmEmail($email);
+                exit;
+            }
+
+            if ($this -> user -> authenticate($email, $password)) {
                 $_SESSION['user_email'] = $email;
-                header("Location: /account-dashboard");
+                //Check if the user is an admin
+                $user = $this->user->getByEmail($email);
+                if ($user['role'] === 'admin') {
+                    header("Location: /admin/dashboard");
+                } else
+                    header("Location: /account-dashboard");
                 exit;
             } else {
                 echo "Invalid email or password";
@@ -44,9 +59,8 @@ class UserController extends Controller
         }
     }
 
-    public static function register(): void
+    public function register(): void
     {
-        global $conn;
         if (isset($_SESSION['user_email'])) {
             header("Location: /account-dashboard");
             exit;
@@ -66,9 +80,8 @@ class UserController extends Controller
                 exit;
             }
 
-            $user = new User($conn);
 
-            if ($user->emailExists($email)) {
+            if ($this -> user -> emailExists($email)) {
                 echo "Email already exists";
                 exit;
             }
@@ -81,7 +94,7 @@ class UserController extends Controller
                 'email_confirmed' => 1
             ];
 
-            if ($user->create($data)) {
+            if ($this -> user -> create($data)) {
                 echo "User created successfully";
                 header("Location: /login");
             } else {
@@ -90,7 +103,7 @@ class UserController extends Controller
         }
     }
 
-    public static function logout(): void
+    #[NoReturn] public function logout(): void
     {
         session_start();
         session_destroy();
@@ -98,13 +111,46 @@ class UserController extends Controller
         exit;
     }
 
-    public static function accountDashboard(): void
+    public function accountDashboard(): void
     {
         self::loadView('user/account-dashboard');
     }
 
-    public static function adminDashboard(): void
+    public function adminDashboard($page = 1): void
     {
-        self::loadView('admin/dashboard');
+        $users = $this->user->paginate($page, 5);
+
+        self::loadView('admin/index', ['users' => $users['data'], 'page' => $users['currentPage'], 'totalPages' => $users['totalPages']]);
     }
+
+    private function confirmEmail($email): void
+    {
+        $mail = new PHPMailer(true);
+
+        try {
+            $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = $_ENV['GMAIL_USERNAME'];
+            $mail->Password = $_ENV['GMAIL_PASSWORD'];
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            $mail->setFrom('rolandcoku1@gmail.com', 'Roland Coku');
+            $mail->addAddress($email);
+
+            $mail->isHTML(true);
+            $mail->Subject = 'Email Confirmation';
+            $mail->Body = 'Click <a href="http://localhost:8000/confirm-email?email=' . $email . '">here</a> to confirm your email';
+
+            $mail->send();
+            echo 'Email has been sent';
+            exit;
+        } catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        }
+
+    }
+
 }

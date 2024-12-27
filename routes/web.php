@@ -5,30 +5,47 @@ require_once app_path('controllers/UserController.php');
 require_once app_path('middleware/AuthMiddleware.php');
 require_once app_path('middleware/RoleMiddleware.php');
 
+//Initiate the controllers
+$homeController = new HomeController();
+$userController = new UserController();
+
 // Get the current route
 $route = $_SERVER['REQUEST_URI'];
 
+// Remove query string from route
+$route = explode('?', $route)[0];
 
+// Remove trailing slash from route
+$route = rtrim($route, '/');
+
+//Get the query string
+$queryString = $_SERVER['QUERY_STRING'];
 
 // Public Routes
 if ($route === '/login') {
-    UserController::login();
+    $userController->login();
 } elseif ($route === '/register') {
-    UserController::register();
+    $userController->register();
 } elseif ($route === '/logout') {
-    UserController::logout();
+    $userController->logout();
 }
 
 // Protected Routes (Require Login)
 elseif ($route === '/account-dashboard') {
     AuthMiddleware::handle(); // Ensure user is logged in
-    UserController::accountDashboard();}
+    $userController->accountDashboard();
+}
 
 // Role-Based Routes (Admins Only)
 elseif ($route === '/admin/dashboard') {
     AuthMiddleware::handle(); // Ensure user is logged in
     RoleMiddleware::handle('admin'); // Ensure user is an admin
-    UserController::adminDashboard();
+
+    // Handle pagination
+    $page = $_GET['page'] ?? 1;
+    $page = (int) $page;
+
+    $userController->adminDashboard($page);
 }
 
 // endpoints
