@@ -17,6 +17,8 @@
                             </div>
                             <div class="btn-group mt-3">
                                 <a href="/travel-packages/show/?id=<?= $travelPackage['id'] ?>" class="btn btn-sm btn-outline-secondary">View</a>
+                                <a href="/travel-packages/edit/?id=<?= $travelPackage['id'] ?>" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                <a href="/travel-packages/destroy/?id=<?= $travelPackage['id'] ?>" class="btn btn-sm btn-outline-secondary">Delete</a>
                             </div>
                         </div>
                     </div>

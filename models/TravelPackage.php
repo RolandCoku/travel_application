@@ -55,6 +55,18 @@ class TravelPackage extends Model
     }
 
     //Has many method for images
+    public function images($id): array
+    {
+        $sql = "SELECT * FROM images WHERE travel_package_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $images = $result->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+
+        return $images;
+    }
 
     //Belongs to method for agency
     public function agency(): array

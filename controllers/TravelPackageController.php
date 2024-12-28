@@ -21,11 +21,9 @@ class TravelPackageController extends Controller
         self::loadView('user/travel-package/index', ['travelPackages' => $travelPackages]);
     }
 
-    public function show($request): void
+    public function show(): void
     {
-        $travelPackage = $this->travelPackage->getById($request['id']);
-
-
+        $travelPackage = $this->travelPackage->getById($_GET['id']);
         self::loadView('user/travel-package/show', ['travelPackage' => $travelPackage]);
     }
 
@@ -38,22 +36,53 @@ class TravelPackageController extends Controller
 
     public function store(): void
     {
-        print_r($this->travelPackage->create($_POST));
-        exit;
+        $travelPackage = [
+            'name' => $_POST['name'],
+            'description' => $_POST['description'],
+            'price' => $_POST['price'],
+            'start_date' => $_POST['start_date'],
+            'end_date' => $_POST['end_date'],
+            'agency_id' => $_POST['agency_id']
+        ];
+
+        if ($this->travelPackage->create($travelPackage)) {
+            header('Location: /travel-packages');
+        } else {
+            echo 'Error creating travel package';
+        }
     }
 
-    public static function edit(): void
+    public function edit(): void
     {
-        self::loadView('admin/travel-agency/travel-packages/edit');
+        $travelPackage = $this->travelPackage->getById($_GET['id']);
+        $travelPackage['images'] = $this->travelPackage->images($travelPackage['id']);
+        $travelAgencies = $this->travelAgency->getAll();
+
+        self::loadView('admin/travel-agency/travel-package/edit', ['travelPackage' => $travelPackage, 'agencies' => $travelAgencies]);
     }
 
-    public static function update(): void
+    public function update(): void
     {
-        // Handle form submission
+        $travelPackage = [
+            'id' => $_POST['id'],
+            'name' => $_POST['name'],
+            'description' => $_POST['description'],
+            'price' => $_POST['price'],
+            'start_date' => $_POST['start_date'],
+            'end_date' => $_POST['end_date'],
+            'agency_id' => $_POST['agency_id']
+        ];
+
+        if ($this->travelPackage->update($travelPackage)) {
+            header('Location: /travel-packages');
+        } else {
+            echo 'Error updating travel package';
+        }
     }
 
-    public static function destroy(): void
+    public function destroy(): void
     {
-        // Handle form submission
+        $this->travelPackage->delete($_GET['id']);
+        header('Location: /travel-packages');
     }
 }

@@ -58,7 +58,7 @@ elseif ($route === '/admin/dashboard') {
 elseif ($route === '/travel-packages') {
     $travelPackageController->index();
 } elseif ($route === '/travel-packages/show') {
-    $travelPackageController->show($_GET);
+    $travelPackageController->show();
 } elseif ($route === '/travel-packages/create') {
     $travelPackageController->create();
 } elseif ($route === '/travel-packages/store') {
