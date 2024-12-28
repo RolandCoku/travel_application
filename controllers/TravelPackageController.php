@@ -1,25 +1,45 @@
 <?php
 
+require_once __DIR__ . '/../models/TravelPackage.php';
+require_once __DIR__ . '/../models/TravelAgency.php';
+
 class TravelPackageController extends Controller
 {
-    public static function index(): void
+    private TravelPackage $travelPackage;
+    private TravelAgency $travelAgency;
+
+    public function __construct()
     {
-        self::loadView('user/travel-package/index');
+        global $conn;
+        $this->travelPackage = new TravelPackage($conn);
+        $this->travelAgency = new TravelAgency($conn);
     }
 
-    public static function show(): void
+    public function index(): void
     {
-        self::loadView('user/travel-package/show');
+        $travelPackages = $this->travelPackage->getAll();
+        self::loadView('user/travel-package/index', ['travelPackages' => $travelPackages]);
     }
 
-    public static function create(): void
+    public function show($request): void
     {
-        self::loadView('admin/travel-agency/travel-packages/create');
+        $travelPackage = $this->travelPackage->getById($request['id']);
+
+
+        self::loadView('user/travel-package/show', ['travelPackage' => $travelPackage]);
     }
 
-    public static function store(): void
+    public function create(): void
     {
-        // Handle form submission
+        $travelAgencies = $this->travelAgency->getAll();
+
+        self::loadView('admin/travel-agency/travel-package/create', ['agencies' => $travelAgencies]);
+    }
+
+    public function store(): void
+    {
+        print_r($this->travelPackage->create($_POST));
+        exit;
     }
 
     public static function edit(): void

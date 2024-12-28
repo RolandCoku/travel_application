@@ -23,12 +23,14 @@ function seedDatabase($conn): void
     echo PHP_EOL . "Seeding agencies table...";
     for ($i = 0; $i < 50; $i++) {
         $name = "Agency $i";
-        $email = "agency$i@example.com";
-        $password = password_hash("password$i", PASSWORD_DEFAULT);
-        $phone = "123456789" . $i;
-        $emailConfirmed = mt_rand(0, 1);
+        $description = "Description of Agency $i";
+        $address = "Address $i";
+        $phone = "1234567890";
+        $email = "agency$i@agency.com";
+        $website = "https://agency$i.com";
 
-        $query = "INSERT INTO agencies (name, email, password, phone, email_confirmed) VALUES ('$name', '$email', '$password', '$phone', $emailConfirmed)";
+        $query = "INSERT INTO agencies (name, description, address, phone, email, website) 
+                  VALUES ('$name', '$description', '$address', '$phone', '$email', '$website')";
         $conn->query($query);
     }
 

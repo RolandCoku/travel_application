@@ -1,13 +1,16 @@
 <?php
 
-require_once app_path('controllers/HomeController.php');
+//Controllers
 require_once app_path('controllers/UserController.php');
+require_once app_path('controllers/TravelPackageController.php');
+
+//Middleware
 require_once app_path('middleware/AuthMiddleware.php');
 require_once app_path('middleware/RoleMiddleware.php');
 
 //Initiate the controllers
-$homeController = new HomeController();
 $userController = new UserController();
+$travelPackageController = new TravelPackageController();
 
 // Get the current route
 $route = $_SERVER['REQUEST_URI'];
@@ -48,6 +51,24 @@ elseif ($route === '/admin/dashboard') {
     $page = (int) $page;
 
     $userController->adminDashboard($page);
+}
+
+// Travel Package Routes
+
+elseif ($route === '/travel-packages') {
+    $travelPackageController->index();
+} elseif ($route === '/travel-packages/show') {
+    $travelPackageController->show($_GET);
+} elseif ($route === '/travel-packages/create') {
+    $travelPackageController->create();
+} elseif ($route === '/travel-packages/store') {
+    $travelPackageController->store();
+} elseif ($route === '/travel-packages/edit') {
+    $travelPackageController->edit();
+} elseif ($route === '/travel-packages/update') {
+    $travelPackageController->update();
+} elseif ($route === '/travel-packages/destroy') {
+    $travelPackageController->destroy();
 }
 
 // endpoints
