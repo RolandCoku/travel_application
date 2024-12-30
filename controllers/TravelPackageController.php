@@ -1,39 +1,88 @@
 <?php
 
+require_once __DIR__ . '/../models/TravelPackage.php';
+require_once __DIR__ . '/../models/TravelAgency.php';
+
 class TravelPackageController extends Controller
 {
-    public static function index(): void
+    private TravelPackage $travelPackage;
+    private TravelAgency $travelAgency;
+
+    public function __construct()
     {
-        self::loadView('user/travel-package/index');
+        global $conn;
+        $this->travelPackage = new TravelPackage($conn);
+        $this->travelAgency = new TravelAgency($conn);
     }
 
-    public static function show(): void
+    public function index(): void
     {
-        self::loadView('user/travel-package/show');
+        $travelPackages = $this->travelPackage->getAll();
+        self::loadView('user/travel-package/index', ['travelPackages' => $travelPackages]);
     }
 
-    public static function create(): void
+    public function show(): void
     {
-        self::loadView('admin/travel-agency/travel-packages/create');
+        $travelPackage = $this->travelPackage->getById($_GET['id']);
+        self::loadView('user/travel-package/show', ['travelPackage' => $travelPackage]);
     }
 
-    public static function store(): void
+    public function create(): void
     {
-        // Handle form submission
+        $travelAgencies = $this->travelAgency->getAll();
+
+        self::loadView('admin/travel-agency/travel-package/create', ['agencies' => $travelAgencies]);
     }
 
-    public static function edit(): void
+    public function store(): void
     {
-        self::loadView('admin/travel-agency/travel-packages/edit');
+        $travelPackage = [
+            'name' => $_POST['name'],
+            'description' => $_POST['description'],
+            'price' => $_POST['price'],
+            'start_date' => $_POST['start_date'],
+            'end_date' => $_POST['end_date'],
+            'agency_id' => $_POST['agency_id']
+        ];
+
+        if ($this->travelPackage->create($travelPackage)) {
+            header('Location: /travel-packages');
+        } else {
+            echo 'Error creating travel package';
+        }
     }
 
-    public static function update(): void
+    public function edit(): void
     {
-        // Handle form submission
+        $travelPackage = $this->travelPackage->getById($_GET['id']);
+        $travelPackage['images'] = $this->travelPackage->images($travelPackage['id']);
+        $travelAgencies = $this->travelAgency->getAll();
+
+        self::loadView('admin/travel-agency/travel-package/edit', ['travelPackage' => $travelPackage, 'agencies' => $travelAgencies]);
     }
 
-    public static function destroy(): void
+    public function update(): void
     {
-        // Handle form submission
+        $travelPackage = [
+            'id' => $_POST['id'],
+            'name' => $_POST['name'],
+            'description' => $_POST['description'],
+            'price' => $_POST['price'],
+            'start_date' => $_POST['start_date'],
+            'end_date' => $_POST['end_date'],
+            'agency_id' => $_POST['agency_id']
+        ];
+
+        if ($this->travelPackage->update($travelPackage)) {
+            header('Location: /travel-packages');
+        } else {
+            echo 'Error updating travel package';
+        }
+    }
+
+    public function destroy(): void
+    {
+        $this->travelPackage->delete($_GET['id']);
+        header('Location: /travel-packages');
     }
 }

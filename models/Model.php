@@ -11,7 +11,7 @@ abstract class Model
 
     public function getAll(): array
     {
-        $sql_select = "SELECT * FROM users";
+        $sql_select = "SELECT * FROM $this->table";
         $result = $this->conn->query($sql_select);
         return $result->fetch_all(MYSQLI_ASSOC);
     }

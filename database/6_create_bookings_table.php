@@ -21,14 +21,12 @@ function runMigration($conn): void
             CREATE TABLE bookings (
                 id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 user_id INT(6) UNSIGNED NOT NULL,
-                agency_id INT(6) UNSIGNED NOT NULL,
                 travel_package_id INT(6) UNSIGNED NOT NULL,
                 booking_date DATE NOT NULL,
                 booking_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                FOREIGN KEY (agency_id) REFERENCES agencies(id) ON DELETE CASCADE,
                 FOREIGN KEY (travel_package_id) REFERENCES travel_packages(id) ON DELETE CASCADE
             )
         ";

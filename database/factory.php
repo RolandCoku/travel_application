@@ -22,13 +22,16 @@ function seedDatabase($conn): void
     // Seed agencies table
     echo PHP_EOL . "Seeding agencies table...";
     for ($i = 0; $i < 50; $i++) {
+        $userId = mt_rand(1, 50);
         $name = "Agency $i";
-        $email = "agency$i@example.com";
-        $password = password_hash("password$i", PASSWORD_DEFAULT);
-        $phone = "123456789" . $i;
-        $emailConfirmed = mt_rand(0, 1);
+        $description = "Description of Agency $i";
+        $address = "Address $i";
+        $phone = "1234567890";
+        $email = "agency$i@agency.com";
+        $website = "https://agency$i.com";
 
-        $query = "INSERT INTO agencies (name, email, password, phone, email_confirmed) VALUES ('$name', '$email', '$password', '$phone', $emailConfirmed)";
+        $query = "INSERT INTO agencies (user_id, name, description, address, phone, email, website) 
+                  VALUES ('$userId', '$name', '$description', '$address', '$phone', '$email', '$website')";
         $conn->query($query);
     }
 
@@ -60,13 +63,12 @@ function seedDatabase($conn): void
     echo PHP_EOL . "Seeding bookings table...";
     for ($i = 0; $i < 50; $i++) {
         $userId = mt_rand(1, 50);
-        $agencyId = mt_rand(1, 50);
         $travelPackageId = mt_rand(1, 50);
         $bookingDate = date('Y-m-d', strtotime("+$i days"));
         $bookingStatus = ['pending', 'approved', 'rejected'][array_rand(['pending', 'approved', 'rejected'])];
 
-        $query = "INSERT INTO bookings (user_id, agency_id, travel_package_id, booking_date, booking_status) 
-                  VALUES ($userId, $agencyId, $travelPackageId, '$bookingDate', '$bookingStatus')";
+        $query = "INSERT INTO bookings (user_id, travel_package_id, booking_date, booking_status) 
+                  VALUES ($userId, $travelPackageId, '$bookingDate', '$bookingStatus')";
         $conn->query($query);
     }
 
@@ -83,18 +85,17 @@ function seedDatabase($conn): void
         $conn->query($query);
     }
 
-    // Seed payments table
-    echo PHP_EOL . "Seeding payments table...";
-    for ($i = 0; $i < 50; $i++) {
-        $userId = mt_rand(1, 50);
-        $bookingId = mt_rand(1, 50);
-        $paymentDate = date('Y-m-d', strtotime("+$i days"));
-        $paymentStatus = ['pending', 'approved', 'rejected'][array_rand(['pending', 'approved', 'rejected'])];
-
-        $query = "INSERT INTO payments (user_id, booking_id, payment_date, payment_status) 
-                  VALUES ($userId, $bookingId, '$paymentDate', '$paymentStatus')";
-        $conn->query($query);
-    }
+//    // Seed payments table
+//    echo PHP_EOL . "Seeding payments table...";
+//    for ($i = 0; $i < 50; $i++) {
+//        $bookingId = mt_rand(1, 50);
+//        $paymentDate = date('Y-m-d', strtotime("+$i days"));
+//        $paymentStatus = ['pending', 'approved', 'rejected'][array_rand(['pending', 'approved', 'rejected'])];
+//
+//        $query = "INSERT INTO payments (booking_id, payment_date, payment_status)
+//                  VALUES ($bookingId, '$paymentDate', '$paymentStatus')";
+//        $conn->query($query);
+//    }
 
     // Seed logs table
     echo PHP_EOL . "Seeding logs table...";
