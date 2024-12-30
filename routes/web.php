@@ -1,16 +1,18 @@
 <?php
 
-//Controllers
+// Controllers
 require_once app_path('controllers/UserController.php');
 require_once app_path('controllers/TravelPackageController.php');
+require_once app_path('controllers/BookingController.php');
 
-//Middleware
+// Middleware
 require_once app_path('middleware/AuthMiddleware.php');
 require_once app_path('middleware/RoleMiddleware.php');
 
-//Initiate the controllers
+// Initiate the controllers
 $userController = new UserController();
 $travelPackageController = new TravelPackageController();
+$bookingController = new BookingController();
 
 // Get the current route
 $route = $_SERVER['REQUEST_URI'];
@@ -21,60 +23,75 @@ $route = explode('?', $route)[0];
 // Remove trailing slash from route
 $route = rtrim($route, '/');
 
-//Get the query string
+// Get the query string
 $queryString = $_SERVER['QUERY_STRING'];
 
-// Public Routes
-if ($route === '/login') {
-    $userController->login();
-} elseif ($route === '/register') {
-    $userController->register();
-} elseif ($route === '/confirm-email') {
-    $userController->confirmEmail();
-} elseif ($route === '/logout') {
-    $userController->logout();
-}
+// Routing
+switch ($route) {
+    // Public Routes
+    case '/login':
+        $userController->login();
+        break;
+    case '/register':
+        $userController->register();
+        break;
+    case '/confirm-email':
+        $userController->confirmEmail();
+        break;
+    case '/logout':
+        $userController->logout();
+        break;
 
-// Protected Routes (Require Login)
-elseif ($route === '/account-dashboard') {
-    AuthMiddleware::handle(); // Ensure user is logged in
-    $userController->accountDashboard();
-}
+    // Protected Routes (Require Login)
+    case '/account-dashboard':
+        AuthMiddleware::handle(); // Ensure user is logged in
+        $userController->accountDashboard();
+        break;
 
-// Role-Based Routes (Admins Only)
-elseif ($route === '/admin/dashboard') {
-    AuthMiddleware::handle(); // Ensure user is logged in
-    RoleMiddleware::handle('admin'); // Ensure user is an admin
+    // Role-Based Routes (Admins Only)
+    case '/admin/dashboard':
+        AuthMiddleware::handle(); // Ensure user is logged in
+        RoleMiddleware::handle('admin'); // Ensure user is an admin
 
-    // Handle pagination
-    $page = $_GET['page'] ?? 1;
-    $page = (int) $page;
+        // Handle pagination
+        $page = $_GET['page'] ?? 1;
+        $page = (int)$page;
 
-    $userController->adminDashboard($page);
-}
+        $userController->adminDashboard($page);
+        break;
 
-// Travel Package Routes
+    // Travel Package Routes (Need to add a role middleware where only agencies can access)
+    case '/travel-packages':
+        $travelPackageController->index();
+        break;
+    case '/travel-packages/show':
+        $travelPackageController->show();
+        break;
+    case '/travel-packages/create':
+        $travelPackageController->create();
+        break;
+    case '/travel-packages/store':
+        $travelPackageController->store();
+        break;
+    case '/travel-packages/edit':
+        $travelPackageController->edit();
+        break;
+    case '/travel-packages/update':
+        $travelPackageController->update();
+        break;
+    case '/travel-packages/destroy':
+        $travelPackageController->destroy();
+        break;
 
-elseif ($route === '/travel-packages') {
-    $travelPackageController->index();
-} elseif ($route === '/travel-packages/show') {
-    $travelPackageController->show();
-} elseif ($route === '/travel-packages/create') {
-    $travelPackageController->create();
-} elseif ($route === '/travel-packages/store') {
-    $travelPackageController->store();
-} elseif ($route === '/travel-packages/edit') {
-    $travelPackageController->edit();
-} elseif ($route === '/travel-packages/update') {
-    $travelPackageController->update();
-} elseif ($route === '/travel-packages/destroy') {
-    $travelPackageController->destroy();
-}
-
-// endpoints
-
-
-// Default Route
-else {
-    require_once app_path('views/user/index.php');
+    // Booking Routes
+    case '/bookings/create':
+        $bookingController->create();
+        break;
+    case '/bookings/store':
+        $bookingController->store();
+        break;
+    // Default Route
+    default:
+        require_once app_path('views/user/index.php');
+        break;
 }

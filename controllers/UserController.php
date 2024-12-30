@@ -46,6 +46,8 @@ class UserController extends Controller
 
             if ($this -> user -> authenticate($email, $password)) {
                 $_SESSION['user_email'] = $email;
+                $_SESSION['user_id'] = $this->user->getByEmail($email)['id'];
+
                 //Check if the user is an admin
                 $user = $this->user->getByEmail($email);
                 if ($user['role'] === 'admin') {
