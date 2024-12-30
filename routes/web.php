@@ -90,6 +90,19 @@ switch ($route) {
     case '/bookings/store':
         $bookingController->store();
         break;
+
+
+    // Keep-Alive Route (For Session Management)
+    case '/keep-alive':
+        session_start();
+        //Check if the session is set and update the last activity timestamp
+        if (isset($_SESSION['last_activity'])) {
+            $_SESSION['last_activity'] = time();
+        }
+        // Return 200 OK
+        http_response_code(200);
+        break;
+
     // Default Route
     default:
         require_once app_path('views/user/index.php');

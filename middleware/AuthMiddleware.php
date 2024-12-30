@@ -6,8 +6,8 @@ class AuthMiddleware {
     {
         session_start();
 
-        // Set timeout duration (30 minutes)
-        $sessionTimeout = 1800;
+        // Set timeout duration (15 minutes)
+        $sessionTimeout = 15 * 60;
 
         // Check if the session is set and validate its lifetime
         if (isset($_SESSION['last_activity'])) {
