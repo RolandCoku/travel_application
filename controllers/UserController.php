@@ -4,6 +4,7 @@ require_once __DIR__ . '/Controller.php';
 require_once __DIR__ . '/../config/db_connection.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../helpers/EmailHelpers.php';
+require_once __DIR__ . '/../models/Log.php';
 
 use JetBrains\PhpStorm\NoReturn;
 use App\Helpers\EmailHelpers;
@@ -11,11 +12,13 @@ use App\Helpers\EmailHelpers;
 class UserController extends Controller
 {
     private User $user;
+    private Log $log;
 
     public function __construct()
     {
         global $conn;
         $this -> user = new User($conn);
+        $this -> log = new Log($conn);
     }
 
     public function login(): void
@@ -39,7 +42,7 @@ class UserController extends Controller
                 $token = $this->user->getByEmail($email)['email_confirmation_token'];
 
                 EmailHelpers::sendConfirmationEmail($email, $token);
-
+                $this->log->log($this->user->getByEmail($email)['id'], 'Email confirmation sent');
                 self::loadView('user/confirm_email');
                 exit;
             }
@@ -47,6 +50,8 @@ class UserController extends Controller
             if ($this -> user -> authenticate($email, $password)) {
                 $_SESSION['user_email'] = $email;
                 $_SESSION['user_id'] = $this->user->getByEmail($email)['id'];
+
+                $this->log->log($this->user->getByEmail($email)['id'], 'Login');
 
                 //Check if the user is an admin
                 $user = $this->user->getByEmail($email);
@@ -57,6 +62,7 @@ class UserController extends Controller
                 exit;
             } else {
                 echo "Invalid email or password";
+                $this->log->log($this->user->getByEmail($email)['id'], 'Login failed');
                 header("Location: /login");
             }
         }
@@ -99,10 +105,10 @@ class UserController extends Controller
             ];
 
             if ($this -> user -> create($data)) {
-                echo "User created successfully";
+                $this->log->log($this->user->getByEmail($email)['id'], 'User created');
                 header("Location: /login");
             } else {
-                echo "Failed to create user";
+                $this->log->log($this->user->getByEmail($email)['id'], 'User creation failed');
             }
         }
     }
