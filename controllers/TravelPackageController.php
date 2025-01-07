@@ -23,8 +23,8 @@ class TravelPackageController extends Controller
 
     public function show(): void
     {
-        $travelPackage = $this->travelPackage->getById($_GET['id']);
-        self::loadView('user/travel-package/show', ['travelPackage' => $travelPackage]);
+//        $travelPackage = $this->travelPackage->getById($_GET['id']);
+        self::loadView('user/travel-package/show');
     }
 
     public function create(): void
