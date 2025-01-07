@@ -5,6 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Travel Application</title>
-    <link rel="stylesheet" href="<?= base_url('/css/bootstrap.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url("/css/style.css"); ?>">
+    <link href="<?= base_url("/css/boxicons-2.1.4/css/boxicons.min.css"); ?>" rel="stylesheet">
+    <title><?= $title = $title ?? 'Elite Travel'?></title>
 </head>
