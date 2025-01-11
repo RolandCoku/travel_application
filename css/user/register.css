@@ -1,0 +1,143 @@
+/* Register page styles */
+body.register-page {
+    background: url('/img/assets/login-background.jpg') no-repeat center center/cover;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+body.register-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Transparent overlay */
+    z-index: 1;
+}
+
+.register-container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 500px; /* Increased width */
+    background: rgba(0, 0, 0, 0.85);
+    padding: 40px; /* Increased padding */
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    animation: fadeIn 1s ease-in-out;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Increased gap */
+}
+
+.register-form .form-title {
+    font-size: 32px; /* Larger title */
+    text-align: center;
+    margin-bottom: 20px; /* Increased margin */
+    color: #a8d4e4;
+    letter-spacing: 1px;
+    animation: slideIn 0.8s ease-in-out;
+}
+
+.register-form .input-group {
+    position: relative;
+}
+
+.register-form .input-group input {
+    width: 100%;
+    padding: 12px 55px 12px 15px; /* Increased padding */
+    font-size: 16px;
+    border: 1px solid #a8d4e4;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    outline: none;
+    transition: box-shadow 0.3s ease;
+}
+
+.register-form .input-group input:focus {
+    box-shadow: 0 0 10px 2px #a8d4e4;
+}
+
+.register-form .input-group i {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #a8d4e4;
+    font-size: 20px;
+    transition: color 0.3s ease;
+}
+
+.register-form .input-group input:focus + i {
+    color: #0c5f80;
+}
+
+.register-form .btn-primary {
+    width: 100%;
+    padding: 14px 20px; /* Larger button */
+    background: linear-gradient(135deg, #0c5f80, #a8d4e4);
+    color: #0c0c37;
+    font-size: 18px; /* Larger font size */
+    font-weight: bold;
+    border: none;
+    border-radius: 30px; /* Softer border */
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.register-form .btn-primary:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #a8d4e4, #0c5f80);
+}
+
+.register-form .login-link {
+    text-align: center;
+    font-size: 14px;
+}
+
+.register-form .login-link a {
+    color: #a8d4e4;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.register-form .login-link a:hover {
+    color: #0c5f80;
+    text-decoration: underline;
+}
+
+/* Keyframes for animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
