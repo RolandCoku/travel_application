@@ -6,6 +6,11 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="<?= base_url("/css/style.css"); ?>">
+
+    <?php if (isset($cssFile)): ?>
+        <link rel="stylesheet" href="<?= base_url("/css/$cssFile"); ?>">
+    <?php endif; ?>
+
     <link href="<?= base_url("/css/boxicons-2.1.4/css/boxicons.min.css"); ?>" rel="stylesheet">
     <title><?= $title = $title ?? 'Elite Travel'?></title>
 </head>

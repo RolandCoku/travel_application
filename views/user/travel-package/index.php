@@ -1,5 +1,6 @@
 <?php
 $title = 'Elite Travel - Travel Packages';
+$cssFile = 'user/travel-package/index.css';
 require_once app_path('includes/layout-header.php');
 ?>
 

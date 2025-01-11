@@ -1,23 +1,8 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <title>Elite Travel - Login</title>-->
-<!--    <link rel="stylesheet" href="--><?php //= base_url("views/user/travel-package/style.css"); ?><!--">-->
-<!--    <link href="--><?php //= base_url("/css/boxicons-2.1.4/css/boxicons.min.css"); ?><!--" rel="stylesheet">-->
-<!--</head>-->
-<!--<body>-->
-
-
 <?php
 $title = 'Elite Travel - Login';
+$cssFile = 'user/login.css';
 require_once app_path('includes/layout-header.php');
 ?>
-
-<!--<header class="header">-->
-<!--    <div class="container">-->
-<!--        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdWIhweoIGz48FgJ8J_0nf8bdpnm8w06rZgg&s" width="250px" alt="logo">-->
-<!--    </div>-->
-<!--</header>-->
 
 <body class="login-page">
 <main class="login-container">
@@ -41,7 +26,7 @@ require_once app_path('includes/layout-header.php');
         </div>
         <button type="submit" class="btn-primary">Login</button>
         <div class="register-link">
-            <p>Don't have an account? <a href="#">Register now</a></p>
+            <p>Don't have an account? <a href="/register">Register now</a></p>
         </div>
     </form>
 </main>

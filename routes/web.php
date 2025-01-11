@@ -44,7 +44,7 @@ switch ($route) {
 
     // Protected Routes (Require Login)
     case '/account-dashboard':
-        AuthMiddleware::handle(); // Ensure user is logged in
+//        AuthMiddleware::handle(); // Ensure user is logged in
         $userController->accountDashboard();
         break;
 

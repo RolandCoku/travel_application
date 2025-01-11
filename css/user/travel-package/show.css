@@ -1,0 +1,226 @@
+/* Style for travel package details */
+body.travel-package-details {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto Condensed', sans-serif;
+    background-color: #f2f2f2;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header Styling */
+body.travel-package-details .header {
+    position: relative;
+    color: #fff;
+    text-align: center;
+    padding: 40px 20px;
+    overflow: hidden;
+}
+
+body.travel-package-details .header .slideshow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    animation: slide 20s infinite;
+}
+
+body.travel-package-details .header .slideshow img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    opacity: 0;
+    animation: fade 20s infinite;
+}
+
+body.travel-package-details .header .slideshow img:nth-child(1) {
+    animation-delay: 0s;
+}
+
+body.travel-package-details .header .slideshow img:nth-child(2) {
+    animation-delay: 5s;
+}
+
+body.travel-package-details .header .slideshow img:nth-child(3) {
+    animation-delay: 10s;
+}
+
+body.travel-package-details .header .slideshow img:nth-child(4) {
+    animation-delay: 15s;
+}
+
+@keyframes fade {
+    0%, 25% {
+        opacity: 1;
+    }
+    30%, 100% {
+        opacity: 0;
+    }
+}
+
+body.travel-package-details .header .content {
+    position: relative;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+body.travel-package-details .header .title {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+body.travel-package-details .header .subtitle {
+    font-size: 1.2rem;
+    font-weight: 300;
+}
+
+/* Main Content Styling */
+body.travel-package-details .main-content {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+body.travel-package-details .image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+body.travel-package-details .image-gallery img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+body.travel-package-details .image-gallery img:hover {
+    transform: scale(1.05);
+}
+
+body.travel-package-details .details {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+body.travel-package-details .details h2 {
+    color: #033649;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+body.travel-package-details .details p {
+    margin-bottom: 15px;
+    font-size: 1rem;
+    color: #555;
+}
+
+body.travel-package-details .highlights {
+    list-style: none;
+    padding: 0;
+}
+
+body.travel-package-details .highlights li {
+    margin-bottom: 10px;
+    position: relative;
+    font-size: 1rem;
+}
+
+body.travel-package-details .highlights li::before {
+    position: absolute;
+    left: 0;
+    color: #599db1;
+    font-weight: bold;
+}
+
+body.travel-package-details .pricing {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #033649;
+}
+
+/* Actions Section */
+body.travel-package-details .actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+body.travel-package-details .btn {
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: inline-block;
+    margin: 5px;
+}
+
+body.travel-package-details .btn.book-now {
+    background: #033649;
+    color: #fff;
+}
+
+body.travel-package-details .btn.learn-more {
+    background: #599db1;
+    color: #fff;
+}
+
+body.travel-package-details .btn:hover {
+    transform: scale(1.05);
+}
+
+/* Footer Styling */
+body.travel-package-details .footer {
+    text-align: center;
+    background: #033649;
+    color: #fff;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+body.travel-package-details .footer a {
+    color: #bae6f8;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+body.travel-package-details .footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Styling */
+@media screen and (max-width: 768px) {
+    body.travel-package-details .header .title {
+        font-size: 2rem;
+    }
+
+    body.travel-package-details .header .subtitle {
+        font-size: 1rem;
+    }
+
+    body.travel-package-details .details {
+        padding: 15px;
+    }
+
+    body.travel-package-details .highlights li {
+        font-size: 0.9rem;
+    }
+
+    body.travel-package-details .pricing {
+        font-size: 1rem;
+    }
+}
+
