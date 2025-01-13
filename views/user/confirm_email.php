@@ -1,20 +1,17 @@
-<?php require_once app_path('includes/layout-header.php'); ?>
+<?php
+$title = 'Elite Travel - Email Confirmation';
+$cssFile = 'user/confirm-email.css?=v' . time();
+require_once app_path('includes/layout-header.php'); ?>
 
-<!-- Tell the user to check their email for a confirmation link -->
-
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <div class="card mt-5">
-                <div class="card-header">
-                    <h5 class="card-title text-center">Confirm Email</h5>
-                </div>
-                <div class="card-body">
-                    <p class="text-center">Please check your email for a confirmation link.</p>
-                </div>
-            </div>
+    <body class="email-confirmation-page">
+    <div class="confirmation-container">
+        <div class="confirmation-box">
+            <h1>Email Confirmation</h1>
+            <p>We've sent a confirmation link to your email address.</p>
+            <p>Please check your inbox and follow the instructions to verify your account.</p>
+            <p>If you didn't receive the email, check your spam folder or <a href="/resend-email" class="resend-link">resend the confirmation email</a>.</p>
         </div>
     </div>
-</div>
+    </body>
 
 <?php require_once app_path('includes/layout-footer.php'); ?>
