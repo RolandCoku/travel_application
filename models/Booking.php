@@ -45,7 +45,7 @@ class Booking extends Model{
         return true;
     }
 
-    public function createAndGetPayment($obj): bool{
+    public function createAndGetPaymentId($obj): int|string|null{
 
       if(!parent::create(
           [
@@ -63,16 +63,17 @@ class Booking extends Model{
       $payment = [
           'booking_id' => $bookingId,
           'payment_date' => $obj['booking_date'],
-          'payment_method' => $obj['payment_method'],
+          // 'payment_method' => $obj['payment_method'],
           'amount' => $obj['total_price'],
           'payment_status' => 'pending'
       ];
 
       $paymentModel = new Payment($this->conn);
 
-      if(!$paymentModel->create($payment)){
-          return null;
-      }
-      return $payment;
+      return $paymentModel->createAndGetId($payment);
+      // if(!$paymentModel->createAndGetId($payment)){
+      //     return null;
+      // }
+      // return $payment;
   }
 }

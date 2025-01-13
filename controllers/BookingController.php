@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../models/Booking.php';
+require_once __DIR__ . '/../models/Payment.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/TravelPackage.php';
 
@@ -9,6 +10,7 @@ use App\Helpers\PayPalService;
 class BookingController extends Controller
 {
   private Booking $booking;
+  private Payment $payment;
   private travelPackage $travelPackage;
   private PayPalService $paypalService;
 
@@ -17,7 +19,7 @@ class BookingController extends Controller
     global $conn;
     $this->booking = new Booking($conn);
     $this->travelPackage = new TravelPackage($conn);
-
+    $this->payment = new Payment($conn);
     global $config;
     $this->paypalService = new PayPalService($config);
   }
@@ -41,7 +43,7 @@ class BookingController extends Controller
 
   public function store(): void
   { // krijon nje approved booking dhe pending payment dhe ben redirect drejt paypal
-    session_start();
+    // ketu duhet rishikuar radha e krijimit te booking, payment dhe paypal order
 
     $travelPackage = $this->travelPackage->getById($_POST['travel_package_id']);
 
@@ -54,7 +56,8 @@ class BookingController extends Controller
       'total_price' => $travelPackage['price'],
     ];
     
-    if (!$this->booking->create($booking)) {
+    $paymentId =$this->booking->createAndGetPaymentId($booking);
+    if ($paymentId === null) {
       // ndoshta ketu bejme nje redirect si tjerat
       echo 'Error creating booking in the database';
       exit;
@@ -91,6 +94,14 @@ class BookingController extends Controller
 
     $order = $result['data'];
 
+    if(!$this->payment->setOrderId($paymentId, $order['id'])){
+      $error ="Couldn't update database"; // I need to handle this in a different way probably
+      error_log($error);
+      header('Location: /payment/error?message=' . urlencode($error));
+      exit;
+    }
+    $_SESSION['payment_id'] = $paymentId;
+
     // Find the "approve" link in the response
     foreach ($order['links'] as $link) {
       if ($link['rel'] === 'approve') {
@@ -118,7 +129,7 @@ class BookingController extends Controller
       echo json_encode([
         'success' => false,
         'error' => "You might've not finished the payment correcty",
-        'redirectUrl' => '/payment/error' . urlencode('possible counterfeit') // duhet te bej endpointe me ekzakte
+        'redirectUrl' => '/payment/error?message=' . urlencode('possible counterfeit') // duhet te bej endpointe me ekzakte
       ]);
       exit;
     }
@@ -128,7 +139,7 @@ class BookingController extends Controller
       echo json_encode([
         'success' => false,
         'error' => $result['error'],
-        'redirectUrl' => '/payment/error' . urlencode('unsuccessful capture') // tani s'jam i sigurt si do behet endpointi i errorit per kte
+        'redirectUrl' => '/payment/error?message=' . urlencode('unsuccessful capture') // tani s'jam i sigurt si do behet endpointi i errorit per kte
       ]);
       exit;
     }
@@ -138,10 +149,10 @@ class BookingController extends Controller
     /////
     echo json_encode([
       'success' => true,
-      'orderId' => $_GET['orderId'],
+      'orderId' => $data['orderId'],
       'status' => $result['status'],          // COMPLETED, etc
       'orderDetails' => $data,
-      'redirectUrl' => '/payment/success'     // Where to redirect after success //duhet te shtoj edhe urlencoded per orderid
+      'redirectUrl' => '/payment/success'. urlencode($data['orderId'])     // Where to redirect after success //duhet te shtoj edhe urlencoded per orderid
     ]);
     exit;
   }
@@ -156,12 +167,18 @@ class BookingController extends Controller
   public function paymentSuccess(): void
   {
     //ktu do bejme get te dhenat e marra nga payment
-    self::loadView('user/booking/paymentSuccess.php');
+    $data = $this->paypalService->getOrderDetails($_GET['orderId']);
+    $this->payment->completePayment($_SESSION['payment_id']);
+    unset($_SESSION['payment_id']);
+    echo json_encode($data);
+    // self::loadView('user/booking/paymentSuccess.php', $data);
   }
+
   public function paymentFailure(): void
   {
     //ktu do bejme get errorin
-    self::loadView('user/booking/paymnetFailure.php');
+    echo $_GET['message'];
+    // self::loadView('user/booking/paymentFailure.php');
   }
 
   public function update(): void
