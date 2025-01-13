@@ -15,11 +15,15 @@ class PayPalService
 
   public function __construct(array $config)
   {
-    $root = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://') .$_SERVER['HTTP_HOST'];
-    
     $this->ROUTES = [
-      "RETURN_URL" => $root . '/payment/success',
-      "CANCEL_URL" => $root . '/payment/cancel'
+      "RETURN_URL" => base_url('/payment/processing'),
+      "CANCEL_URL" => base_url('/payment/cancel')
+    ];
+
+    $config = [ // po i le ketu njehere
+      'client_id' => $_ENV['PAYPAL_CLIENT_ID'],
+      'client_secret' => $_ENV['PAYPAL_CLIENT_SECRET'],
+      'api_base_url' => $_ENV['PAYPAL_API_BASE_URL'] // 'https://api-m.sandbox.paypal.com' or 'https://api.paypal.com'
     ];
 
     $accessTokenService = new AccessTokenService($config);
@@ -73,27 +77,16 @@ class PayPalService
     }
   }
 
-  public function createOrder(int|string|float $amount, $name, $description, $sellerPayPalId, $currency = 'USD')
+  public function createOrder(string $amount, $name, $description, $sellerPayPalId, $imageUrl = '', $currency = 'USD') //Duhet te vendos nje default image me te mire
   { // vlerat monetare do jene ne string ose int, jo float
-    return $this->safeApiCall(function () use ($amount, $name, $description, $sellerPayPalId, $currency) {
+    return $this->safeApiCall(function () use ($amount, $name, $description, $sellerPayPalId, $imageUrl, $currency) {
 
       $quantity = 1; //maybe later we make quantity a variable too
 
-      if (is_string($amount)) { // zakonisht do jete string, keshtu qe ndoshta e thjeshtoj kte pjese me vone
-        // String input: convert to cents
-        $cents = bcmul($amount, "100");
-        $unitAmountInCents = intval($cents);
-        if ($unitAmountInCents === 0 && $amount !== "0" && $amount !== "0.00") {
-          return;
-        }
-      } elseif (is_int($amount)) {
-        $unitAmountInCents = $amount;
-      } elseif (is_float($amount)) {
-        $unitAmountInCents = (int)round($amount * 100);
-      } else {
-        // Invalid type
-        error_log("Error: Invalid amount type: " . gettype($amount));
-        return;
+      $cents = bcmul($amount, "100");
+      $unitAmountInCents = intval($cents);
+      if ($unitAmountInCents === 0 && $amount !== "0" && $amount !== "0.00") {
+        die("Amount is 0, something is wrong");
       }
 
       $individualPrice = $unitAmountInCents; //this is in cents
@@ -111,8 +104,8 @@ class PayPalService
             'value' => $formattedItemTotal,
             'breakdown' => [
               'item_total' => [
-                  'currency_code' => $currency,
-                  'value' => $formattedItemTotal, // Item total is required
+                'currency_code' => $currency,
+                'value' => $formattedItemTotal, // Item total is required
               ],
             ],
           ],
@@ -124,8 +117,8 @@ class PayPalService
             ],
             'quantity' => $quantity,
             'category' => 'DIGITAL_GOODS',
-            // "image_url" => "https://example.com/static/images/items/1/shoes_running.jpg",
-            // "url" => "https://example.com/url-to-the-item-being-purchased-2",
+            "image_url" => $imageUrl,
+            // "url" => "https://example.com/url-to-the-item-being-purchased-2",  //ketu besoj do jete me id te travel package
           ]],
           'payee' => [
             'email_address' => $sellerPayPalId
@@ -151,18 +144,44 @@ class PayPalService
     });
   }
 
-  // kjo do perdoret nese duam me shume siguri, me shume hapa, intent te createOrder do behet "AUTHORIZE
-  public function authorizeOrder($token)
+  function getOrderDetails(string $orderId): bool|array
   {
-    return $this->safeApiCall(function () use ($token) {
-      $token = trim($token);
-      $response = $this->client->post("/v2/checkout/orders/$token/authorize", [
+    $client = new Client(['base_uri' => 'https://api.paypal.com']);
+
+    try {
+      $response = $client->request('GET', '/v2/checkout/orders/' . $orderId, [
         'headers' => [
-          'Content-Type' => 'application/json',
-        ]
+          'Accept' => 'application/json',
+        ],
       ]);
-      return json_decode($response->getBody()->getContents(), true);
-    });
+
+      $statusCode = $response->getStatusCode();
+      if ($statusCode == 200) {
+        $data = json_decode($response->getBody(), true);
+        return $data;
+      } else {
+        error_log("Paypal returned status code: " . $statusCode);
+        return false;
+      }
+    } catch (RequestException $e) {
+      error_log("Guzzle HTTP Request Exception: " . $e->getMessage());
+      if ($e->hasResponse()) {
+        error_log("Paypal returned body: " . $e->getResponse()->getBody());
+      }
+      return false;
+    } catch (\Exception $e) {
+      error_log("General exception: " . $e->getMessage());
+      return false;
+    }
+  }
+
+  public function verifyOrder(string $orderId)
+  {
+    return match ($this->getOrderDetails($orderId)) {
+      false => false, // Handle API errors or failed retrieval
+      ['status' => 'APPROVED'] => true, // Order is approved
+      default => false // Order is not approved or has a different status
+  };
   }
 
   public function captureOrder($token)
@@ -181,6 +200,9 @@ class PayPalService
   // For Refunds (after capture):
   public function refundPayment($captureId, $amount = null)
   {
+    //captureId eshte id e transaksionit pasi behet blerja. 
+    //Useri mund te kerkoje refund, por eshte bisnesi qe perdor kete funksion nese do te pranoje te beje refund userin
+    //Amount nuk specifikohet nese eshte full refund
     return $this->safeApiCall(function () use ($captureId, $amount) {
       $requestBody = $amount ? ['amount' => $amount] : [];
       try {
@@ -201,13 +223,14 @@ class PayPalService
     });
   }
 
-  // For Voids (before capture, on an authorization):
-  public function voidAuthorization($authorizationId)
+  public function getTransactionInformation($transactionId)
   {
-    return $this->safeApiCall(function () use ($authorizationId) {
+    return $this->safeApiCall(function () use ($transactionId) {
       try {
-        $response = $this->client->post("/v2/payments/authorizations/" . trim($authorizationId) . "/void", [
-          'headers' => [], // Headers array can be empty
+        $response = $this->client->get("/v2/payments/captures/" . trim($transactionId), [
+          'headers' => [
+            'Content-Type' => 'application/json',
+          ]
         ]);
       } catch (\Exception $e) {
         error_log($e->getMessage());

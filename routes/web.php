@@ -87,16 +87,26 @@ switch ($route) {
   case '/bookings/create':
     $bookingController->create();
     break;
-  case '/payment/success':
 
-    break;
-  case '/payment/cancel':
-
-    break;
-  case '/bookings/store':
+  case '/bookings/store': // also starts the payment
     $bookingController->store();
     break;
 
+  case '/payment/processing':
+    $bookingController->paypalReturn();
+    break;
+  case '/payment/cancel':
+    // kjo eshte faqja qe paraqitet nese i ben cancel brenda paypalit
+    break;
+  case '/payment/capture':
+    $bookingController->captureOrder(); // return a json, will be fetched from js
+    break;
+  case '/payment/success':
+    $bookingController->paymentSuccess();
+    break;
+  case '/payment/error':
+    $bookingController->paymentFailure();
+    break;
 
     // Keep-Alive Route (For Session Management)
   case '/keep-alive':

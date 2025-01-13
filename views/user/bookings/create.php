@@ -13,7 +13,7 @@
             <input type="date" name="date" id="date" class="form-control" required>
         </div>
     </div>
-    <div class="form-group row">
+    <!-- <div class="form-group row">
         <div class="col">
             <label for="payment_method">Payment Method</label>
             <select name="payment_method" id="payment_method" class="form-control" required>
@@ -32,13 +32,13 @@
             <label for="expiry_date">Expiry Date</label>
             <input type="date" name="expiry_date" id="expiry_date" class="form-control" required>
         </div>
-    </div>
-    <div class="form-group row">
+    </div> -->
+    <!-- <div class="form-group row">
         <div class="col">
             <label for="cvv">CVV</label>
             <input type="text" name="cvv" id="cvv" class="form-control" required>
         </div>
-    </div>
+    </div> -->
     <div class="form-group mt-3">
         <button type="submit" class="btn btn-primary">Book</button>
     </div>

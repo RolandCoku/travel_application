@@ -53,23 +53,33 @@ class BookingController extends Controller
       'booking_date' => $travelPackage['start_date'],
       'total_price' => $travelPackage['price'],
     ];
-
-    global $conn;
-    $agencyModel = new TravelAgency($conn);
-    $agency = $agencyModel->getById($travelPackage['agency_id']);
-    $agencyEmail = $agency['email'];  //assuming that their email is also used for paypal
-
+    
     if (!$this->booking->create($booking)) {
       // ndoshta ketu bejme nje redirect si tjerat
       echo 'Error creating booking in the database';
       exit;
     }
 
+    global $conn;
+    $agencyModel = new TravelAgency($conn);
+    $agency = $agencyModel->getById($travelPackage['agency_id']);
+    if(!$agency){
+      echo 'Database error';
+      exit;
+    }
+    $agencyEmail = $agency['email'];  //assuming that their email is also used for paypal
+
+    $imageModel = new Image($conn);
+    $image = $imageModel->getByTravelPackageId($_POST['travel_package_id']);
+    $imageUrl = $image['image_url'];
+
+
     $result = $this->paypalService->createOrder(
       $travelPackage['price'],
       $travelPackage['name'],
       $travelPackage['description'],
-      $agencyEmail
+      $agencyEmail,
+      $imageUrl
     );
 
     if (!$result['success']) {
@@ -94,17 +104,46 @@ class BookingController extends Controller
     error_log("No approve link found in PayPal response: " . print_r($order, true));
     header('Location : /payment/error?message=' . urlencode("Could not redirect to PayPal."));
     exit;
-    // header('Location: /bookings');
   }
 
-  public function captureOrder($token)
+  public function paypalReturn()
   {
-    $result = $this->paypalService->captureOrder($token);
-    if(! $result['success']){
-      echo $result['error'];
-    } else {
-      parent::loadView('paymentSuccess', ['token'=> $token]);
+    self::loadView('user/bookings/loading');
+  }
+
+  public function captureOrder()  // this one returns a json, and gets fetched by js
+  {
+    $token = $_POST['token'];
+    if(!$this->paypalService->verifyOrder($token)){
+      echo json_encode([
+        'success' => false,
+        'error' => "You might've not finished the payment correcty",
+        'redirectUrl' => '/payment/error' . urlencode('possible counterfeit') // duhet te bej endpointe me ekzakte
+      ]);
+      exit;
     }
+    // Pasi verifikojme qe token eshte i sakte, we proceed with the payment
+    $result = $this->paypalService->captureOrder($token);
+    if (! $result['success']) {
+      echo json_encode([
+        'success' => false,
+        'error' => $result['error'],
+        'redirectUrl' => '/payment/error' . urlencode('unsuccessful capture') // tani s'jam i sigurt si do behet endpointi i errorit per kte
+      ]);
+      exit;
+    }
+    $data = $result['data'];
+    /////
+    // ketu duhet te bejme update databazen me payment info
+    /////
+    echo json_encode([
+      'success' => true,
+      'orderId' => $_GET['orderId'],
+      'status' => $result['status'],          // COMPLETED, etc
+      'orderDetails' => $data,
+      'redirectUrl' => '/payment/success'     // Where to redirect after success //duhet te shtoj edhe urlencoded per orderid
+    ]);
+    exit;
   }
 
   public function edit(): void
@@ -112,6 +151,17 @@ class BookingController extends Controller
     $booking = $this->booking->getById($_GET['id']);
 
     self::loadView('admin/booking/edit', ['booking' => $booking]);
+  }
+
+  public function paymentSuccess(): void
+  {
+    //ktu do bejme get te dhenat e marra nga payment
+    self::loadView('user/booking/paymentSuccess.php');
+  }
+  public function paymentFailure(): void
+  {
+    //ktu do bejme get errorin
+    self::loadView('user/booking/paymnetFailure.php');
   }
 
   public function update(): void
