@@ -1,5 +1,5 @@
 <?php
-session_start();
+session_start();  // e vendosa kete ketu se eshte me e rekomanduar
 // Controllers
 require_once app_path('controllers/UserController.php');
 require_once app_path('controllers/TravelPackageController.php');
