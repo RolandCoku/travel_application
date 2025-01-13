@@ -44,4 +44,35 @@ class Booking extends Model{
         }
         return true;
     }
+
+    public function createAndGetPayment($obj): bool{
+
+      if(!parent::create(
+          [
+              'user_id' => $obj['user_id'],
+              'travel_package_id' => $obj['travel_package_id'],
+              'booking_date' => $obj['booking_date'],
+              'booking_status' => 'approved',
+          ]
+      )){
+          return false;
+      }
+
+      $bookingId = $this->conn->insert_id;
+
+      $payment = [
+          'booking_id' => $bookingId,
+          'payment_date' => $obj['booking_date'],
+          'payment_method' => $obj['payment_method'],
+          'amount' => $obj['total_price'],
+          'payment_status' => 'pending'
+      ];
+
+      $paymentModel = new Payment($this->conn);
+
+      if(!$paymentModel->create($payment)){
+          return null;
+      }
+      return $payment;
+  }
 }
