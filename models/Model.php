@@ -59,8 +59,10 @@ abstract class Model
     }
 
     public function createAndGetId($obj){
-      if (!$this->confirmInsertSchema($obj))
-            return "Bad Object Signature";
+      // if (!$this->confirmInsertSchema($obj))
+      //       return "Bad Object Signature";
+      if (!$this->confirmUpdateSchema($obj))
+        return null;
 
         $columns = array_keys($obj);
         $values = array_values($obj);

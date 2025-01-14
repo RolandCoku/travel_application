@@ -18,7 +18,7 @@ class Payment extends Model
                                                WHERE id=?;
                                         ");
 
-    $updateQuery->bind_param('ii', $paypalOrderId, $paymentId);
+    $updateQuery->bind_param('si', $paypalOrderId, $paymentId);
 
     return $updateQuery->execute();
   }

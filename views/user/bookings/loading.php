@@ -16,7 +16,14 @@
     The order is currently being processed. <br />
     You'll be redirected shortly.
   </p>
+  <form id='capture' action='/payment/capture' method="post">
+    <input name='token' value="<?=$_GET['token']?>" hidden/>
+    <button type="submit">Finalize Payment</button>
+  </form>
   <script>
+    const form = document.getElementById('capture');
+  </script>
+  <!-- <script>
     const orderId = getTokenFromUrl(); // Function to extract order ID from URL
     const checkOrderStatus = () => {
       fetch(`/payment/capture?token=${orderId}`)
@@ -51,7 +58,7 @@
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get('token');
     }
-  </script>
+  </script> -->
 
  </body>
 </html>

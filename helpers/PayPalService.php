@@ -5,7 +5,10 @@ namespace App\Helpers;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ConnectException;
-// use App\Helpers\AccessTokenService;
+use App\Helpers\AccessTokenService;
+use GuzzleHttp\Psr7\Response;
+
+require_once 'AccessTokenService.php';
 
 class PayPalService
 {
@@ -13,7 +16,7 @@ class PayPalService
   private $client;
   private $accessToken;
 
-  public function __construct(array $config)
+  public function __construct()
   {
     $this->ROUTES = [
       "RETURN_URL" => base_url('/payment/processing'),
@@ -117,7 +120,7 @@ class PayPalService
             ],
             'quantity' => $quantity,
             'category' => 'DIGITAL_GOODS',
-            "image_url" => $imageUrl,
+            // "image_url" => $imageUrl,
             // "url" => "https://example.com/url-to-the-item-being-purchased-2",  //ketu besoj do jete me id te travel package
           ]],
           'payee' => [
@@ -131,7 +134,7 @@ class PayPalService
       ];
 
       // Log the full payload
-      error_log("PayPal Payload: " . json_encode($payload, JSON_PRETTY_PRINT));
+      // error_log("PayPal Payload: " . json_encode($payload, JSON_PRETTY_PRINT));
 
       $response = $this->client->post('v2/checkout/orders', [
         'headers' => [
@@ -146,10 +149,8 @@ class PayPalService
 
   function getOrderDetails(string $orderId): bool|array
   {
-    $client = new Client(['base_uri' => 'https://api.paypal.com']);
-
     try {
-      $response = $client->request('GET', '/v2/checkout/orders/' . $orderId, [
+      $response = $this->client->get('/v2/checkout/orders/' . $orderId, [
         'headers' => [
           'Accept' => 'application/json',
         ],
@@ -158,6 +159,7 @@ class PayPalService
       $statusCode = $response->getStatusCode();
       if ($statusCode == 200) {
         $data = json_decode($response->getBody(), true);
+        error_log($response->getBody());
         return $data;
       } else {
         error_log("Paypal returned status code: " . $statusCode);
@@ -177,10 +179,9 @@ class PayPalService
 
   public function verifyOrder(string $orderId)
   {
-    return match ($this->getOrderDetails($orderId)) {
-      false => false, // Handle API errors or failed retrieval
-      ['status' => 'APPROVED'] => true, // Order is approved
-      default => false // Order is not approved or has a different status
+    return match ($this->getOrderDetails($orderId)['status']) {
+      'APPROVED' => true,
+      default => false
   };
   }
 
