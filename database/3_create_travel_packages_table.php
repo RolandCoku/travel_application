@@ -23,6 +23,7 @@ function runMigration($conn): void
                 agency_id INT(6) UNSIGNED NOT NULL,
                 name VARCHAR(50) NOT NULL,
                 description TEXT NOT NULL,
+                location VARCHAR(50) NOT NULL,
                 price DECIMAL(10, 2) NOT NULL,
                 seats INT(6) UNSIGNED NOT NULL,
                 occupied_seats INT(6) UNSIGNED DEFAULT 0,
