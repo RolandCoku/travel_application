@@ -1,8 +1,217 @@
-<?php
-$title = 'Elite Travel | Home';
-$cssFile = 'user/index.css?=v' . time();
-require_once app_path('includes/layout-header.php');
-?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Travel</title>
+
+    <style>
+        /* General Body Styling */
+        body.homepage {
+            background: url('/img/assets/homepage-background.jpg') no-repeat center center/cover;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(0, 0, 0, 0.7);
+            position: fixed;
+            width: 100%;
+            z-index: 10;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar .logo img {
+            max-width: 150px;
+        }
+
+        .navbar .nav-links ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            padding: 0;
+            margin: 0;
+        }
+
+        .navbar .nav-links a {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .navbar .nav-links a:hover {
+            color: #2891ff;
+        }
+
+        .navbar .user-actions {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            color: #ffffff;
+            background: linear-gradient(135deg, rgba(0, 91, 255, 0.7), rgba(40, 145, 255, 0.7)),
+            url('/img/assets/hero-background.jpg') no-repeat center center/cover;
+        }
+
+        .hero .hero-slider {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .hero .slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            animation: slideFade 5s infinite;
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+        }
+
+        .hero .hero-text {
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .hero .btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #005bff, #2891ff);
+            color: #ffffff;
+            transition: transform 0.3s, background 0.3s;
+            cursor: pointer;
+        }
+
+        .hero .btn:hover {
+            background: linear-gradient(135deg, #2891ff, #005bff);
+            transform: translateY(-5px);
+        }
+
+        /* Animations */
+        @keyframes slideFade {
+            0% {opacity: 0;}
+            25% {opacity: 1;}
+            50% {opacity: 1;}
+            100% {opacity: 0;}
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        /* Travel Packages */
+        .travel-packages {
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .travel-packages h2 {
+            font-size: 2.5rem;
+            color: #ffffff;
+            margin-bottom: 30px;
+        }
+
+        .packages-row {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 10px;
+            scroll-behavior: smooth;
+        }
+
+        .packages-scroll {
+            display: flex;
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .card img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            color: #ffffff;
+            margin: 15px 0 10px;
+        }
+
+        .card p {
+            color: #dddddd;
+            font-size: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .navbar {
+                flex-direction: column;
+                padding: 10px 20px;
+            }
+
+            .nav-links ul {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .travel-packages h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
 <body class="homepage">
 <!-- Navbar -->
 <header class="navbar">
@@ -98,5 +307,6 @@ require_once app_path('includes/layout-header.php');
         <p>&copy; 2025 Elite Travel. All Rights Reserved.</p>
     </div>
 </footer>
+
 </body>
 </html>
