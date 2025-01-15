@@ -1,223 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elite Travel</title>
+<?php
+$title = 'Elite Travel | Home';
+$cssFile = 'user/index.css?=v' . time();
+require_once app_path('includes/layout-header.php');
+?>
+<link
+        href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+        rel="stylesheet"
+/>
 
-    <style>
-        /* General Body Styling */
-        body.homepage {
-            background: url('/img/assets/homepage-background.jpg') no-repeat center center/cover;
-            color: #ffffff;
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Navbar */
-        .navbar {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 50px;
-            background: rgba(0, 0, 0, 0.7);
-            position: fixed;
-            width: 100%;
-            z-index: 10;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-        }
-
-        .navbar .logo img {
-            max-width: 150px;
-        }
-
-        .navbar .nav-links ul {
-            list-style: none;
-            display: flex;
-            gap: 20px;
-            padding: 0;
-            margin: 0;
-        }
-
-        .navbar .nav-links a {
-            text-decoration: none;
-            color: #ffffff;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
-
-        .navbar .nav-links a:hover {
-            color: #2891ff;
-        }
-
-        .navbar .user-actions {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        /* Hero Section */
-        .hero {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            text-align: center;
-            color: #ffffff;
-            background: linear-gradient(135deg, rgba(0, 91, 255, 0.7), rgba(40, 145, 255, 0.7)),
-            url('/img/assets/hero-background.jpg') no-repeat center center/cover;
-        }
-
-        .hero .hero-slider {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .hero .slide {
-            min-width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            animation: slideFade 5s infinite;
-            background-size: cover;
-            background-position: center;
-            text-align: center;
-        }
-
-        .hero .hero-text {
-            animation: fadeIn 2s ease-in-out;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            text-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            margin-bottom: 20px;
-        }
-
-        .hero .btn {
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 30px;
-            background: linear-gradient(135deg, #005bff, #2891ff);
-            color: #ffffff;
-            transition: transform 0.3s, background 0.3s;
-            cursor: pointer;
-        }
-
-        .hero .btn:hover {
-            background: linear-gradient(135deg, #2891ff, #005bff);
-            transform: translateY(-5px);
-        }
-
-        /* Animations */
-        @keyframes slideFade {
-            0% {opacity: 0;}
-            25% {opacity: 1;}
-            50% {opacity: 1;}
-            100% {opacity: 0;}
-        }
-
-        @keyframes fadeIn {
-            from {opacity: 0;}
-            to {opacity: 1;}
-        }
-
-        /* Travel Packages */
-        .travel-packages {
-            padding: 60px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
-
-        .travel-packages h2 {
-            font-size: 2.5rem;
-            color: #ffffff;
-            margin-bottom: 30px;
-        }
-
-        .packages-row {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            padding: 10px;
-            scroll-behavior: smooth;
-        }
-
-        .packages-scroll {
-            display: flex;
-            gap: 20px;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .card img {
-            max-width: 100%;
-            border-radius: 8px;
-        }
-
-        .card h3 {
-            font-size: 1.5rem;
-            color: #ffffff;
-            margin: 15px 0 10px;
-        }
-
-        .card p {
-            color: #dddddd;
-            font-size: 1rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-
-            .navbar {
-                flex-direction: column;
-                padding: 10px 20px;
-            }
-
-            .nav-links ul {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .travel-packages h2 {
-                font-size: 2rem;
-            }
-        }
-    </style>
-</head>
-<body class="homepage">
 <!-- Navbar -->
 <header class="navbar">
     <div class="container">
         <div class="logo">
             <img src="https://via.placeholder.com/150x50?text=Elite+Travel" alt="Logo">
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search destinations, agencies, etc."/>
         </div>
         <nav class="nav-links">
             <ul>
@@ -233,16 +31,49 @@
     </div>
 </header>
 
-<!-- Hero Section -->
-<section class="hero">
-    <div class="hero-content">
-        <h1>Your Next Adventure Awaits</h1>
-        <p>Explore the world's most beautiful destinations with Elite Travel.</p>
-        <a href="/book-now" class="btn btn-primary">Book Now</a>
+<!-- Slideshow -->
+<div class="slideshow-container">
+    <div class="slide active" style="background-image: url('https://via.placeholder.com/1920x600?text=Slide+1');">
+        <div class="caption">Explore the world with us</div>
     </div>
-</section>
+    <div class="slide" style="background-image: url('https://via.placeholder.com/1920x600?text=Slide+2');">
+        <div class="caption">Your adventure begins here</div>
+    </div>
+    <div class="slide" style="background-image: url('https://via.placeholder.com/1920x600?text=Slide+3');">
+        <div class="caption">Discover new destinations</div>
+    </div>
+    <button class="prev">&#10094;</button>
+    <button class="next">&#10095;</button>
+    <div class="dots">
+        <span class="dot active" data-slide="0"></span>
+        <span class="dot" data-slide="1"></span>
+        <span class="dot" data-slide="2"></span>
+    </div>
+</div>
 
 <!-- Travel Packages Section -->
+<section class="travel-packages2">
+    <div class="container2">
+        <h2>Featured Agency</h2>
+        <div class="card-container2">
+            <div class="card2">
+                <img src="https://via.placeholder.com/300x200?text=Beach+Paradise" alt="Beach Paradise">
+                <h3>Beach Paradise</h3>
+                <p>Relax on the most pristine beaches.</p>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/300x200?text=Mountain+Retreat" alt="Mountain Retreat">
+                <h3>Mountain Retreat</h3>
+                <p>Rejuvenate in the serene mountains.</p>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/300x200?text=City+Explorer" alt="City Explorer">
+                <h3>City Explorer</h3>
+                <p>Discover vibrant cityscapes.</p>
+            </div>
+        </div>
+    </div>
+</section>
 <section class="travel-packages">
     <div class="container">
         <h2>Featured Travel Packages</h2>
@@ -265,48 +96,120 @@
         </div>
     </div>
 </section>
+<div class="review-conteiner">
 
-<!-- Agencies Section -->
-<section class="agencies">
-    <div class="container">
-        <h2>Our Trusted Agencies</h2>
-        <div class="card-container">
-            <div class="card">
-                <img src="https://via.placeholder.com/300x200?text=Global+Travel+Co." alt="Global Travel Co.">
-                <h3>Global Travel Co.</h3>
-                <p>Experts in global travel solutions.</p>
+    <div class="container-left">
+        <h2>Read what our costumer love about us</h2>
+        <p>
+            Over 200 companies firm diverse sectors consult us to enhance the user experience revenue with our services.
+        </p>
+        <p>
+            We have helped companies increase their costumers base and generate multiple revenue with our services.
+        </p>
+        <button>Read our succes story</button>
+    </div>
+
+    <div class="container-right">
+        <div class="card">
+            <img src="https://cdni.iconscout.com/illustration/premium/thumb/woman-profile-illustration-download-in-svg-png-gif-file-formats--young-female-girl-avatar-portraits-pack-people-illustrations-6590622.png?f=webp">
+            <div class="card-content">
+                <span><i class="ri-double-quotes-l"></i></span>
+                <div class="card-details">
+                    <p>
+                        "Fantastic service and memorable trips!"
+                        Elite Travel made booking easy and tailored everything to my preferences. Highly recommend for a
+                        stress-free vacation!
+
+
+                    </p>
+                    <h4>
+                        -Anna Smith
+                    </h4>
+
+                </div>
             </div>
-            <div class="card">
-                <img src="https://via.placeholder.com/300x200?text=Adventure+Tours" alt="Adventure Tours">
-                <h3>Adventure Tours</h3>
-                <p>Adventure awaits with us.</p>
-            </div>
-            <div class="card">
-                <img src="https://via.placeholder.com/300x200?text=Luxury+Escapes" alt="Luxury Escapes">
-                <h3>Luxury Escapes</h3>
-                <p>Indulge in luxurious vacations.</p>
+        </div>
+        <div class="card">
+            <img src="https://st3.depositphotos.com/15648834/17930/v/450/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
+
+            <div class="card-content">
+                <span><i class="ri-double-quotes-l"></i></span>
+                <div class="card-details">
+                    <p>
+                        "User-friendly and efficient!"
+                        The Elite Travel Agency made booking my trip a breeze. It’s easy to navigate, offers great
+                        recommendations, and I love the real-time updates. Highly recommend for hassle-free travel
+                        planning!
+
+
+                    </p>
+                    <h4>
+                        -Land Johnson
+                    </h4>
+
+                </div>
             </div>
         </div>
     </div>
-</section>
-
-<!-- Footer -->
-<footer class="footer">
-    <div class="container">
-        <div class="footer-content">
-            <div class="logo">
-                <img src="https://via.placeholder.com/150x50?text=Elite+Travel" alt="Footer Logo">
+</div>
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="logo">
+                        <img src="https://via.placeholder.com/150x50?text=Elite+Travel" alt="Footer Logo">
+                    </div>
+                    <nav class="footer-links">
+                        <a href="/about">About Us</a>
+                        <a href="/contact">Contact</a>
+                        <a href="/privacy">Privacy Policy</a>
+                        <a href="/terms">Terms of Service</a>
+                    </nav>
+                </div>
+                <p>&copy; 2025 Elite Travel. All Rights Reserved.</p>
             </div>
-            <nav class="footer-links">
-                <a href="/about">About Us</a>
-                <a href="/contact">Contact</a>
-                <a href="/privacy">Privacy Policy</a>
-                <a href="/terms">Terms of Service</a>
-            </nav>
-        </div>
-        <p>&copy; 2025 Elite Travel. All Rights Reserved.</p>
-    </div>
-</footer>
+        </footer>
 
-</body>
-</html>
+        <!-- JavaScript for Slideshow -->
+        <script>
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
+                });
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+                currentSlide = index;
+            }
+
+            document.querySelector('.next').addEventListener('click', () => {
+                const nextSlide = (currentSlide + 1) % slides.length;
+                showSlide(nextSlide);
+            });
+
+            document.querySelector('.prev').addEventListener('click', () => {
+                const prevSlide = (currentSlide - 1 + slides.length) % slides.length;
+                showSlide(prevSlide);
+            });
+
+            dots.forEach(dot => {
+                dot.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.dataset.slide, 10);
+                    showSlide(index);
+                });
+            });
+
+            // Auto-slide every 5 seconds
+            setInterval(() => {
+                const nextSlide = (currentSlide + 1) % slides.length;
+                showSlide(nextSlide);
+            }, 5000);
+        </script>
+
+        <!-- CSS f<or Slideshow -->
+
+
