@@ -1,5 +1,7 @@
 <?php
 
+use JetBrains\PhpStorm\NoReturn;
+
 require_once __DIR__ . '/../models/Booking.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/TravelPackage.php';
@@ -24,8 +26,8 @@ class BookingController extends Controller
 
     public function show(): void
     {
-        $booking = $this->booking->getById($_GET['id']);
-        self::loadView('admin/bookings/show', ['booking' => $booking]);
+//        $booking = $this->booking->getById($_GET['id']);
+        self::loadView('user/bookings/show');
     }
 
     public function create(): void
@@ -89,5 +91,34 @@ class BookingController extends Controller
         }
     }
 
+    public function adminShow(): void
+    {
+//        $booking = $this->booking->getById($_GET['id']);
+//        $package = $this->travelPackage->getById($booking['travel_package_id']);
 
+        self::loadView('admin/travel-agency/bookings/show', );
+    }
+
+    //API endpoints
+    #[NoReturn] public function paginateBookings(): void
+    {
+        $bookings = $this->booking->paginate($_GET['page'], $_GET['limit'], ['id', 'user_id', 'travel_package_id', 'booking_date', 'booking_status']);
+        echo json_encode($bookings);
+        exit;
+    }
+
+    #[NoReturn] public function getBookingsByDateRange(): void
+    {
+        $bookings = $this->booking->getByDateRange($_GET['start_date'], $_GET['end_date']);
+        echo json_encode($bookings);
+        exit;
+    }
+
+    #[NoReturn] public function countBookingsByDateRange(): void
+    {
+        $nrBookings = $this->booking->countByDateRange($_GET['start_date'], $_GET['end_date']);
+        header('Content-Type: application/json');
+        echo json_encode($nrBookings);
+        exit;
+    }
 }

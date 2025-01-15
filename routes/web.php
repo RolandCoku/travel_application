@@ -4,6 +4,11 @@
 require_once app_path('controllers/UserController.php');
 require_once app_path('controllers/TravelPackageController.php');
 require_once app_path('controllers/BookingController.php');
+require_once app_path('controllers/TravelAgencyController.php');
+require_once app_path('controllers/AdminController.php');
+require_once app_path('controllers/LogController.php');
+
+
 
 // Middleware
 require_once app_path('middleware/AuthMiddleware.php');
@@ -13,6 +18,12 @@ require_once app_path('middleware/RoleMiddleware.php');
 $userController = new UserController();
 $travelPackageController = new TravelPackageController();
 $bookingController = new BookingController();
+$travelAgencyController = new TravelAgencyController();
+$adminController = new AdminController();
+$logController = new LogController();
+
+//Initiate the middleware
+$authMiddleware = new AuthMiddleware();
 
 // Get the current route
 $route = $_SERVER['REQUEST_URI'];
@@ -28,6 +39,7 @@ $queryString = $_SERVER['QUERY_STRING'];
 
 // Routing
 switch ($route) {
+
     // Public Routes
     case '/login':
         $userController->login();
@@ -38,48 +50,98 @@ switch ($route) {
     case '/confirm-email':
         $userController->confirmEmail();
         break;
-    case '/logout':
-        $userController->logout();
-        break;
 
     // Protected Routes (Require Login)
     case '/account-dashboard':
-//        AuthMiddleware::handle(); // Ensure user is logged in
+        $authMiddleware->handle(); // Ensure user is logged in
         $userController->accountDashboard();
         break;
+    case '/logout':
+        $userController->logout();
 
-    // Role-Based Routes (Admins Only)
+
+    // Role-Based Routes (Admins Only) TODO: Add auth and role controller for verification
     case '/admin/dashboard':
-        AuthMiddleware::handle(); // Ensure user is logged in
-        RoleMiddleware::handle('admin'); // Ensure user is an admin
-
-        // Handle pagination
-        $page = $_GET['page'] ?? 1;
-        $page = (int)$page;
-
-        $userController->adminDashboard($page);
+        //TODO: - Fetch the data for total income in 7 days
+        //      - Fetch the latest updates
+        //      - Fetch top destinations
+        $adminController->dashboard();
+        break;
+    case '/admin/travel-agencies':
+        //TODO: Fetch travel agencies (Select id, name, email, address, phone, website)
+        $adminController->agencies();
+        break;
+    case '/admin/travel-agencies/register':
+        //TODO: Store handle form submission
+        $adminController->registerAgency();
+        break;
+    case '/admin/bookings':
+        //TODO: Fetch bookings (Select id, client name, email, agency, travel package name, booking date)
+        $adminController->bookings();
+        break;
+    case '/admin/reviews':
+        //TODO: Fetch reviews (Select id, user name, package name, Comment, Rating)
+        $adminController->reviews();
+        break;
+    case '/admin/travel-packages':
+        //TODO: Fetch travel packages (Select id, agency, name, description, price, date, duration, free seats)
+        $adminController->travelPackages();
         break;
 
-    // Travel Package Routes (Need to add a role middleware where only agencies can access)
+    // Role-Based Routes (Travel Agencies Only)
+    case '/travel-agency/admin/dashboard':
+        //TODO: - Fetch the data, total income and fully booked packages
+        //      - Fetch the latest updates
+        //      - Fetch top destinations
+        $travelAgencyController->adminDashboard();
+        break;
+    case '/travel-agency/admin/bookings':
+        //TODO: - Fetch bookings (Select client name, client email, travel package name, booking date, booking status, payment amount, payment status)
+        //      - Fetch Top 5 bookings
+        $travelAgencyController->bookings();
+        break;
+    case '/travel-agency/admin/travel-packages':
+        //TODO: - Fetch travel packages (Select name, description, price, date, duration, free seats)
+        //      - Fetch Top 5 packages
+        $travelAgencyController->travelPackages();
+        break;
+    case '/travel-agency/admin/reviews':
+        //TODO: - Fetch reviews (Select user name, package name, comment, rating)
+        //      - Fetch latest reviews
+        $travelAgencyController->reviews();
+        break;
+
+
+        //Travel package routes
     case '/travel-packages':
         $travelPackageController->index();
         break;
     case '/travel-packages/show':
         $travelPackageController->show();
         break;
-    case '/travel-packages/create':
+
+        //Travel package admin routes
+    case '/travel-agency/admin/travel-packages/show':
+        //TODO: Fetch travel package details (Select name, description, price, date, duration, free seats) from id
+        $travelPackageController->adminShow();
+        break;
+    case '/travel-agency/admin/travel-packages/create':
         $travelPackageController->create();
         break;
-    case '/travel-packages/store':
+    case '/travel-agency/admin/travel-packages/store':
+        //TODO: Handle form submission
         $travelPackageController->store();
         break;
-    case '/travel-packages/edit':
+    case '/travel-agency/admin/travel-packages/edit':
+        //TODO: Fetch travel package details (Select name, description, price, date, duration, free seats) from id
         $travelPackageController->edit();
         break;
-    case '/travel-packages/update':
+    case '/travel-agency/admin/travel-packages/update':
+        //TODO: Handle form submission
         $travelPackageController->update();
         break;
-    case '/travel-packages/destroy':
+    case '/travel-agency/admin/travel-packages/destroy':
+        //TODO: Delete travel package
         $travelPackageController->destroy();
         break;
 
@@ -87,14 +149,86 @@ switch ($route) {
     case '/bookings/create':
         $bookingController->create();
         break;
+    case '/bookings/show':
+        $bookingController->show();
+        break;
     case '/bookings/store':
         $bookingController->store();
         break;
+    // Admin Booking Routes
+    case '/admin/bookings/show':
+        // TODO: Fetch booking details (Select client name, client email, travel package name, booking date, booking status, payment amount, payment status) from id
+        $bookingController->adminShow();
+        break;
+    case '/admin/bookings/edit':
+        // TODO: Fetch booking details (Select client name, client email, travel package name, booking date, booking status, payment amount, payment status) from id
+        $bookingController->edit();
+        break;
+    case '/admin/bookings/update':
+        // TODO: Handle form submission
+        $bookingController->update();
+        break;
+    case '/admin/bookings/destroy':
+        // TODO: Delete booking
+        $bookingController->destroy();
+        break;
 
+    // Users API Routes
+    case '/api/users':
+        $action = $_GET['action'] ?? null;
+
+        switch ($action) {
+            case 'paginate':
+                $userController->paginateUsers();
+
+            case 'filterByDate':
+                $userController->getUsersByRegisteredDateRange();
+
+            case 'countByDate':
+                $userController->countUsersByRegisteredDateRange();
+
+            default:
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action parameter']);
+                exit;
+        }
+
+        // Bookings API Routes
+    case '/api/bookings':
+        $action = $_GET['action'] ?? null;
+
+        switch ($action) {
+            case 'paginate':
+                $bookingController->paginateBookings();
+            case 'countByDate':
+                $bookingController->countBookingsByDateRange();
+            default:
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action parameter']);
+                exit;
+        }
+
+        //Logs API Routes
+    case '/api/logs':
+        $action = $_GET['action'] ?? null;
+
+        switch ($action) {
+            case 'latest':
+                $logController->getLatestLogsAndUserInfo();
+            default:
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action parameter']);
+                exit;
+        }
 
     // Keep-Alive Route (For Session Management)
     case '/keep-alive':
-        session_start();
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
         //Check if the session is set and update the last activity timestamp
         if (isset($_SESSION['last_activity'])) {
             $_SESSION['last_activity'] = time();
@@ -103,7 +237,7 @@ switch ($route) {
         http_response_code(200);
         break;
 
-    // Default Route
+//     Default Route
     default:
         require_once app_path('views/user/index.php');
         break;

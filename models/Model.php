@@ -22,7 +22,6 @@ abstract class Model
                         WHERE id=?;
                         ";
 
-
         $getQuery = $this->conn->prepare("$queryString");
 
         $getQuery->bind_param('i', $id);
@@ -87,7 +86,7 @@ abstract class Model
         return $updateQuery->execute();
     }
 
-    public function update($data) // this should be fine right?
+    public function update($data): bool // this should be fine right?
     {
         $id = $data['id'];
         unset($data['id']);
@@ -105,18 +104,29 @@ abstract class Model
         return $deleteQuery->execute();
     }
 
-    public function paginate(int $page, int $limit): array
+    public function paginate(int $page, int $limit, array $keys): array
     {
         $offset = ($page - 1) * $limit;
-        $queryString = "SELECT * FROM $this->table
-                        LIMIT ? OFFSET ?;
-                        ";
-
+        if (empty($keys)) {
+            $queryString = "SELECT * FROM $this->table
+                            LIMIT ? OFFSET ?;
+                            ";
+        } else {
+            $columns = implode(", ", $keys);
+            $queryString = "SELECT $columns FROM $this->table
+                            LIMIT ? OFFSET ?;
+                            ";
+        }
         $getQuery = $this->conn->prepare("$queryString");
 
         $getQuery->bind_param('ii', $limit, $offset);
         $getQuery->execute();
         $result = $getQuery->get_result();
+
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[$row['id']] = $row;
+        }
 
         //Set the current page and the total number of pages
         $currentPage = $page;
@@ -125,8 +135,43 @@ abstract class Model
         return [
             'currentPage' => $currentPage,
             'totalPages' => $totalPages,
-            'data' => $result->fetch_all(MYSQLI_ASSOC)
+            'data' => $data
         ];
+    }
+
+    public function countByDateRange($startDate, $endDate)
+    {
+        $queryString = "SELECT COUNT(*) FROM $this->table
+                        WHERE created_at BETWEEN ? AND ?;
+                        ";
+
+        $getQuery = $this->conn->prepare("$queryString");
+
+        $getQuery->bind_param('ss', $startDate, $endDate);
+        $getQuery->execute();
+        $result = $getQuery->get_result();
+
+        return $result->fetch_row()[0];
+    }
+
+    public function getByDateRange($startDate, $endDate): array
+    {
+        $queryString = "SELECT * FROM $this->table
+                        WHERE created_at BETWEEN ? AND ?;
+                        ";
+
+        $getQuery = $this->conn->prepare("$queryString");
+
+        $getQuery->bind_param('ss', $startDate, $endDate);
+        $getQuery->execute();
+        $result = $getQuery->get_result();
+
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[$row['id']] = $row;
+        }
+
+        return $data;
     }
 
     private function getParamType($value): string
