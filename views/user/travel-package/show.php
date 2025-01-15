@@ -1,6 +1,7 @@
 
 <?php
 $title = 'Phi Phi Island Escape';
+$cssFile = 'user/travel-package/show.css';
 require_once app_path('includes/layout-header.php');
 ?>
 <body class="travel-package-details">
