@@ -20,9 +20,9 @@ function runMigration($conn): void
         $createPaymentsTableQuery = "
             CREATE TABLE payments (
                 id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                paypal_order_id VARCHAR(255) UNIQUE NULL,
                 booking_id INT(6) UNSIGNED NOT NULL,
                 amount DECIMAL(10, 2) NOT NULL,
-                payment_method ENUM('credit_card', 'paypal', 'stripe') NOT NULL,
                 payment_date DATE NOT NULL,
                 payment_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

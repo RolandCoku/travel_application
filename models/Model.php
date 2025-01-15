@@ -57,6 +57,34 @@ abstract class Model
         return $insertQuery->execute();
     }
 
+    public function createAndGetId($obj){
+      // if (!$this->confirmInsertSchema($obj))
+      //       return "Bad Object Signature";
+      if (!$this->confirmUpdateSchema($obj))
+        return null;
+
+        $columns = array_keys($obj);
+        $values = array_values($obj);
+        $columnString = implode(", ", $columns);
+        $valueString = implode(", ", array_fill(0, count($columns), "?"));
+
+        $insertQuery = $this->conn->prepare("INSERT INTO $this->table ($columnString) 
+                                                   VALUES ($valueString);
+                                            ");
+
+        $types = '';
+
+        foreach ($values as $value) {
+            $types .= $this->getParamType($value);
+        }
+
+        $insertQuery->bind_param($types, ...$values);
+
+        if(!$insertQuery->execute())
+          return null;
+        return $insertQuery->insert_id;
+    }
+
     public function updateById(int $id, array $obj): bool
     {
         if (!$this->confirmUpdateSchema($obj)) {

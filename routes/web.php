@@ -35,11 +35,10 @@ $route = explode('?', $route)[0];
 $route = rtrim($route, '/');
 
 // Get the query string
-$queryString = $_SERVER['QUERY_STRING'];
+// $queryString = $_SERVER['QUERY_STRING'];
 
 // Routing
 switch ($route) {
-
     // Public Routes
     case '/login':
         $userController->login();
@@ -146,15 +145,29 @@ switch ($route) {
         break;
 
     // Booking Routes
-    case '/bookings/create':
-        $bookingController->create();
-        break;
-    case '/bookings/show':
-        $bookingController->show();
-        break;
-    case '/bookings/store':
-        $bookingController->store();
-        break;
+  case '/bookings/create':
+    $bookingController->create();
+    break;
+  case '/bookings/store': // also starts the payment
+    $bookingController->store();
+    break;
+
+    // Payment processing routes
+  case '/payment/processing':
+    $bookingController->paypalReturn();
+    break;
+  case '/payment/cancel':
+    // kjo eshte faqja qe paraqitet nese i ben cancel brenda paypalit
+    break;
+  case '/payment/capture':
+    $bookingController->captureOrder(); // return a json, will be fetched from js
+    break;
+  case '/payment/success':
+    $bookingController->paymentSuccess();
+    break;
+  case '/payment/error':
+    $bookingController->paymentFailure();
+    break;
     // Admin Booking Routes
     case '/admin/bookings/show':
         // TODO: Fetch booking details (Select client name, client email, travel package name, booking date, booking status, payment amount, payment status) from id
