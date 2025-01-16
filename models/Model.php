@@ -4,7 +4,7 @@ abstract class Model
 {
     public function __construct(
         protected readonly mysqli $conn,
-        private readonly string   $table,
+        protected readonly string $table,
         private readonly array    $requiredKeys
     ) {
     }

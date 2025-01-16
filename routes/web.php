@@ -252,7 +252,7 @@ switch ($route) {
 
         switch ($action) {
             case 'paginate':
-                $bookingController->paginateBookings();
+                $bookingController->getAllPaginated();
             case 'countByDate':
                 $bookingController->countBookingsByDateRange();
             case 'topDestinations':

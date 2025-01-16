@@ -9,6 +9,7 @@ require_once __DIR__ . '/../models/User.php';
 // require_once __DIR__ . '/../helpers/PayPalService.php';
 
 use App\Helpers\PayPalService;
+use JetBrains\PhpStorm\NoReturn;
 
 class BookingController extends Controller
 {
@@ -84,15 +85,15 @@ class BookingController extends Controller
     }
 
     //API endpoints
-    // #[NoReturn] 
-    public function paginateBookings(): void
+
+    #[NoReturn] public function getAllPaginated(): void
     {
-        $bookings = $this->booking->paginate($_GET['page'], $_GET['limit'], ['id', 'user_id', 'travel_package_id', 'booking_date', 'booking_status']);
+        $bookings = $this->booking->paginate($_GET['page'], $_GET['limit'], ['bookings.id', 'users.name', 'email', 'travel_packages.name', 'agencies.name', 'booking_date', 'booking_status']);
+        header('Content-Type: application/json');
         echo json_encode($bookings);
         exit;
     }
 
-    // #[NoReturn] 
     public function getBookingsByDateRange(): void
     {
         $bookings = $this->booking->getByDateRange($_GET['start_date'], $_GET['end_date']);
@@ -100,7 +101,6 @@ class BookingController extends Controller
         exit;
     }
 
-    // #[NoReturn] 
     public function countBookingsByDateRange(): void
     {
         $nrBookings = $this->booking->countByDateRange($_GET['start_date'], $_GET['end_date']);
@@ -109,8 +109,7 @@ class BookingController extends Controller
         exit;
     }
 
-    // #[NoReturn] 
-    public function getTopDestinations(): void
+    #[NoReturn] public function getTopDestinations(): void
     {
         $limit = $_GET['limit'] ?? 3;
         $result = $this->booking->getTopDestinations($limit);
