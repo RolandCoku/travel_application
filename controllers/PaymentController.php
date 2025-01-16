@@ -136,22 +136,14 @@ class PaymentController extends Controller {
       exit;
     }
     $data = $result['data'];
-    /////
-    // ketu duhet te bejme update databazen me payment info
-    /////
+ 
     require_once app_path('models/Booking.php');
-    // require_once __DIR__ . '/../helpers/PayPalService.php';
-    // //ktu do bejme get te dhenat e marra nga payment
     $bookingRepo = new Booking($this->conn);
-    $bookingRepo->finishBooking($_SESSION['booking_id'], $_SESSION['payment_id']);
+    if(!$bookingRepo->finishBooking($_SESSION['booking_id'], $_SESSION['payment_id'])){
+      echo "payment is done, but there's a server problem, please contact the agency to mark your payment as done";
+    }
     unset($_SESSION['booking_id']);
     unset($_SESSION['payment_id']);
-    // echo json_encode([
-    //   'orderId' => $data['id'],
-    //   'status' => $data['status'],          // COMPLETED, etc
-    //   'orderDetails' => $data,
-    //   'redirectUrl' => '/payment/success'. urlencode($data['id'])     // Where to redirect after success //duhet te shtoj edhe urlencoded per orderid
-    // ]);
     header('Location: /payment/success?orderId='. urlencode($data['id']));
     exit;
   }
