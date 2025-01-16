@@ -230,8 +230,8 @@ abstract class Model
     private function confirmUpdateSchema($obj): bool  // we check that the update object keys fit the criteria
     {
         $obj_keys = array_keys($obj);
-        if (count($obj_keys) > count($this->requiredKeys))
-            return false;
+        // if (count($obj_keys) > count($this->requiredKeys))
+        //     return false;
 
         foreach ($obj_keys as $key) {
             if (!in_array($key, $this->requiredKeys))
