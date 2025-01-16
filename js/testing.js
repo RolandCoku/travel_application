@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetchUsers();
     function fetchUsers() {
-        fetch("/api/users", {
+        fetch("/api/admin/users", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"

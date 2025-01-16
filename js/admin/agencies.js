@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch and display agencies
     const fetchAgencies = async (page = 1, limit = 10) => {
         try {
-            const { currentPage, totalPages, data } = await fetchData(`/api/travel-agencies?action=paginate&page=${page}&limit=${limit}`);
+            const { currentPage, totalPages, data } = await fetchData(`/api/admin/travel-agencies?action=paginate&page=${page}&limit=${limit}`);
             displayAgencies(data);
             setupPagination("#pagination-container", currentPage, totalPages, fetchAgencies);
         } catch (error) {
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch top agencies
     const fetchTopAgencies = async (limit = 5) => {
         try {
-            return await fetchData(`/api/travel-agencies?action=topAgencies&limit=${limit}`);
+            return await fetchData(`/api/admin/travel-agencies?action=topAgencies&limit=${limit}`);
         } catch (error) {
             console.error("Error fetching top agencies:", error);
             return [];

@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Fetch and display users
     const fetchUsers = async (page = 1, limit = 10) => {
         try {
-            const { currentPage, totalPages, data } = await fetchData(`/api/users?action=paginate&page=${page}&limit=${limit}`);
+            const { currentPage, totalPages, data } = await fetchData(`/api/admin/users?action=paginate&page=${page}&limit=${limit}`);
             displayUsers(data);
             setupPagination("#pagination-container", currentPage, totalPages, fetchUsers);
         } catch (error) {
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const fetchLatestLogs = async (limit = 5) => {
         try {
-            return await fetchData(`/api/logs?action=latest&limit=${limit}`);
+            return await fetchData(`/api/admin/logs?action=latest&limit=${limit}`);
         } catch (error) {
             console.error("Error fetching latest logs:", error);
             return [];
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const fetchTopDestinations = async (limit = 5) => {
         try {
-            return await fetchData(`/api/bookings?action=topDestinations&limit=${limit}`);
+            return await fetchData(`/api/admin/bookings?action=topDestinations&limit=${limit}`);
         } catch (error) {
             console.error("Error fetching top destinations:", error);
             return [];
@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const countUsersByDateRange = async (start_date, end_date) => {
         try {
-            return await fetchData(`/api/users?action=countByDate&start_date=${start_date}&end_date=${end_date}`);
+            return await fetchData(`/api/admin/users?action=countByDate&start_date=${start_date}&end_date=${end_date}`);
         } catch (error) {
             console.error("Error counting users by date range:", error);
             return 0;
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const countBookingsByDateRange = async (start_date, end_date) => {
         try {
-            return await fetchData(`/api/bookings?action=countByDate&start_date=${start_date}&end_date=${end_date}`);
+            return await fetchData(`/api/admin/bookings?action=countByDate&start_date=${start_date}&end_date=${end_date}`);
         } catch (error) {
             console.error("Error counting bookings by date range:", error);
             return 0;

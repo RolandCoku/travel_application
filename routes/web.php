@@ -193,8 +193,10 @@ switch ($route) {
         $bookingController->destroy();
         break;
 
+    /* ADMIN API ROUTES TO FETCH DATA FOR DASHBOARD */
+
     // Users API Routes
-    case '/api/users':
+    case '/api/admin/users':
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
@@ -215,7 +217,7 @@ switch ($route) {
         }
 
     // Travel Agencies API Routes
-    case '/api/travel-agencies':
+    case '/api/admin/travel-agencies':
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
@@ -232,7 +234,7 @@ switch ($route) {
         }
 
     // Travel Packages API Routes
-    case '/api/travel-packages':
+    case '/api/admin/travel-packages':
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
@@ -245,7 +247,7 @@ switch ($route) {
         }
 
     // Bookings API Routes
-    case '/api/bookings':
+    case '/api/admin/bookings':
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
@@ -264,7 +266,7 @@ switch ($route) {
         }
 
     //Logs API Routes
-    case '/api/logs':
+    case '/api/admin/logs':
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
