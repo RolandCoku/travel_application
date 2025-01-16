@@ -54,11 +54,11 @@ class TravelPackageController extends Controller
 
     public function edit(): void
     {
-        $travelPackage = $this->travelPackage->getById($_GET['id']);
-        $travelPackage['images'] = $this->travelPackage->images($travelPackage['id']);
-        $travelAgencies = $this->travelAgency->getAll();
+//        $travelPackage = $this->travelPackage->getById($_GET['id']);
+//        $travelPackage['images'] = $this->travelPackage->images($travelPackage['id']);
+//        $travelAgencies = $this->travelAgency->getAll();
 
-        self::loadView('admin/travel-agency/travel-package/edit', ['travelPackage' => $travelPackage, 'agencies' => $travelAgencies]);
+        self::loadView('admin/travel-agency/travel-package/edit');
     }
 
     public function update(): void
@@ -84,5 +84,9 @@ class TravelPackageController extends Controller
     {
         $this->travelPackage->delete($_GET['id']);
         header('Location: /travel-packages');
+    }
+
+    public function adminShow()
+    {
     }
 }
