@@ -154,19 +154,27 @@ switch ($route) {
 
     // Payment processing routes
   case '/payment/processing':
-    $bookingController->paypalReturn();
+    require_once app_path('controllers/PaymentController.php');
+    $paymentController = new PaymentController();
+    $paymentController->paypalReturn();
     break;
   case '/payment/cancel':
     // kjo eshte faqja qe paraqitet nese i ben cancel brenda paypalit
     break;
   case '/payment/capture':
-    $bookingController->captureOrder(); // return a json, will be fetched from js
+    require_once app_path('controllers/PaymentController.php');
+    $paymentController = new PaymentController();
+    $paymentController->captureOrder(); // return a json, will be fetched from js
     break;
   case '/payment/success':
-    $bookingController->paymentSuccess();
+    require_once app_path('controllers/PaymentController.php');
+    $paymentController = new PaymentController();
+    $paymentController->paymentSuccess();
     break;
   case '/payment/error':
-    $bookingController->paymentFailure();
+    require_once app_path('controllers/PaymentController.php');
+    $paymentController = new PaymentController();
+    $paymentController->paymentFailure();
     break;
     // Admin Booking Routes
     case '/admin/bookings/show':
