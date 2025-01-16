@@ -146,8 +146,10 @@ switch ($route) {
         $bookingController->create();
         break;
     case '/bookings/store': // also starts the payment
-        $bookingController->store();
-        break;
+      require_once app_path('controllers/PaymentController.php');
+      $paymentController = new PaymentController();
+      $paymentController->store();
+      break;
 
     // Payment processing routes
   case '/payment/processing':
