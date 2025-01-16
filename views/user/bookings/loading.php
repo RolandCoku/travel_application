@@ -1,64 +1,56 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 
 <head>
+  <title>Processing Payment</title>
   <meta charset="UTF-8">
   <meta name="viewport"
     content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="<?= base_url("/css/style.css"); ?>">
   <title>Loading...</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .spinner {
+      border: 16px solid #f3f3f3;
+      /* Light grey */
+      border-top: 16px solid #3498db;
+      /* Blue */
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Thank you for your order!</h1>
-  <p>
-    The order is currently being processed. <br />
-    You'll be redirected shortly.
-  </p>
+  <h1>Processing Payment...</h1>
+  <div class="spinner"></div>
+  <p>Your payment is being processed. Please wait. Do not refresh or close this page.</p>
   <form id='capture' action='/payment/capture' method="post">
-    <input name='token' value="<?=$_GET['token']?>" hidden/>
-    <button type="submit">Finalize Payment</button>
+    <input name='token' value="<?= $_GET['token'] ?>" hidden />
   </form>
   <script>
-    const form = document.getElementById('capture');
+    document.getElementById('capture').submit();
   </script>
-  <!-- <script>
-    const orderId = getTokenFromUrl(); // Function to extract order ID from URL
-    const checkOrderStatus = () => {
-      fetch(`/payment/capture?token=${orderId}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === "complete") {
-            // Order is complete, redirect to confirmation page or display confirmation message
-            clearInterval(intervalId); // Stop polling
-            window.location.href = data.redirectUrl; // Or update the page content
-          } else if (data.status === "error") {
-            // Handle error
-            clearInterval(intervalId);
-            console.log(data.error);
-          } else {
-            // Order is still pending, continue polling
-            console.log("Order pending...");
-          }
-        }).catch(error => {
-          console.error("Error checking order status:", error);
-          clearInterval(intervalId); // Stop polling on error
-          console.log("An error occurred. Please contact support.");
-        });
-    };
+</body>
 
-    // Poll every few seconds
-    const intervalId = setInterval(checkOrderStatus, 3000);
-
-    // Initial check
-    checkOrderStatus();
-
-    function getTokenFromUrl() {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get('token');
-    }
-  </script> -->
-
- </body>
 </html>
+
