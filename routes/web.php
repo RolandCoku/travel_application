@@ -50,8 +50,8 @@ switch ($route) {
 
     // Role-Based Routes (Admins Only)
     case '/admin/dashboard':
-        AuthMiddleware::handle(); // Ensure user is logged in
-        RoleMiddleware::handle('admin'); // Ensure user is an admin
+//        AuthMiddleware::handle(); // Ensure user is logged in
+//        RoleMiddleware::handle('admin'); // Ensure user is an admin
 
         // Handle pagination
         $page = $_GET['page'] ?? 1;
