@@ -7,7 +7,7 @@ require_once app_path('includes/layout-header.php'); ?>
 
 <div class="container">
     <!-- Sidebar -->
-    <?php require_once app_path('includes/travel-agency-admin-sidebar.php'); ?>
+    <?php require_once app_path('includes/admin-sidebar.php'); ?>
 
     <!-- Main Content -->
     <main>
@@ -19,13 +19,12 @@ require_once app_path('includes/layout-header.php'); ?>
             <table>
                 <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Client Name</th>
-                    <th>Client Email</th>
+                    <th>Email</th>
+                    <th>Agency</th>
                     <th>Travel Package Name</th>
                     <th>Booking Date</th>
-                    <th>Booking Status</th>
-                    <th>Payment Amount</th>
-                    <th>Payment Status</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -81,7 +80,9 @@ require_once app_path('includes/layout-header.php'); ?>
 </div>
 
 <?php
-$jsFile = '/adminDashboard.js';
+$jsFiles = [
+    '/admin/bookings.js'
+];
 require_once app_path('includes/layout-footer.php');
 ?>
 

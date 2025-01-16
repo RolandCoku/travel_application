@@ -1,167 +1,75 @@
 <?php
-$cssFile = '/admin/adminDashboard.css';
+$title = 'Admin Dashboard';
+$cssFile = '/admin/adminDashboard.css?v=' . time();
 require_once app_path('includes/layout-header.php'); ?>
-<link
-href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet"
-/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet"/>
 
 
 <div class="container">
     <!-- Sidebar -->
-    <aside>
-        <div class="top">
-            <div class="logo">
-                <h2>TRAVEL<span class="danger">ADMIN</span></h2>
-            </div>
-            <div class="close" id="close-btn">
-                <span class="material-icons-sharp"> close </span>
-            </div>
-        </div>
-
-        <div class="sidebar">
-            <a href="#" class="active">
-                <span class="material-icons-sharp"> dashboard </span>
-                <h3>Dashboard</h3>
-            </a>
-            <a href="#">
-                <span class="material-icons-sharp"> flight </span>
-                <h3>Bookings</h3>
-            </a>
-            <a href="#">
-                <span class="material-icons-sharp"> location_on </span>
-                <h3>Destinations</h3>
-            </a>
-            <a href="#">
-                <span class="material-icons-sharp"> query_stats </span>
-                <h3>Analytics</h3>
-            </a>
-            <a href="#">
-                <span class="material-icons-sharp"> mail_outline </span>
-                <h3>Inquiries</h3>
-                <span class="message-count">12</span>
-            </a>
-            <a href="#">
-                <span class="material-icons-sharp"> feedback </span>
-                <h3>Feedback</h3>
-            </a>
-            <a href="#">
-                <span class="material-icons-sharp"> inventory </span>
-                <h3>Packages</h3>
-            </a>
-            <a href="#">
-                <span class="material-icons-sharp"> settings </span>
-                <h3>Settings</h3>
-            </a>
-            <a href="#">
-                <span class="material-icons-sharp"> add </span>
-                <h3>Add Destination</h3>
-            </a>
-            <a href="#">
-                <span class="material-icons-sharp"> logout </span>
-                <h3>Logout</h3>
-            </a>
-        </div>
-    </aside>
-
+    <?php require_once app_path('includes/admin-sidebar.php'); ?>
     <!-- Main Content -->
     <main>
         <div class="header">
-            <h1>Travel Dashboard</h1>
-            <div class="date">
-                <input type="date" />
-            </div>
+            <h1>Admin Dashboard</h1>
         </div>
 
         <div class="insights">
             <div class="bookings">
-                <span class="material-icons-sharp"> flight </span>
+                <h2 class="text-muted"> Last 7 days </h2>
                 <div class="middle">
+                    <span class="material-icons-sharp"> flight </span>
                     <div class="left">
-                        <h3>Total Bookings</h3>
                         <h1>1,245</h1>
-                    </div>
-                    <div class="progress">
-                        <svg>
-                            <circle cx="38" cy="38" r="36"></circle>
-                        </svg>
-                        <div class="number">
-                            <p>78%</p>
-                        </div>
+                        <h3>Total Bookings</h3>
                     </div>
                 </div>
-                <small class="text-muted"> Last 7 days </small>
             </div>
 
             <div class="expenses">
-                <span class="material-icons-sharp"> bar_chart </span>
+                <h2 class="text-muted"> Last 7 days </h2>
                 <div class="middle">
+                    <span class="material-icons-sharp"> bar_chart </span>
                     <div class="left">
-                        <h3>Total Expenses</h3>
                         <h1>$18,540</h1>
-                    </div>
-                    <div class="progress">
-                        <svg>
-                            <circle cx="38" cy="38" r="36"></circle>
-                        </svg>
-                        <div class="number">
-                            <p>65%</p>
-                        </div>
+                        <h3>Total Income</h3>
                     </div>
                 </div>
-                <small class="text-muted"> Last 7 days </small>
             </div>
 
             <div class="new-users">
-                <span class="material-icons-sharp"> group </span>
+                <h2 class="text-muted"> Last 7 days </h2>
                 <div class="middle">
+                    <span class="material-icons-sharp"> group </span>
                     <div class="left">
+                        <h1></h1>
                         <h3>New Users</h3>
-                        <h1>432</h1>
-                    </div>
-                    <div class="progress">
-                        <svg>
-                            <circle cx="38" cy="38" r="36"></circle>
-                        </svg>
-                        <div class="number">
-                            <p>56%</p>
-                        </div>
                     </div>
                 </div>
-                <small class="text-muted"> Last 7 days </small>
             </div>
         </div>
 
-        <!-- Recent Bookings -->
+        <!-- Registered users  -->
         <div class="recent-orders">
-            <h2>Recent Bookings</h2>
+            <h2>Registered Users</h2>
             <table>
                 <thead>
                 <tr>
-                    <th>Customer Name</th>
-                    <th>Destination</th>
-                    <th>Booking Date</th>
-                    <th>Status</th>
-                    <th></th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Email Confirmed</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <td>Jane Doe</td>
-                    <td>Paris</td>
-                    <td>2025-01-10</td>
-                    <td><span class="success">Confirmed</span></td>
-                    <td class="primary">Details</td>
-                </tr>
-                <tr>
-                    <td>John Smith</td>
-                    <td>New York</td>
-                    <td>2025-01-12</td>
-                    <td><span class="warning">Pending</span></td>
-                    <td class="primary">Details</td>
-                </tr>
+                <tbody id="users-table-body">
+                <!-- Data will be loaded here using JS -->
                 </tbody>
             </table>
-            <a href="#">View All Bookings</a>
+            <div id="pagination-container" class="pagination">
+                <!-- Pagination buttons will be dynamically added here -->
+            </div>
         </div>
     </main>
 
@@ -171,10 +79,6 @@ href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="styles
             <button id="menu-btn">
                 <span class="material-icons-sharp"> menu </span>
             </button>
-            <div class="theme-toggler">
-                <span class="material-icons-sharp active"> light_mode </span>
-                <span class="material-icons-sharp"> dark_mode </span>
-            </div>
             <div class="profile">
                 <div class="info">
                     <p>Hello, <b>Admin</b></p>
@@ -218,15 +122,16 @@ href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="styles
                     <p>180 bookings</p>
                 </div>
             </div>
-            <div class="item add-destination">
-                <span class="material-icons-sharp"> add </span>
-                <h3>Add Destination</h3>
-            </div>
         </div>
     </div>
 </div>
-<script src="js/adminDashboard.js"></script>
-<?php require_once app_path('includes/layout-footer.php'); ?>
+
+<?php
+$jsFiles = [
+    'admin/adminDashboard.js?v=' . time(),
+];
+require_once app_path('includes/layout-footer.php');
+?>
 
 
 
