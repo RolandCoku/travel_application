@@ -20,27 +20,35 @@ class Log extends Model
         $stmt->execute();
     }
 
-    public function getLogs($page): array
+    public function getLogs($page, $limit, $logKeys, $userKeys): false|mysqli_result
     {
-        $limit = 10;
         $offset = ($page - 1) * $limit;
 
-        $sql_select = "SELECT logs.id, users.name, logs.action, logs.created_at FROM logs JOIN users ON logs.user_id = users.id ORDER BY logs.created_at DESC LIMIT ? OFFSET ?";
-
-        $stmt = $this->conn->prepare($sql_select);
-
-        $stmt->bind_param("ii", $limit, $offset);
-
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-
-        $logs = [];
-
-        while ($row = $result->fetch_assoc()) {
-            $logs[] = $row;
+        if (isset($logKeys) && isset($userKeys)) {
+            $logColumns = implode(", ", $logKeys);
+            $logColumns = "logs.id, $logColumns";
+            $userColumns = implode(", ", $userKeys);
+            $userColumns = "users.id, $userColumns";
+            $sql_select = "SELECT $logColumns, $userColumns FROM logs
+                           JOIN users ON logs.user_id = users.id
+                           ORDER BY logs.created_at DESC
+                           LIMIT ? OFFSET ?";
+        } else if (isset($logKeys)) {
+            $columns = implode(", ", $logKeys);
+            $columns = "user.id, $columns";
+            $sql_select = "SELECT $columns FROM logs
+                           ORDER BY created_at DESC
+                           LIMIT ? OFFSET ?";
+        } else {
+            $sql_select = "SELECT * FROM logs
+                           ORDER BY created_at DESC
+                           LIMIT ? OFFSET ?";
         }
 
-        return $logs;
+        $stmt = $this->conn->prepare($sql_select);
+        $stmt->bind_param("ii", $limit, $offset);
+        $stmt->execute();
+
+        return $stmt->get_result();
     }
 }

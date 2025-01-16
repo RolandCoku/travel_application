@@ -1,73 +1,210 @@
-<?php require_once app_path('includes/layout-header.php'); ?>
+<?php
+$title = 'Edit Travel Package';
+$cssFiles = [
+    '/admin/adminDashboard.css',
+    '/admin/travel-agency/travel-package/edit.css',
+    'boxicons-2.1.4/css/boxicons.min.css'
+];
 
-<!-- This view is used to edit a travel package -->
+$package = [
+    'id' => 1,
+    'name' => 'Paris',
+    'description' => 'The city of love',
+    'start_date' => '2022-06-01',
+    'end_date' => '2022-06-10',
+    'price' => 2000,
+    'main_image' => 'paris.jpg',
+    'secondary_images' => ['paris1.jpg', 'paris2.jpg', 'paris3.jpg']
+];
+require_once app_path('includes/layout-header.php'); ?>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet"/>
 
 <div class="container">
-    <h1 class="text-center">Edit Travel Package</h1>
-    <div class="row">
-        <div class="col-md-12">
-            <form action="/travel-packages/update" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="id" value="<?= $travelPackage['id'] ?>">
-                <div class="form-group row">
-                    <div class="col">
-                        <label for="name">Name</label>
-                        <input type="text" name="name" id="name" class="form-control" value="<?= $travelPackage['name'] ?>" required>
-                    </div>
-                    <div class="col">
-                        <label for="price">Price</label>
-                        <input type="number" name="price" id="price" class="form-control" value="<?= $travelPackage['price'] ?>" required>
-                    </div>
+    <!-- Sidebar -->
+    <?php require_once app_path('includes/travel-agency-admin-sidebar.php'); ?>
+
+    <!-- Main Content -->
+    <main>
+        <div class="header">
+            <h1>Edit Travel Package</h1>
+        </div>
+
+        <!-- Edit Travel Package Form -->
+        <div class="form-container">
+            <form id="edit-travel-package-form" action="/travel-packages/update" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="package_id" value="<?= $package['id'] ?>" />
+
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" class="form-control" value="<?= $package['name'] ?>" required />
                 </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="4" class="form-control" required><?= $package['description'] ?></textarea>
+                </div>
+
                 <div class="form-group row">
                     <div class="col">
                         <label for="start_date">Start Date</label>
-                        <input type="date" name="start_date" id="start_date" class="form-control" value="<?= $travelPackage['start_date'] ?>" required>
+                        <input type="date" id="start_date" name="start_date" class="form-control" value="<?= $package['start_date'] ?>" required />
                     </div>
                     <div class="col">
                         <label for="end_date">End Date</label>
-                        <input type="date" name="end_date" id="end_date" class="form-control" value="<?= $travelPackage['end_date'] ?>" required>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col">
-                        <label for="agency_id">Agency</label>
-                        <select name="agency_id" id="agency_id" class="form-control" required>
-                            <option value="">Select Agency</option>
-                            <?php if (isset($agencies)) {
-                                foreach ($agencies as $agency): ?>
-                                    <option value="<?= $agency['id'] ?>" <?= $agency['id'] === $travelPackage['agency_id'] ? 'selected' : '' ?>><?= $agency['name'] ?></option>
-                                <?php endforeach;
-                            } ?>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col">
-                        <label for="description">Description</label>
-                        <textarea name="description" id="description" class="form-control" required><?= $travelPackage['description'] ?></textarea>
+                        <input type="date" id="end_date" name="end_date" class="form-control" value="<?= $package['end_date'] ?>" required />
                     </div>
                 </div>
 
-                <!-- Show the current image -->
-                <div class="form-group row">
-                    <div class="col col-2">
-                        <label>Current Image</label>
-                        <img src="<?= base_url('img/') . $travelPackage['images'][0]['image_url'] ?>" alt="<?= $travelPackage['images'][0]['alt_text'] ?>" class="img-fluid">
-                    </div>
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <input type="number" id="price" name="price" class="form-control" value="<?= $package['price'] ?>" required />
                 </div>
 
-                <div class="form-group row">
-                    <div class="col">
-                        <label for="image">Image</label>
-                        <input type="file" name="image" id="image" class="form-control" >
+                <div class="form-group">
+                    <label for="image">Main Image</label>
+                    <div class="current-image">
+                        <img src="/uploads/<?= $package['main_image'] ?>" alt="Main Image" class="preview-image" />
                     </div>
+                    <input type="file" id="image" name="image" class="form-control" />
+                    <small class="text-muted">Leave empty to keep the current image.</small>
                 </div>
-                <div class="form-group mt-3">
-                    <button type="submit" class="btn btn-primary">Update</button>
+
+                <div class="form-group">
+                    <label for="secondary_images">Secondary Images</label>
+                    <div class="current-images">
+                        <?php foreach ($package['secondary_images'] as $image): ?>
+                            <img src="/uploads/<?= $image ?>" alt="Secondary Image" class="preview-image" />
+                        <?php endforeach; ?>
+                    </div>
+                    <input type="file" id="secondary_images" name="secondary_images[]" class="form-control" multiple />
+                    <small class="text-muted">Leave empty to keep the current images.</small>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn primary">Update Package</button>
+                    <a href="/admin/travel-packages" class="btn secondary">Cancel</a>
                 </div>
             </form>
         </div>
+    </main>
+
+    <!-- Right Sidebar -->
+    <div class="right">
+        <div class="top">
+            <button id="menu-btn">
+                <span class="material-icons-sharp"> menu </span>
+            </button>
+            <div class="profile">
+                <div class="info">
+                    <p>Hello, <b>Admin</b></p>
+                    <small class="text-muted">Travel Manager</small>
+                </div>
+                <div class="profile-photo">
+                    <img src="person2.png" alt="Profile Picture"/>
+                </div>
+            </div>
+        </div>
+        <div class="sales-analytics">
+            <div class="info item">
+                <i class='bx bx-edit' style="font-size: 50px; color: #7380ec"></i>
+                <h2>Update the fields to edit the travel package details</h2>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<?php require_once app_path('includes/layout-footer.php'); ?>
+<?php
+$jsFile = '/admin/adminDashboard.js';
+require_once app_path('includes/layout-footer.php'); ?>
+
+<style>
+    .form-container {
+        background: var(--color-white);
+        padding: var(--card-padding);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--box-shadow);
+        width: 100%;
+        margin: 2rem auto;
+    }
+
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--color-dark);
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid var(--color-light);
+        border-radius: var(--border-radius-1);
+        background: var(--color-info-light);
+        color: var(--color-dark);
+        font-size: 0.9rem;
+        outline: none;
+        transition: all 300ms ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: var(--color-primary);
+    }
+
+    .form-group .current-image,
+    .form-group .current-images {
+        margin: 1rem 0;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .preview-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: var(--border-radius-1);
+        box-shadow: var(--box-shadow);
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .form-actions .btn {
+        padding: 0.8rem 1.6rem;
+        border: none;
+        border-radius: var(--border-radius-1);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 300ms ease;
+    }
+
+    .form-actions .btn.primary {
+        background: var(--color-primary);
+        color: var(--color-white);
+    }
+
+    .form-actions .btn.primary:hover {
+        background: var(--color-primary-variant);
+    }
+
+    .form-actions .btn.secondary {
+        background: var(--color-light);
+        color: var(--color-dark);
+    }
+
+    .form-actions .btn.secondary:hover {
+        background: var(--color-info-light);
+    }
+</style>

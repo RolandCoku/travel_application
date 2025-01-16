@@ -1,4 +1,3 @@
-
 <?php
 $title = 'Phi Phi Island Escape';
 $cssFile = 'user/travel-package/show.css';

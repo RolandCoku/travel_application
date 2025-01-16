@@ -13,18 +13,14 @@ use App\Helpers\PayPalService;
 class BookingController extends Controller
 {
   private Booking $booking;
-  // private Payment $payment;
-  // private travelPackage $travelPackage;
-  // private PayPalService $paypalService;
+  private travelPackage $travelPackage;
 
   public function __construct()
   {
     global $conn;
     $this->booking = new Booking($conn);
-    // $this->travelPackage = new TravelPackage($conn);
-    // $this->payment = new Payment($conn);
 
-    // $this->paypalService = new PayPalService();
+    $this->travelPackage = new TravelPackage($conn);
   }
 
   public function index(): void
@@ -198,6 +194,22 @@ class BookingController extends Controller
         $nrBookings = $this->booking->countByDateRange($_GET['start_date'], $_GET['end_date']);
         header('Content-Type: application/json');
         echo json_encode($nrBookings);
+        exit;
+    }
+
+    // #[NoReturn] 
+    public function getTopDestinations(): void
+    {
+        $limit = $_GET['limit'] ?? 3;
+        $result = $this->booking->getTopDestinations($limit);
+        header('Content-Type: application/json');
+
+        $topDestinations = [];
+        while ($row = $result->fetch_assoc()) {
+            $topDestinations[] = $row;
+        }
+
+        echo json_encode($topDestinations);
         exit;
     }
 }

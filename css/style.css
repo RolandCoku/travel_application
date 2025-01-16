@@ -3,5 +3,66 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Verdana', sans-serif;
+    font-family: 'Futura Std Medium', sans-serif;
+}
+
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    width: 100%;
+    max-width: 450px;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    animation: fadeIn 1s ease-in-out;
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-container img {
+    display: inline-block;
+    max-height: 90px;
+    opacity: 0;
+}
+
+.logo-container img:first-of-type {
+    animation: slideInLogo1 1s ease-in-out forwards;
+    animation-delay: 0.3s; /* Delay to create a staggered effect */
+}
+
+.logo-container img:last-of-type {
+    animation: slideInLogo2 1s ease-in-out forwards;
+    animation-delay: 0.5s; /* Delay to create a staggered effect */
+}
+
+@keyframes slideInLogo1 {
+    from {
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLogo2 {
+    from {
+        transform: translateX(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }

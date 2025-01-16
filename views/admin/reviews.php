@@ -7,29 +7,27 @@ require_once app_path('includes/layout-header.php'); ?>
 
 <div class="container">
     <!-- Sidebar -->
-    <?php require_once app_path('includes/travel-agency-admin-sidebar.php'); ?>
+    <?php require_once app_path('includes/admin-sidebar.php'); ?>
 
     <!-- Main Content -->
     <main>
         <div class="header">
-            <h1>Bookings</h1>
+            <h1>Reviews</h1>
         </div>
-        <!-- Registered users  -->
+        <!--Reviews  -->
         <div class="recent-orders">
             <table>
                 <thead>
                 <tr>
-                    <th>Client Name</th>
-                    <th>Client Email</th>
-                    <th>Travel Package Name</th>
-                    <th>Booking Date</th>
-                    <th>Booking Status</th>
-                    <th>Payment Amount</th>
-                    <th>Payment Status</th>
+                    <th>ID</th>
+                    <th>User Name</th>
+                    <th>Package Name</th>
+                    <th>Comment</th>
+                    <th>Rating</th>
                     <th>Action</th>
                 </tr>
                 </thead>
-                <tbody id="agencies-table-body">
+                <tbody id="reviews-table-body">
                 <!-- Data will be loaded here using JS -->
                 </tbody>
             </table>
@@ -57,7 +55,7 @@ require_once app_path('includes/layout-header.php'); ?>
         </div>
 
         <div class="sales-analytics">
-            <h2>Top Destinations</h2>
+            <h2>Latest Reviews</h2>
             <div class="item">
                 <div>
                     <h3>Paris</h3>
@@ -84,6 +82,3 @@ require_once app_path('includes/layout-header.php'); ?>
 $jsFile = '/adminDashboard.js';
 require_once app_path('includes/layout-footer.php');
 ?>
-
-
-

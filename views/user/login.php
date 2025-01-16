@@ -1,13 +1,30 @@
 <?php
-$title = 'Elite Travel - Login';
-$cssFile = 'user/login.css';
+$title = 'Elite Travel | Login';
+$cssFile = 'user/login.css?=v' . time();
 require_once app_path('includes/layout-header.php');
 ?>
 
 <body class="login-page">
+
+<div class="logo-container">
+    <div class="image-container">
+        <img class="login-image" src="/img/assets/logo-2.png" alt="Logo 2">
+        <img class="login-image" src="/img/assets/logo-1.png" alt="Logo 1">
+    </div>
+</div>
+
 <main class="login-container">
     <form class="login-form" action="/login" method="post">
         <h1 class="form-title">Login</h1>
+        <?php if (isset($_SESSION['login']['error'])): ?>
+            <p class="error-message"><?= $_SESSION['login']['error'] ?></p>
+        <?php endif; ?>
+        <?php if (isset($_SESSION['register']['success'])): ?>
+            <p class="success-message"><?= $_SESSION['register']['success'] ?></p>
+        <?php endif; ?>
+        <?php if (isset($_SESSION['login']['success'])): ?>
+            <p class="success-message"><?= $_SESSION['login']['success'] ?></p>
+        <?php endif; ?>
         <div class="input-group">
             <label>
                 <input type="email" name="email" placeholder="Email" required>
@@ -21,7 +38,8 @@ require_once app_path('includes/layout-header.php');
             <i class='bx bxs-lock-alt'></i>
         </div>
         <div class="form-options">
-            <label><input type="checkbox"> Remember me</label>
+            <label class="remember-me">
+                <input type="checkbox" name="remember-me"> Remember me</label>
             <a href="#">Forgot Password?</a>
         </div>
         <button type="submit" class="btn-primary">Login</button>

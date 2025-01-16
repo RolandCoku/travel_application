@@ -1,31 +1,32 @@
 <?php
 $title = 'Admin Dashboard';
-$cssFile = '/admin/adminDashboard.css?v=' . time();
+$cssFiles = [
+        'admin/adminDashboard.css?v=' . time()
+];
 require_once app_path('includes/layout-header.php'); ?>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet"/>
 
 
 <div class="container">
     <!-- Sidebar -->
-    <?php require_once app_path('includes/travel-agency-admin-sidebar.php'); ?>
+    <?php require_once app_path('includes/admin-sidebar.php'); ?>
 
     <!-- Main Content -->
     <main>
         <div class="header">
-            <h1>Bookings</h1>
+            <h1>Travel Agencies</h1>
         </div>
         <!-- Registered users  -->
         <div class="recent-orders">
             <table>
                 <thead>
                 <tr>
-                    <th>Client Name</th>
-                    <th>Client Email</th>
-                    <th>Travel Package Name</th>
-                    <th>Booking Date</th>
-                    <th>Booking Status</th>
-                    <th>Payment Amount</th>
-                    <th>Payment Status</th>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Website</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -57,23 +58,14 @@ require_once app_path('includes/layout-header.php'); ?>
         </div>
 
         <div class="sales-analytics">
-            <h2>Top Destinations</h2>
-            <div class="item">
+            <h2>Top Agencies</h2>
+        </div>
+        <!-- Register a new agency link -->
+        <div class="sales-analytics">
+            <div class="item" style="background-color: lightcoral">
                 <div>
-                    <h3>Paris</h3>
-                    <p>250 bookings</p>
-                </div>
-            </div>
-            <div class="item">
-                <div>
-                    <h3>Bali</h3>
-                    <p>200 bookings</p>
-                </div>
-            </div>
-            <div class="item">
-                <div>
-                    <h3>New York</h3>
-                    <p>180 bookings</p>
+                    <h3 style="padding-bottom: 5px"><a href="/admin/travel-agencies/register">Register New Agency</a></h3>
+                    <p class="text-muted">Add a new travel agency to the system.</p>
                 </div>
             </div>
         </div>
@@ -81,9 +73,8 @@ require_once app_path('includes/layout-header.php'); ?>
 </div>
 
 <?php
-$jsFile = '/adminDashboard.js';
+$jsFiles = [
+        'admin/agencies.js?v=' . time(),
+];
 require_once app_path('includes/layout-footer.php');
 ?>
-
-
-
