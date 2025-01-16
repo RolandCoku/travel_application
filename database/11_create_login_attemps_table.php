@@ -30,9 +30,11 @@ function runMigration($conn): void
         if ($conn->query($createLoginAttemptsTableQuery) === TRUE) {
             echo PHP_EOL . "Table 'login_attempts' created successfully.";
         } else {
-            throw new Exception("Error creating table: " . $conn->error);
+            echo PHP_EOL . "Error creating table: " . $conn->error;
         }
     } catch (Exception $e) {
         echo PHP_EOL . "Migration failed: " . $e->getMessage();
     }
 }
+
+runMigration($conn);

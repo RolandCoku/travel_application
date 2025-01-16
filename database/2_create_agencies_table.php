@@ -25,7 +25,6 @@ function runMigration($conn): void
                 description TEXT NOT NULL,
                 address VARCHAR(255) NOT NULL,
                 phone VARCHAR(20) NOT NULL,
-                email VARCHAR(100) NOT NULL,
                 website VARCHAR(100) NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
