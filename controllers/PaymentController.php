@@ -14,18 +14,20 @@ class PaymentController extends Controller {
   { // krijon nje approved booking dhe pending payment dhe ben redirect drejt paypal
     // ketu duhet rishikuar radha e krijimit te booking, payment dhe paypal order
     require_once app_path('models/TravelPackage.php');
-    require_once app_path('models/Booking.php');
-    // require_once app_path('models/Payment.php');
+
     require_once app_path('helpers/PayPalService.php');
     global $conn;
 
     $travelPackageRepo = new TravelPackage($conn);
-    $bookingRepo = new Booking($conn);
-    // $paymentRepo = new Payment($conn);
     $paypalService = new PayPalService();
     $agencyModel = new TravelAgency($conn);
     
     $travelPackage = $travelPackageRepo->getById($_POST['travel_package_id']);
+    $nextSeats = $travelPackage['occupied_seats'] + 1;
+    if($nextSeats > $travelPackage['seats']){
+      header('Location : /payment/error?message=' . urlencode("No more available seats"));
+    }
+
     $agency = $agencyModel->getById($travelPackage['agency_id']);
     
     if(!$agency){
@@ -58,6 +60,8 @@ class PaymentController extends Controller {
     }
 
     $order = $result['data'];
+    error_log(json_encode($order));
+    // error_log($order);
 
     // $user_id eshte edhe ne get
     $booking = [
@@ -70,27 +74,18 @@ class PaymentController extends Controller {
       'total_price' => $travelPackage['price'],
     ];
 
-    $bookingIDs = $bookingRepo->createAndGetPaymentId($booking);
-    
+    require_once app_path('models/Booking.php');
+    $bookingRepo = new Booking($conn);
+
+    $bookingIDs = $bookingRepo->createAndGetPaymentId($booking, $travelPackage['id']);
+
     if (!$bookingIDs) {
       // ndoshta ketu bejme nje redirect si tjerat
       echo 'Error creating booking in the database';
       exit();
     }
     error_log("payment ids of the new entry". json_encode($bookingIDs));
-
-    // if(!$paymentRepo->setOrderId($bookingIDs['paymentId'], $order['id'])){
-    //   //keto do duhet te ishin ne nje transaction
-    //   $error ="Couldn't update database";
-    //   error_log($error);
-    //   header('Location: /payment/error?message=' . urlencode($error));
-    //   exit();
-    // }
-    
     error_log(json_encode($bookingIDs));
-    
-    // error_log("order id is:". $order['id']);
-    // $_SESSION['paypal_order_id'] = $order['id'];  // payment id ne paypal. Different from 'token'
 
     // Find the "approve" link in the response
     foreach ($order['links'] as $link) {
@@ -182,5 +177,17 @@ class PaymentController extends Controller {
     //dhe ndoshta heqim nga databaza pagesen e fundit qe deshtoi
     echo $_GET['message'];
     // self::loadView('user/booking/paymentFailure.php');
+  }
+
+  public function paymentCancel(): void
+  {
+    require_once app_path('models/Booking.php');
+    global $conn;
+    // $_SESSION['booking_id'] = 28;
+    $bookingRepo = new Booking($conn);
+    $bookingRepo->deleteAndReturnSeat($_SESSION['booking_id']);
+
+    unset($_SESSION['booking_id']);
+    unset($_SESSION['payment_id']);
   }
 }

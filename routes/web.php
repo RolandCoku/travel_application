@@ -158,7 +158,9 @@ switch ($route) {
     $paymentController->paypalReturn();
     break;
   case '/payment/cancel':
-    // kjo eshte faqja qe paraqitet nese i ben cancel brenda paypalit
+    require_once app_path('controllers/PaymentController.php');
+    $paymentController = new PaymentController();
+    $paymentController->paymentCancel();
     break;
   case '/payment/capture':
     require_once app_path('controllers/PaymentController.php');
