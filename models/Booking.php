@@ -78,4 +78,21 @@ class Booking extends Model{
       // }
       // return $payment;
   }
+
+    public function getTopDestinations($limit = 3): false|mysqli_result
+    {
+        $query = "SELECT travel_packages.name, COUNT(bookings.id) as bookings
+                  FROM bookings
+                  JOIN travel_packages ON bookings.travel_package_id = travel_packages.id
+                  GROUP BY travel_packages.name
+                  ORDER BY bookings DESC
+                  LIMIT ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('i', $limit);
+        $stmt->execute();
+
+        return $stmt->get_result();
+    }
+
+
 }

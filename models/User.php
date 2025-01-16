@@ -65,6 +65,10 @@ class User extends Model
 
         $result = $stmt->get_result();
 
+        if ($result->num_rows === 0) {
+            return [];
+        }
+
         return $result->fetch_assoc();
     }
 
@@ -82,7 +86,47 @@ class User extends Model
         $stmt = $this->conn->prepare("SELECT * FROM users WHERE email_confirmation_token = ?");
         $stmt->bind_param('s', $token);
         $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
+
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            return false;
+        }
+
+        return $result->fetch_assoc();
     }
 
+    public function setRememberMeToken($email, $token): void
+    {
+        $sql_update = "UPDATE users SET remember_token = ? WHERE email = ?";
+        $stmt = $this->conn->prepare($sql_update);
+
+        $stmt->bind_param("ss", $token, $email);
+        $stmt->execute();
+    }
+
+    public function getUserByRememberToken($token): array
+    {
+        $sql_select = "SELECT * FROM users WHERE remember_token = ?";
+
+        $stmt = $this->conn->prepare($sql_select);
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            return [];
+        }
+
+        return $result->fetch_assoc();
+    }
+
+    public function clearRememberMeToken(mixed $userEmail): void
+    {
+        $sql_update = "UPDATE users SET remember_token = NULL WHERE email = ?";
+        $stmt = $this->conn->prepare($sql_update);
+        $stmt->bind_param("s", $userEmail);
+        $stmt->execute();
+    }
 }
