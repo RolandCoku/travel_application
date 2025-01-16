@@ -53,8 +53,10 @@ abstract class Model
         }
 
         $insertQuery->bind_param($types, ...$values);
+        $returnVal = $insertQuery->execute();
+        $insertQuery->close();
 
-        return $insertQuery->execute();
+        return $returnVal;
     }
 
     public function createAndGetId($obj){
@@ -80,8 +82,12 @@ abstract class Model
 
         $insertQuery->bind_param($types, ...$values);
 
-        if(!$insertQuery->execute())
+        if(!$insertQuery->execute()){
+          $insertQuery->close();
           return null;
+        }
+        $insertQuery->close();
+        
         return $insertQuery->insert_id;
     }
 
@@ -111,7 +117,9 @@ abstract class Model
         $valuesAndId = [...$values, $id]; // adding the id to be bound
 
         $updateQuery->bind_param($types, ...$valuesAndId);
-        return $updateQuery->execute();
+        $returnVal = $updateQuery->execute();
+        $updateQuery->close();
+        return $returnVal;
     }
 
     public function update($data): bool // this should be fine right?
@@ -128,8 +136,9 @@ abstract class Model
                                             ");
 
         $deleteQuery->bind_param('i', $id);
-
-        return $deleteQuery->execute();
+        $returnVal = $deleteQuery->execute();
+        $deleteQuery->close();
+        return $returnVal;
     }
 
     public function paginate(int $page, int $limit, array $keys): array

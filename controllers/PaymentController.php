@@ -15,42 +15,23 @@ class PaymentController extends Controller {
     // ketu duhet rishikuar radha e krijimit te booking, payment dhe paypal order
     require_once app_path('models/TravelPackage.php');
     require_once app_path('models/Booking.php');
-    require_once app_path('models/Payment.php');
+    // require_once app_path('models/Payment.php');
     require_once app_path('helpers/PayPalService.php');
     global $conn;
 
     $travelPackageRepo = new TravelPackage($conn);
     $bookingRepo = new Booking($conn);
-    $paymentRepo = new Payment($conn);
+    // $paymentRepo = new Payment($conn);
     $paypalService = new PayPalService();
-
-    $travelPackage = $travelPackageRepo->getById($_POST['travel_package_id']);
-    // $user_id eshte edhe ne get
-    $booking = [
-      'user_id' => $_SESSION['user_id'],
-      'travel_package_id' => $_POST['travel_package_id'],
-      // 'payment_method' => $_POST['payment_method'],
-      'agency_id' => $travelPackage['agency_id'],
-      'booking_date' => $travelPackage['start_date'], //ketu sjam i sigurt, ndoshta do behet me post
-      'total_price' => $travelPackage['price'],
-    ];
-
-    $bookingIDs = $bookingRepo->createAndGetPaymentId($booking);
-    if (!$bookingIDs || ! $bookingIDs['paymentId']) {
-      // ndoshta ketu bejme nje redirect si tjerat
-      echo 'Error creating booking in the database';
-      exit();
-    }
-    error_log("payment ids of the new entry". json_encode($bookingIDs));
-
-    global $conn;
     $agencyModel = new TravelAgency($conn);
+    
+    $travelPackage = $travelPackageRepo->getById($_POST['travel_package_id']);
     $agency = $agencyModel->getById($travelPackage['agency_id']);
+    
     if(!$agency){
       echo 'Database error';
       exit();
     }
-    
     // keto komente duhet te hiqen ne production
     // require_once app_path('models/User.php');
     // $userRepo = new User($conn);
@@ -78,21 +59,44 @@ class PaymentController extends Controller {
 
     $order = $result['data'];
 
-    if(!$paymentRepo->setOrderId($bookingIDs['paymentId'], $order['id'])){
-      $error ="Couldn't update database"; // I need to handle this in a different way probably
-      error_log($error);
-      header('Location: /payment/error?message=' . urlencode($error));
+    // $user_id eshte edhe ne get
+    $booking = [
+      'user_id' => $_SESSION['user_id'],
+      'travel_package_id' => $_POST['travel_package_id'],
+      // 'payment_method' => $_POST['payment_method'],
+      'paypal_order_id' => $order['id'],
+      'agency_id' => $travelPackage['agency_id'],
+      'booking_date' => $travelPackage['start_date'], //ketu sjam i sigurt, ndoshta do behet me post
+      'total_price' => $travelPackage['price'],
+    ];
+
+    $bookingIDs = $bookingRepo->createAndGetPaymentId($booking);
+    
+    if (!$bookingIDs) {
+      // ndoshta ketu bejme nje redirect si tjerat
+      echo 'Error creating booking in the database';
       exit();
     }
-    $_SESSION['payment_id'] = $bookingIDs['paymentId']; // payment id ne databaze
+    error_log("payment ids of the new entry". json_encode($bookingIDs));
+
+    // if(!$paymentRepo->setOrderId($bookingIDs['paymentId'], $order['id'])){
+    //   //keto do duhet te ishin ne nje transaction
+    //   $error ="Couldn't update database";
+    //   error_log($error);
+    //   header('Location: /payment/error?message=' . urlencode($error));
+    //   exit();
+    // }
+    
     error_log(json_encode($bookingIDs));
-    $_SESSION['booking_id'] = $bookingIDs['bookingId'];
+    
     // error_log("order id is:". $order['id']);
     // $_SESSION['paypal_order_id'] = $order['id'];  // payment id ne paypal. Different from 'token'
 
     // Find the "approve" link in the response
     foreach ($order['links'] as $link) {
       if ($link['rel'] === 'approve') {
+        $_SESSION['payment_id'] = $bookingIDs['paymentId']; // payment id ne databaze
+        $_SESSION['booking_id'] = $bookingIDs['bookingId'];
         $approveUrl = $link['href'];
         header('Location: ' . $approveUrl); // Redirect to PayPal
         exit();
