@@ -1,10 +1,12 @@
 /* Login page styles */
 body.login-page {
     background: url('/img/assets/login-background.jpg') no-repeat center center/cover;
-    color: #fff;
+    color: #2891ff;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 20px;
     min-height: 100vh;
     padding: 0 20px;
     position: relative;
@@ -18,7 +20,6 @@ body.login-page::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Transparent overlay */
     z-index: 1;
 }
 
@@ -26,11 +27,11 @@ body.login-page::before {
     position: relative;
     z-index: 2;
     width: 100%;
-    max-width: 400px;
-    background: rgba(0, 0, 0, 0.85);
+    max-width: 450px;
+    background: rgba(255, 255, 255, 0.6);
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(10px);
     animation: fadeIn 1s ease-in-out;
 }
@@ -42,10 +43,10 @@ body.login-page::before {
 }
 
 .login-form .form-title {
-    font-size: 28px;
+    font-size: 30px;
     text-align: center;
     margin-bottom: 15px;
-    color: #a8d4e4;
+    color: #2891ff;
     letter-spacing: 1px;
     animation: slideIn 0.8s ease-in-out;
 }
@@ -58,16 +59,16 @@ body.login-page::before {
     width: 100%;
     padding: 10px 50px 10px 15px;
     font-size: 16px;
-    border: 1px solid #a8d4e4;
+    border: 1px solid #2891ff;
     border-radius: 25px;
     background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    color: #2891ff;
     outline: none;
     transition: box-shadow 0.3s ease;
 }
 
 .login-form .input-group input:focus {
-    box-shadow: 0 0 10px 2px #a8d4e4;
+    box-shadow: 0 0 10px 2px #005bff;
 }
 
 .login-form .input-group i {
@@ -75,38 +76,46 @@ body.login-page::before {
     top: 50%;
     right: 15px;
     transform: translateY(-50%);
-    color: #a8d4e4;
+    color: #2891ff;
     font-size: 20px;
     transition: color 0.3s ease;
 }
 
 .login-form .input-group input:focus + i {
-    color: #0c5f80;
+    color: #005bff;
 }
 
 .login-form .form-options {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
-    color: #a8d4e4;
+    padding: 0 5px;
+    color: #2891ff;
 }
 
 .login-form .form-options a {
-    color: #a8d4e4;
+    color: #2891ff;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .login-form .form-options a:hover {
-    color: #0c5f80;
+    color: #005bff;
     text-decoration: underline;
+}
+
+.login-form .form-options .remember-me {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 5px;
 }
 
 .login-form .btn-primary {
     width: 100%;
     padding: 12px 20px;
-    background: linear-gradient(135deg, #0c5f80, #a8d4e4);
-    color: #0c0c37;
+    background: linear-gradient(135deg, #005bff, #2891ff);
+    color: #ffffff;
     font-size: 16px;
     font-weight: bold;
     border: none;
@@ -117,7 +126,7 @@ body.login-page::before {
 
 .login-form .btn-primary:hover {
     transform: translateY(-2px);
-    background: linear-gradient(135deg, #a8d4e4, #0c5f80);
+    background: linear-gradient(135deg, #2891ff, #005bff);
 }
 
 .login-form .register-link {
@@ -126,15 +135,29 @@ body.login-page::before {
 }
 
 .login-form .register-link a {
-    color: #a8d4e4;
+    color: #2891ff;
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s ease;
 }
 
 .login-form .register-link a:hover {
-    color: #0c5f80;
+    color: #005bff;
     text-decoration: underline;
+}
+
+.login-form .error-message {
+    color: #ff0000;
+    font-size: 16px;
+    text-align: left;
+    animation: slideIn 0.2s ease-in-out;
+}
+
+.login-form .success-message {
+    color: #00ff00;
+    font-size: 16px;
+    text-align: left;
+    animation: slideIn 0.2s ease-in-out;
 }
 
 /* Keyframes for animations */
@@ -158,4 +181,50 @@ body.login-page::before {
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+/* Slide-in animation for logos */
+@keyframes slideInLogo1 {
+    from {
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLogo2 {
+    from {
+        transform: translateX(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Slide-in animation for header */
+@keyframes slideInHeader {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Apply animations to logos */
+.logo-container img:first-of-type {
+    animation: slideInLogo1 1s ease-in-out forwards;
+    animation-delay: 0.3s; /* Delay to create a staggered effect */
+}
+
+.logo-container img:last-of-type {
+    animation: slideInLogo2 1s ease-in-out forwards;
+    animation-delay: 0.5s; /* Delay to create a staggered effect */
 }
