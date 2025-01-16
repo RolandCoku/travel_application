@@ -9,7 +9,6 @@ require_once app_path('controllers/AdminController.php');
 require_once app_path('controllers/LogController.php');
 
 
-
 // Middleware
 require_once app_path('middleware/AuthMiddleware.php');
 require_once app_path('middleware/RoleMiddleware.php');
@@ -62,8 +61,6 @@ switch ($route) {
     // Role-Based Routes (Admins Only) TODO: Add auth and role controller for verification
     case '/admin/dashboard':
         //TODO: - Fetch the data for total income in 7 days
-        //      - Fetch the latest updates
-        //      - Fetch top destinations
         $adminController->dashboard();
         break;
     case '/admin/travel-agencies':
@@ -111,7 +108,7 @@ switch ($route) {
         break;
 
 
-        //Travel package routes
+    //Travel package routes
     case '/travel-packages':
         $travelPackageController->index();
         break;
@@ -119,7 +116,7 @@ switch ($route) {
         $travelPackageController->show();
         break;
 
-        //Travel package admin routes
+    //Travel package admin routes
     case '/travel-agency/admin/travel-packages/show':
         //TODO: Fetch travel package details (Select name, description, price, date, duration, free seats) from id
         $travelPackageController->adminShow();
@@ -145,29 +142,30 @@ switch ($route) {
         break;
 
     // Booking Routes
-  case '/bookings/create':
-    $bookingController->create();
-    break;
-  case '/bookings/store': // also starts the payment
-    $bookingController->store();
-    break;
+    case '/bookings/create':
+        $bookingController->create();
+        break;
+    case '/bookings/store': // also starts the payment
+        $bookingController->store();
+        break;
 
     // Payment processing routes
-  case '/payment/processing':
-    $bookingController->paypalReturn();
-    break;
-  case '/payment/cancel':
-    // kjo eshte faqja qe paraqitet nese i ben cancel brenda paypalit
-    break;
-  case '/payment/capture':
-    $bookingController->captureOrder(); // return a json, will be fetched from js
-    break;
-  case '/payment/success':
-    $bookingController->paymentSuccess();
-    break;
-  case '/payment/error':
-    $bookingController->paymentFailure();
-    break;
+    case '/payment/processing':
+        $bookingController->paypalReturn();
+        break;
+    case '/payment/cancel':
+        // kjo eshte faqja qe paraqitet nese i ben cancel brenda paypalit
+        break;
+    case '/payment/capture':
+        $bookingController->captureOrder(); // return a json, will be fetched from js
+        break;
+    case '/payment/success':
+        $bookingController->paymentSuccess();
+        break;
+    case '/payment/error':
+        $bookingController->paymentFailure();
+        break;
+
     // Admin Booking Routes
     case '/admin/bookings/show':
         // TODO: Fetch booking details (Select client name, client email, travel package name, booking date, booking status, payment amount, payment status) from id
@@ -207,7 +205,37 @@ switch ($route) {
                 exit;
         }
 
-        // Bookings API Routes
+    // Travel Agencies API Routes
+    case '/api/travel-agencies':
+        $action = $_GET['action'] ?? null;
+
+        switch ($action) {
+            case 'paginate':
+                $travelAgencyController->paginateTravelAgencies();
+            case 'topAgencies':
+                $travelAgencyController->getTopAgencies();
+
+            default:
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action parameter']);
+                exit;
+        }
+
+    // Travel Packages API Routes
+    case '/api/travel-packages':
+        $action = $_GET['action'] ?? null;
+
+        switch ($action) {
+
+            default:
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action parameter']);
+                exit;
+        }
+
+    // Bookings API Routes
     case '/api/bookings':
         $action = $_GET['action'] ?? null;
 
@@ -216,6 +244,9 @@ switch ($route) {
                 $bookingController->paginateBookings();
             case 'countByDate':
                 $bookingController->countBookingsByDateRange();
+            case 'topDestinations':
+                $bookingController->getTopDestinations();
+
             default:
                 header('Content-Type: application/json');
                 http_response_code(400);
@@ -223,7 +254,7 @@ switch ($route) {
                 exit;
         }
 
-        //Logs API Routes
+    //Logs API Routes
     case '/api/logs':
         $action = $_GET['action'] ?? null;
 
