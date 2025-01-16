@@ -39,7 +39,15 @@ class BookingController extends Controller
   public function create(): void
   {
     $_SESSION['user_id'] = 1; // sa per prove
-    self::loadView('user/bookings/create');
+    require_once app_path('models/TravelAgency.php');
+    require_once app_path('models/TravelPackage.php');
+    global $conn;
+    $travelAgencyRepo = new TravelAgency($conn);
+    $travelPackageRepo = new TravelPackage($conn);
+    $travelInfo = $travelPackageRepo->getById($_GET['travel_package_id']);
+    $travelInfo['agency_name'] = $travelAgencyRepo->getById($travelInfo['agency_id'])['name'];
+    
+    self::loadView('user/bookings/create', $travelInfo);
   }
 
   public function edit(): void

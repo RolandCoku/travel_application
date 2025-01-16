@@ -23,15 +23,15 @@ class Payment extends Model
     return $updateQuery->execute();
   }
 
-  public function completePayment($paymentId)
-  {
-    $updateQuery = $this->conn->prepare("UPDATE payments
-                                               SET payment_status=?
-                                               WHERE id=?;
-                                        ");
+  // public function completePayment($paymentId)
+  // {
+  //   // return parent::updateById($paymentId, ['payment_status' => 'approved']);
+  //   $updateQuery = $this->conn->prepare("UPDATE payments
+  //                                              SET payment_status=?
+  //                                              WHERE id=?;
+  //                                       ");
 
-    $updateQuery->bind_param('si', 'approved', $paymentId);
-
-    return $updateQuery->execute();
-  }
+  //   $updateQuery->bind_param('si', 'approved', $paymentId);
+  //   return $updateQuery->execute();
+  // }
 }

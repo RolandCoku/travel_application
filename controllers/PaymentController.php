@@ -13,10 +13,10 @@ class PaymentController extends Controller {
   public function store(): void
   { // krijon nje approved booking dhe pending payment dhe ben redirect drejt paypal
     // ketu duhet rishikuar radha e krijimit te booking, payment dhe paypal order
-    require_once __DIR__ . '/../models/TravelPackage.php';
-    require_once __DIR__ .'/../models/Booking.php';
-    require_once __DIR__ . '/../models/Payment.php';
-    require_once __DIR__ . '/../helpers/PayPalService.php';
+    require_once app_path('models/TravelPackage.php');
+    require_once app_path('models/Booking.php');
+    require_once app_path('models/Payment.php');
+    require_once app_path('helpers/PayPalService.php');
     global $conn;
 
     $travelPackageRepo = new TravelPackage($conn);
@@ -35,13 +35,13 @@ class PaymentController extends Controller {
       'total_price' => $travelPackage['price'],
     ];
 
-    $paymentId =$bookingRepo->createAndGetPaymentId($booking);
-    if ($paymentId === null) {
+    $bookingIDs = $bookingRepo->createAndGetPaymentId($booking);
+    if (!$bookingIDs || ! $bookingIDs['paymentId']) {
       // ndoshta ketu bejme nje redirect si tjerat
       echo 'Error creating booking in the database';
       exit();
     }
-    error_log("payment id of the new entry". $paymentId);
+    error_log("payment ids of the new entry". json_encode($bookingIDs));
 
     global $conn;
     $agencyModel = new TravelAgency($conn);
@@ -50,7 +50,12 @@ class PaymentController extends Controller {
       echo 'Database error';
       exit();
     }
-    $agencyEmail = $agency['email'];  //assuming that their email is also used for paypal
+    
+    // keto komente duhet te hiqen ne production
+    // require_once app_path('models/User.php');
+    // $userRepo = new User($conn);
+    // $agencyEmail = $userRepo->getById($agency['user_id'])['email'];
+    $agencyEmail = 'sb-85a47f36460352@business.example.com';
 
     $imageModel = new Image($conn);
     $image = $imageModel->getByTravelPackageId($_POST['travel_package_id']);
@@ -73,13 +78,15 @@ class PaymentController extends Controller {
 
     $order = $result['data'];
 
-    if(!$paymentRepo->setOrderId($paymentId, $order['id'])){
+    if(!$paymentRepo->setOrderId($bookingIDs['paymentId'], $order['id'])){
       $error ="Couldn't update database"; // I need to handle this in a different way probably
       error_log($error);
       header('Location: /payment/error?message=' . urlencode($error));
       exit();
     }
-    $_SESSION['payment_id'] = $paymentId; // payment id ne databaze
+    $_SESSION['payment_id'] = $bookingIDs['paymentId']; // payment id ne databaze
+    error_log(json_encode($bookingIDs));
+    $_SESSION['booking_id'] = $bookingIDs['bookingId'];
     // error_log("order id is:". $order['id']);
     // $_SESSION['paypal_order_id'] = $order['id'];  // payment id ne paypal. Different from 'token'
 
@@ -133,28 +140,35 @@ class PaymentController extends Controller {
     /////
     // ketu duhet te bejme update databazen me payment info
     /////
-    echo json_encode([
-      'success' => true,
-      'orderId' => $data['orderId'],
-      'status' => $result['status'],          // COMPLETED, etc
-      'orderDetails' => $data,
-      'redirectUrl' => '/payment/success'. urlencode($data['orderId'])     // Where to redirect after success //duhet te shtoj edhe urlencoded per orderid
-    ]);
+    require_once app_path('models/Booking.php');
+    // require_once __DIR__ . '/../helpers/PayPalService.php';
+    // //ktu do bejme get te dhenat e marra nga payment
+    $bookingRepo = new Booking($this->conn);
+    $bookingRepo->finishBooking($_SESSION['booking_id'], $_SESSION['payment_id']);
+    unset($_SESSION['booking_id']);
+    unset($_SESSION['payment_id']);
+    // echo json_encode([
+    //   'orderId' => $data['id'],
+    //   'status' => $data['status'],          // COMPLETED, etc
+    //   'orderDetails' => $data,
+    //   'redirectUrl' => '/payment/success'. urlencode($data['id'])     // Where to redirect after success //duhet te shtoj edhe urlencoded per orderid
+    // ]);
+    header('Location: /payment/success?orderId='. urlencode($data['id']));
     exit;
   }
 
   public function paymentSuccess(): void
   {
-    require_once __DIR__ . '/../models/Payment.php';
+    // require_once app_path('models/Booking.php');
     require_once __DIR__ . '/../helpers/PayPalService.php';
-    //ktu do bejme get te dhenat e marra nga payment
-    $paymentRepo = new Payment($this->conn);
+    // //ktu do bejme get te dhenat e marra nga payment
+    // $bookingRepo = new Booking($this->conn);
     $paypalService = new PayPalService();
     
     $data = $paypalService->getOrderDetails($_GET['orderId']);
-    $paymentRepo->completePayment($_SESSION['payment_id']);
-    unset($_SESSION['payment_id']);
+
     echo json_encode($data);
+    // echo 'payment was successful';
     // self::loadView('user/booking/paymentSuccess.php', $data);
   }
 

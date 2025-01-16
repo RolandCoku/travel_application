@@ -139,8 +139,8 @@ function seedImagesTable($conn): void
 
 function seedDatabase($conn): void
 {
-//    seedUsersTable($conn);
-//    seedAgenciesTable($conn);
+  //  seedUsersTable($conn);
+  //  seedAgenciesTable($conn);
     seedTravelPackagesTable($conn);
     seedCategoriesTable($conn);
     seedBookingsTable($conn);
