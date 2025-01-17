@@ -110,7 +110,7 @@ class Review extends Model
         $query = "SELECT $aliasedKeysString FROM reviews
                   JOIN users ON reviews.user_id = users.id
                   JOIN travel_packages ON reviews.travel_package_id = travel_packages.id
-                  ORDER BY reviews.id DESC
+                  ORDER BY reviews.created_at DESC
                   LIMIT ?";
 
         $stmt = $this->conn->prepare($query);

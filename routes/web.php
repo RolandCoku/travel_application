@@ -7,6 +7,7 @@ require_once app_path('controllers/BookingController.php');
 require_once app_path('controllers/TravelAgencyController.php');
 require_once app_path('controllers/AdminController.php');
 require_once app_path('controllers/LogController.php');
+require_once app_path('controllers/ReviewController.php');
 
 
 // Middleware
@@ -20,6 +21,7 @@ $bookingController = new BookingController();
 $travelAgencyController = new TravelAgencyController();
 $adminController = new AdminController();
 $logController = new LogController();
+$reviewController = new ReviewController();
 
 //Initiate the middleware
 $authMiddleware = new AuthMiddleware();
@@ -146,35 +148,35 @@ switch ($route) {
         $bookingController->create();
         break;
     case '/bookings/store': // also starts the payment
-      require_once app_path('controllers/PaymentController.php');
-      $paymentController = new PaymentController();
-      $paymentController->store();
-      break;
+        require_once app_path('controllers/PaymentController.php');
+        $paymentController = new PaymentController();
+        $paymentController->store();
+        break;
 
     // Payment processing routes
-  case '/payment/processing':
-    require_once app_path('controllers/PaymentController.php');
-    $paymentController = new PaymentController();
-    $paymentController->paypalReturn();
-    break;
-  case '/payment/cancel':
-    // kjo eshte faqja qe paraqitet nese i ben cancel brenda paypalit
-    break;
-  case '/payment/capture':
-    require_once app_path('controllers/PaymentController.php');
-    $paymentController = new PaymentController();
-    $paymentController->captureOrder(); // return a json, will be fetched from js
-    break;
-  case '/payment/success':
-    require_once app_path('controllers/PaymentController.php');
-    $paymentController = new PaymentController();
-    $paymentController->paymentSuccess();
-    break;
-  case '/payment/error':
-    require_once app_path('controllers/PaymentController.php');
-    $paymentController = new PaymentController();
-    $paymentController->paymentFailure();
-    break;
+    case '/payment/processing':
+        require_once app_path('controllers/PaymentController.php');
+        $paymentController = new PaymentController();
+        $paymentController->paypalReturn();
+        break;
+    case '/payment/cancel':
+        // kjo eshte faqja qe paraqitet nese i ben cancel brenda paypalit
+        break;
+    case '/payment/capture':
+        require_once app_path('controllers/PaymentController.php');
+        $paymentController = new PaymentController();
+        $paymentController->captureOrder(); // return a json, will be fetched from js
+        break;
+    case '/payment/success':
+        require_once app_path('controllers/PaymentController.php');
+        $paymentController = new PaymentController();
+        $paymentController->paymentSuccess();
+        break;
+    case '/payment/error':
+        require_once app_path('controllers/PaymentController.php');
+        $paymentController = new PaymentController();
+        $paymentController->paymentFailure();
+        break;
     // Admin Booking Routes
     case '/admin/bookings/show':
         // TODO: Fetch booking details (Select client name, client email, travel package name, booking date, booking status, payment amount, payment status) from id
@@ -238,6 +240,10 @@ switch ($route) {
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
+            case 'paginate':
+                $travelPackageController->getAllPaginated();
+            case 'topPackages':
+                $travelPackageController->getTopPackages();
 
             default:
                 header('Content-Type: application/json');
@@ -257,6 +263,24 @@ switch ($route) {
                 $bookingController->countBookingsByDateRange();
             case 'topDestinations':
                 $bookingController->getTopDestinations();
+
+            default:
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action parameter']);
+                exit;
+        }
+
+    // Reviews API Routes
+    case '/api/admin/reviews':
+        $action = $_GET['action'] ?? null;
+
+        switch ($action) {
+            case 'paginate':
+                $reviewController->getAllPaginated();
+            case 'latest':
+                $reviewController->getLatestReviews();
+
 
             default:
                 header('Content-Type: application/json');
