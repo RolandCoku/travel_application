@@ -286,4 +286,22 @@ class UserController extends Controller
         exit;
     }
 
+    #[NoReturn] public function searchUsers(): void
+    {
+        $searchQuery = $_GET['search_query'] ?? null;
+        $limit = $_GET['limit'] ?? 10;
+        $offset = $_GET['offset'] ?? 0;
+
+        $result = $this->user->search($searchQuery, $limit, $offset, ['id', 'name', 'email', 'role']);
+
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($users);
+        exit;
+    }
+
 }

@@ -8,6 +8,7 @@ require_once app_path('controllers/TravelAgencyController.php');
 require_once app_path('controllers/AdminController.php');
 require_once app_path('controllers/LogController.php');
 require_once app_path('controllers/ReviewController.php');
+require_once app_path('controllers/PaymentController.php');
 
 
 // Middleware
@@ -22,6 +23,7 @@ $travelAgencyController = new TravelAgencyController();
 $adminController = new AdminController();
 $logController = new LogController();
 $reviewController = new ReviewController();
+$paymentController = new PaymentController();
 
 //Initiate the middleware
 $authMiddleware = new AuthMiddleware();
@@ -75,8 +77,10 @@ switch ($route) {
         $adminController->agencies();
         break;
     case '/admin/travel-agencies/register':
-        //TODO: Store handle form submission
         $adminController->registerAgency();
+        break;
+    case '/admin/travel-agencies/store':
+        $travelAgencyController->store();
         break;
     case '/admin/bookings':
         $adminController->bookings();
@@ -213,6 +217,10 @@ switch ($route) {
             case 'countByDate':
                 $userController->countUsersByRegisteredDateRange();
 
+            case 'search':
+                $userController->searchUsers();
+
+
             default:
                 header('Content-Type: application/json');
                 http_response_code(400);
@@ -304,6 +312,24 @@ switch ($route) {
                 echo json_encode(['error' => 'Invalid action parameter']);
                 exit;
         }
+
+    // Payment API Routes
+    case '/api/admin/payments':
+        $action = $_GET['action'] ?? null;
+
+        switch ($action):
+            case 'totalByDateRange':
+                $paymentController->getTotalPaymentsByDateRange();
+                break;
+
+            default:
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action parameter']);
+                exit;
+        endswitch;
+        break;
+
 
     // Keep-Alive Route (For Session Management)
     case '/keep-alive':

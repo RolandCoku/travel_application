@@ -2,7 +2,7 @@
 
 class TravelAgency extends Model
 {
-    private const KEYS = ['name', 'description', 'address', 'phone', 'email', 'website'];
+    private const KEYS = ['user_id', 'name', 'description', 'address', 'phone', 'website'];
 
     public function __construct(mysqli $conn)
     {
@@ -76,4 +76,7 @@ class TravelAgency extends Model
 
         return $data;
     }
+
+
+
 }

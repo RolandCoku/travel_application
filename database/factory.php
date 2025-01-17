@@ -137,6 +137,21 @@ function seedImagesTable($conn): void
     }
 }
 
+function seedPaymentsTable($conn): void
+{
+    echo PHP_EOL . "Seeding payments table...";
+    for ($i = 0; $i < 50; $i++) {
+        $bookingId = mt_rand(1, 50);
+        $paypalOrder = "PAY-$i";
+        $amount = mt_rand(100, 10000) / 100;
+        $status = ['pending', 'approved', 'rejected'][array_rand(['pending', 'approved', 'rejected'])];
+
+        $query = "INSERT INTO payments (booking_id, paypal_order_id, amount, payment_status) 
+                  VALUES ($bookingId, '$paypalOrder', '$amount', '$status')";
+        $conn->query($query);
+    }
+}
+
 function seedDatabase($conn): void
 {
     seedUsersTable($conn);
@@ -148,6 +163,8 @@ function seedDatabase($conn): void
     seedLogsTable($conn);
     seedCategoryTravelPackageTable($conn);
     seedImagesTable($conn);
+
+    seedPaymentsTable($conn);
 
     echo PHP_EOL . "Seeding complete.";
 }

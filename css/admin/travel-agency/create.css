@@ -1,0 +1,115 @@
+.form-container {
+    background: var(--color-white);
+    padding: var(--card-padding);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--box-shadow);
+    width: 100%;
+    margin: 2rem auto;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--color-dark);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--color-light);
+    border-radius: var(--border-radius-1);
+    background: var(--color-info-light);
+    color: var(--color-dark);
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 300ms ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: var(--color-primary);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.form-actions .btn {
+    padding: 0.8rem 1.6rem;
+    border: none;
+    border-radius: var(--border-radius-1);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 300ms ease;
+}
+
+.form-actions .btn.primary {
+    background: var(--color-primary);
+    color: var(--color-white);
+}
+
+.form-actions .btn.primary:hover {
+    background: var(--color-primary-variant);
+}
+
+.form-actions .btn.secondary {
+    background: var(--color-light);
+    color: var(--color-dark);
+}
+
+.form-actions .btn.secondary:hover {
+    background: var(--color-info-light);
+}
+
+.suggestions {
+    position: absolute;
+    top: 100%; /* Positioned below the input field */
+    left: 0;
+    width: 100%;
+    background: var(--color-white);
+    border: 1px solid var(--color-light);
+    box-shadow: var(--box-shadow);
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    z-index: 1050; /* High z-index to ensure it appears above other elements */
+    display: none; /* Hidden by default */
+    padding: 0.5rem 0; /* Add padding for dropdown content */
+}
+
+.suggestions::-webkit-scrollbar {
+    width: 0; /* Remove scrollbar width */
+    background: transparent; /* Ensure scrollbar track is not visible */
+}
+
+.suggestions .suggestion-item {
+    padding: 0.8rem 1rem; /* Match form inputs padding */
+    cursor: pointer;
+    font-size: 0.9rem; /* Match font size of inputs */
+    color: var(--color-dark);
+    background: var(--color-info-light); /* Background to match input field */
+    transition: all 300ms ease;
+    border-bottom: 1px solid var(--color-light); /* Separate items with a thin border */
+}
+
+.suggestions .suggestion-item:last-child {
+    border-bottom: none; /* Remove border for the last item */
+}
+
+.suggestions .suggestion-item:hover {
+    background-color: var(--color-primary-variant); /* Highlight on hover */
+    color: var(--color-white); /* Ensure text contrasts on hover */
+}
+
+

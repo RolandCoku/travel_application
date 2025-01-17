@@ -6,11 +6,13 @@ class TravelAgencyController extends Controller
 {
 
     private TravelAgency $travelAgency;
+    private User $user;
 
     public function __construct()
     {
         global $conn;
         $this->travelAgency = new TravelAgency($conn);
+        $this->user = new User($conn);
     }
 
 
@@ -56,9 +58,30 @@ class TravelAgencyController extends Controller
         self::loadView('admin/travel-agency/travel-packages/create');
     }
 
-    public function store(): void
+    #[NoReturn] public function store(): void
     {
         // Handle form submission
+        $user = $this->user->getByEmail($_POST['email']);
+
+        if (!$user) {
+            redirect('/admin/travel-agencies', ['error' => 'User not found'], 'travel-agencies');
+        }
+
+        $newAgency = [
+            'user_id' => $user['id'],
+            'name' => $_POST['name'],
+            'description' => $_POST['description'],
+            'address' => $_POST['address'],
+            'phone' => $_POST['phone'],
+            'website' => $_POST['website']
+        ];
+
+        if ($this->travelAgency->create($newAgency)) {
+            $this->user->updateById($user['id'], ['role' => 'agency_admin']);
+            redirect('/admin/travel-agencies', ['success' => 'Travel agency created successfully'], 'travel-agencies');
+        } else {
+            redirect('/admin/travel-agencies', ['error' => 'Failed to create travel agency'], 'travel-agencies');
+        }
     }
 
     public function edit(): void

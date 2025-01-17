@@ -168,4 +168,19 @@ class User extends Model
         $stmt->bind_param("s", $email);
         $stmt->execute();
     }
+
+    public function search(mixed $searchQuery, int $limit, int $offset, array $keys): false|mysqli_result
+    {
+        $columns = implode(',', $keys);
+
+        $sql_search = "SELECT $columns FROM users WHERE name LIKE ? OR email LIKE ? LIMIT ? OFFSET ?";
+
+        $stmt = $this->conn->prepare($sql_search);
+        $searchQuery = "%$searchQuery%";
+        $stmt->bind_param("ssii", $searchQuery, $searchQuery, $limit, $offset);
+
+        $stmt->execute();
+
+        return $stmt->get_result();
+    }
 }

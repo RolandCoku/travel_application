@@ -22,7 +22,7 @@ function runMigration($conn): void
                 name VARCHAR(30) NOT NULL,
                 email VARCHAR(50) NOT NULL UNIQUE,
                 password VARCHAR(255) NOT NULL,
-                role ENUM('admin', 'user') DEFAULT 'user',
+                role ENUM('admin', 'user', 'agency_admin') DEFAULT 'user',
                 email_confirmed BOOLEAN DEFAULT FALSE,
                 email_confirmation_token VARCHAR(255) DEFAULT NULL,
                 remember_token VARCHAR(255) DEFAULT NULL, 
