@@ -34,4 +34,21 @@ class Payment extends Model
   //   $updateQuery->bind_param('si', 'approved', $paymentId);
   //   return $updateQuery->execute();
   // }
+    public function getTotalPaymentsByDateRange(mixed $startDate, mixed $endDate)
+    {
+        $sql = "SELECT SUM(amount) as total FROM payments WHERE created_at BETWEEN ? AND ?";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ss", $startDate, $endDate);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $total = $result->fetch_assoc();
+
+        if (!$total['total']) {
+            return 0;
+        }
+
+        return $total['total'];
+    }
 }
