@@ -7,7 +7,7 @@ class RoleMiddleware {
             exit;
         }
 
-        // Check if the user is an admin
+        // Check the users role
         global $conn;
         require_once implode(DIRECTORY_SEPARATOR, [ __DIR__ , '..', 'models', 'User.php']);
         $user = new User($conn);

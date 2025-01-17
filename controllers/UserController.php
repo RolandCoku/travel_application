@@ -46,16 +46,13 @@ class UserController extends Controller
             $user = $this->user->getByEmail($email);
             if ($this->loginAttempt->isLockedOut($user['id'])) {
                 //Get the time remaining until the lockout is lifted
-                $lockoutTime = strtotime($this->loginAttempt->getByUserId($user['id'])['lockout_time']);
-                $timeRemaining = $lockoutTime - time();
-                $minutesRemaining = ceil($timeRemaining / 60);
-                redirect('/login', ['error' => 'You are locked out. Please try again in ' . $minutesRemaining . ' minutes.']);
+                $minutesRemaining = $this->loginAttempt->getMinutesRemaining($user['id']);
+                redirect('/login', ['error' => 'You are locked out. Please try again in ' . $minutesRemaining . ' minutes.'], 'login');
             }
 
             if (!$this->user->emailExists($email)) {
                 redirect('/login', ['error' => 'Invalid email or password'], 'login');
             }
-
 
             if (!$this->user->isConfirmed($email)) {
                 $token = $this->user->getByEmail($email)['email_confirmation_token'];
@@ -151,6 +148,7 @@ class UserController extends Controller
 
             if ($this->user->create($data)) {
                 $this->log->log($this->user->getByEmail($email)['id'], 'User created');
+
                 EmailHelpers::sendConfirmationEmail($email, $emailConfirmationToken);
                 redirect('/confirm-email?email=' . $email);
             } else {

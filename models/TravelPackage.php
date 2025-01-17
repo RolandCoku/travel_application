@@ -128,7 +128,7 @@ class TravelPackage extends Model
         ];
     }
 
-    public function getTopPackages(int $limit, array $keys)
+    public function getTopPackages(int $limit, array $keys): array
     {
 
         $aliasKeys = array_map(function ($key) {
