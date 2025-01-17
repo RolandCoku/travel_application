@@ -129,4 +129,43 @@ class User extends Model
         $stmt->bind_param("s", $userEmail);
         $stmt->execute();
     }
+
+    public function setPasswordResetToken(mixed $email, string $token): void
+    {
+        $sql_update = "UPDATE users SET password_reset_token = ? WHERE email = ?";
+        $stmt = $this->conn->prepare($sql_update);
+        $stmt->bind_param("ss", $token, $email);
+        $stmt->execute();
+    }
+
+    public function findByPasswordResetToken(mixed $token): false|array|null
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE password_reset_token = ?");
+        $stmt->bind_param('s', $token);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            return false;
+        }
+
+        return $result->fetch_assoc();
+    }
+
+    public function resetPassword(mixed $email, mixed $newPassword): void
+    {
+        $sql_update = "UPDATE users SET password = ? WHERE email = ?";
+        $stmt = $this->conn->prepare($sql_update);
+        $stmt->bind_param("ss", $newPassword, $email);
+        $stmt->execute();
+    }
+
+    public function clearPasswordResetToken(mixed $email): void
+    {
+        $sql_update = "UPDATE users SET password_reset_token = NULL WHERE email = ?";
+        $stmt = $this->conn->prepare($sql_update);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+    }
 }

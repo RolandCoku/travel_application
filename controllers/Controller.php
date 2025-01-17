@@ -13,6 +13,7 @@ class Controller
             echo "File not found: " . $filePath;
             die;
         }
+
         require_once $filePath;
     }
 }

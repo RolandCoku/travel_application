@@ -36,7 +36,6 @@ class UserController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             self::loadView('user/login');
-
         } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'] ?? '';
             $password = $_POST['password'] ?? '';
@@ -196,6 +195,57 @@ class UserController extends Controller
         } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $email = $_GET['email'] ?? null;
             self::loadView('user/confirm_email', ['email' => $email]);
+        }
+    }
+
+    public function forgotPassword(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            self::loadView('user/forgot-password');
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = $_POST['email'] ?? null;
+
+            if (!$this->user->emailExists($email)) {
+                redirect('/forgot-password', ['error' => 'Email not found'], 'forgot-password');
+            }
+
+            $token = bin2hex(random_bytes(16));
+            $this->user->setPasswordResetToken($email, $token);
+
+            EmailHelpers::sendPasswordResetEmail($email, $token);
+            $this->log->log($this->user->getByEmail($email)['id'], 'Password reset email sent');
+
+            self::loadView('user/password-reset-email-sent', ['email' => $email]);
+        }
+    }
+
+    public function resetPassword(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $token = $_GET['token'] ?? null;
+            $email = $_GET['email'] ?? null;
+
+            if (!$this->user->findByPasswordResetToken($token)) {
+                redirect('/forgot-password', ['error' => 'Invalid or expired password reset token.'], 'forgot-password');
+            }
+            self::loadView('user/reset_password', ['email' => $email]);
+
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = $_POST['email'] ?? null;
+            $newPassword = $_POST['new_password'] ?? null;
+            $confirmPassword = $_POST['confirm_password'] ?? null;
+
+            if ($newPassword !== $confirmPassword) {
+                redirect('/reset-password?email=' . $email, ['error' => 'Passwords do not match'], 'reset-password');
+            }
+
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+            $this->user->resetPassword($email, $hashedPassword);
+            $this->user->clearPasswordResetToken($email);
+            $this->log->log($this->user->getByEmail($email)['id'], 'Password reset');
+
+            redirect('/login', ['success' => 'Password reset successfully. Please login to your account!'], 'login');
         }
     }
 

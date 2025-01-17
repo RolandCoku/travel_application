@@ -26,6 +26,7 @@ function runMigration($conn): void
                 email_confirmed BOOLEAN DEFAULT FALSE,
                 email_confirmation_token VARCHAR(255) DEFAULT NULL,
                 remember_token VARCHAR(255) DEFAULT NULL, 
+                password_reset_token VARCHAR(255) DEFAULT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )

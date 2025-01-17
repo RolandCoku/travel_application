@@ -50,6 +50,12 @@ switch ($route) {
     case '/confirm-email':
         $userController->confirmEmail();
         break;
+    case '/forgot-password':
+        $userController->forgotPassword();
+        break;
+    case '/reset-password':
+        $userController->resetPassword();
+        break;
 
     // Protected Routes (Require Login)
     case '/account-dashboard':

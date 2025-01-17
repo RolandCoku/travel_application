@@ -73,5 +73,17 @@ class EmailHelpers
         return self::sendEmail($email, $subject, $body);
     }
 
+    public static function sendPasswordResetEmail($email, $token): bool
+    {
+        $resetUrl = "http://localhost/reset-password?token=$token&" . urlencode($email);
+        $subject = "Reset your password";
+        $body = "
+                <p>Click the button below to reset your password:</p>
+                <a href='$resetUrl' style='background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; text-decoration: none;'>Reset Password</a>
+                ";
+
+        return self::sendEmail($email, $subject, $body);
+    }
+
 
 }

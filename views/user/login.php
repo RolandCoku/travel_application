@@ -40,7 +40,7 @@ require_once app_path('includes/layout-header.php');
         <div class="form-options">
             <label class="remember-me">
                 <input type="checkbox" name="remember-me"> Remember me</label>
-            <a href="#">Forgot Password?</a>
+            <a href="/forgot-password">Forgot Password?</a>
         </div>
         <button type="submit" class="btn-primary">Login</button>
         <div class="register-link">
