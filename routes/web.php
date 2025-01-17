@@ -66,7 +66,6 @@ switch ($route) {
         $adminController->dashboard();
         break;
     case '/admin/travel-agencies':
-        //TODO: Fetch travel agencies (Select id, name, email, address, phone, website)
         $adminController->agencies();
         break;
     case '/admin/travel-agencies/register':
@@ -74,15 +73,12 @@ switch ($route) {
         $adminController->registerAgency();
         break;
     case '/admin/bookings':
-        //TODO: Fetch bookings (Select id, client name, email, agency, travel package name, booking date)
         $adminController->bookings();
         break;
     case '/admin/reviews':
-        //TODO: Fetch reviews (Select id, user name, package name, Comment, Rating)
         $adminController->reviews();
         break;
     case '/admin/travel-packages':
-        //TODO: Fetch travel packages (Select id, agency, name, description, price, date, duration, free seats)
         $adminController->travelPackages();
         break;
 
