@@ -112,4 +112,10 @@
     color: var(--color-white); /* Ensure text contrasts on hover */
 }
 
+.error-message {
+    color: var(--color-danger); /* Define a suitable error color in your CSS variables */
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
 

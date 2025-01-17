@@ -1,8 +1,8 @@
 <?php
 $title = 'Add New Travel Agency';
 $cssFiles = [
-    '/admin/adminDashboard.css',
-    '/admin/travel-agency/create.css',
+    '/admin/adminDashboard.css?v=' . time(),
+    '/admin/travel-agency/create.css?v=' . time(),
     'boxicons-2.1.4/css/boxicons.min.css'
 ];
 require_once app_path('includes/layout-header.php'); ?>

@@ -7,12 +7,14 @@ class TravelAgencyController extends Controller
 
     private TravelAgency $travelAgency;
     private User $user;
+    private Log $log;
 
     public function __construct()
     {
         global $conn;
         $this->travelAgency = new TravelAgency($conn);
         $this->user = new User($conn);
+        $this->log = new Log($conn);
     }
 
 
@@ -78,6 +80,7 @@ class TravelAgencyController extends Controller
 
         if ($this->travelAgency->create($newAgency)) {
             $this->user->updateById($user['id'], ['role' => 'agency_admin']);
+            $this->log->create(['user_id' => $user['id'], 'action' => 'Changed role of ' . $user['email'] . ' to agency_admin']);
             redirect('/admin/travel-agencies', ['success' => 'Travel agency created successfully'], 'travel-agencies');
         } else {
             redirect('/admin/travel-agencies', ['error' => 'Failed to create travel agency'], 'travel-agencies');
