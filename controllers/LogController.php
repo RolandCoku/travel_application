@@ -18,16 +18,22 @@ class LogController extends Controller
         $limit = $_GET['limit'] ?? 5;
         $result = $this->log->getLogs($page, $limit, ['action', 'logs.created_at'], ['name', 'email']);
 
-        $logs = [];
+        $data = [];
         while ($row = $result->fetch_assoc()) {
-            $logs[$row['id']]['log']['action'] = $row['action'];
-            $logs[$row['id']]['log']['created_at'] = $row['created_at'];
-            $logs[$row['id']]['user']['name'] = $row['name'];
-            $logs[$row['id']]['user']['email'] = $row['email'];
+            $data[] = [
+                'log' => [
+                    'action' => $row['action'],
+                    'created_at' => $row['created_at']
+                ],
+                'user' => [
+                    'name' => $row['name'],
+                    'email' => $row['email']
+                ]
+            ];
         }
 
         header('Content-Type: application/json');
-        echo json_encode($logs);
+        echo json_encode($data);
         exit;
     }
 }

@@ -60,7 +60,7 @@ class PaymentController extends Controller
         $agencyEmail = 'sb-85a47f36460352@business.example.com';
 
         $imageModel = new Image($conn);
-        $image = $imageModel->getByTravelPackageId($_POST['travel_package_id']);
+        $image = $imageModel->getImagesByEntity('travel_package', $travelPackage['id'])->fetch_assoc();
         $imageUrl = $image['image_url'] ?? 'default.jpg';
 
         $result = $paypalService->createOrder(

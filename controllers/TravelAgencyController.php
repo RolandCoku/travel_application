@@ -80,7 +80,7 @@ class TravelAgencyController extends Controller
 
         if ($this->travelAgency->create($newAgency)) {
             $this->user->updateById($user['id'], ['role' => 'agency_admin']);
-            $this->log->create(['user_id' => $user['id'], 'action' => 'Changed role of ' . $user['email'] . ' to agency_admin']);
+            $this->log->log($user['id'], 'Changed role of ' . $user['email'] . ' to agency_admin');
             redirect('/admin/travel-agencies', ['success' => 'Travel agency created successfully'], 'travel-agencies');
         } else {
             redirect('/admin/travel-agencies', ['error' => 'Failed to create travel agency'], 'travel-agencies');
