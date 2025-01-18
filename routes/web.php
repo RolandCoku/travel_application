@@ -7,6 +7,8 @@ require_once app_path('controllers/BookingController.php');
 require_once app_path('controllers/TravelAgencyController.php');
 require_once app_path('controllers/AdminController.php');
 require_once app_path('controllers/LogController.php');
+require_once app_path('controllers/ReviewController.php');
+require_once app_path('controllers/PaymentController.php');
 
 
 // Middleware
@@ -20,6 +22,8 @@ $bookingController = new BookingController();
 $travelAgencyController = new TravelAgencyController();
 $adminController = new AdminController();
 $logController = new LogController();
+$reviewController = new ReviewController();
+$paymentController = new PaymentController();
 
 //Initiate the middleware
 $authMiddleware = new AuthMiddleware();
@@ -48,6 +52,12 @@ switch ($route) {
     case '/confirm-email':
         $userController->confirmEmail();
         break;
+    case '/forgot-password':
+        $userController->forgotPassword();
+        break;
+    case '/reset-password':
+        $userController->resetPassword();
+        break;
 
     // Protected Routes (Require Login)
     case '/account-dashboard':
@@ -64,23 +74,21 @@ switch ($route) {
         $adminController->dashboard();
         break;
     case '/admin/travel-agencies':
-        //TODO: Fetch travel agencies (Select id, name, email, address, phone, website)
         $adminController->agencies();
         break;
     case '/admin/travel-agencies/register':
-        //TODO: Store handle form submission
         $adminController->registerAgency();
         break;
+    case '/admin/travel-agencies/store':
+        $travelAgencyController->store();
+        break;
     case '/admin/bookings':
-        //TODO: Fetch bookings (Select id, client name, email, agency, travel package name, booking date)
         $adminController->bookings();
         break;
     case '/admin/reviews':
-        //TODO: Fetch reviews (Select id, user name, package name, Comment, Rating)
         $adminController->reviews();
         break;
     case '/admin/travel-packages':
-        //TODO: Fetch travel packages (Select id, agency, name, description, price, date, duration, free seats)
         $adminController->travelPackages();
         break;
 
@@ -146,10 +154,10 @@ switch ($route) {
         $bookingController->create();
         break;
     case '/bookings/store': // also starts the payment
-      require_once app_path('controllers/PaymentController.php');
-      $paymentController = new PaymentController();
-      $paymentController->store();
-      break;
+        require_once app_path('controllers/PaymentController.php');
+        $paymentController = new PaymentController();
+        $paymentController->store();
+        break;
 
     // Payment processing routes
   case '/payment/processing':
@@ -211,6 +219,10 @@ switch ($route) {
             case 'countByDate':
                 $userController->countUsersByRegisteredDateRange();
 
+            case 'search':
+                $userController->searchUsers();
+
+
             default:
                 header('Content-Type: application/json');
                 http_response_code(400);
@@ -240,6 +252,10 @@ switch ($route) {
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
+            case 'paginate':
+                $travelPackageController->getAllPaginated();
+            case 'topPackages':
+                $travelPackageController->getTopPackages();
 
             default:
                 header('Content-Type: application/json');
@@ -267,6 +283,24 @@ switch ($route) {
                 exit;
         }
 
+    // Reviews API Routes
+    case '/api/admin/reviews':
+        $action = $_GET['action'] ?? null;
+
+        switch ($action) {
+            case 'paginate':
+                $reviewController->getAllPaginated();
+            case 'latest':
+                $reviewController->getLatestReviews();
+
+
+            default:
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action parameter']);
+                exit;
+        }
+
     //Logs API Routes
     case '/api/admin/logs':
         $action = $_GET['action'] ?? null;
@@ -280,6 +314,24 @@ switch ($route) {
                 echo json_encode(['error' => 'Invalid action parameter']);
                 exit;
         }
+
+    // Payment API Routes
+    case '/api/admin/payments':
+        $action = $_GET['action'] ?? null;
+
+        switch ($action):
+            case 'totalByDateRange':
+                $paymentController->getTotalPaymentsByDateRange();
+                break;
+
+            default:
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action parameter']);
+                exit;
+        endswitch;
+        break;
+
 
     // Keep-Alive Route (For Session Management)
     case '/keep-alive':

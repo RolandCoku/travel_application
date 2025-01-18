@@ -2,13 +2,16 @@
 
 use App\Helpers\PayPalService;
 
-class PaymentController extends Controller {
+class PaymentController extends Controller
+{
   private $conn;
-  
-  public function __construct(){
+
+  public function __construct()
+  {
     global $conn;
     $this->conn = $conn;
   }
+
 
   public function store(): void
   { // krijon nje approved booking dhe pending payment dhe ben redirect drejt paypal
@@ -20,16 +23,16 @@ class PaymentController extends Controller {
     $travelPackageRepo = new TravelPackage($conn);
     $paypalService = new PayPalService();
     $agencyModel = new TravelAgency($conn);
-    
+
     $travelPackage = $travelPackageRepo->getById($_POST['travel_package_id']);
     $nextSeats = $travelPackage['occupied_seats'] + 1;
-    if($nextSeats > $travelPackage['seats']){
+    if ($nextSeats > $travelPackage['seats']) {
       header('Location : /payment/error?message=' . urlencode("No more available seats"));
     }
 
     $agency = $agencyModel->getById($travelPackage['agency_id']);
-    
-    if(!$agency){
+
+    if (!$agency) {
       echo 'Database error';
       exit();
     }
@@ -40,7 +43,7 @@ class PaymentController extends Controller {
     $agencyEmail = 'sb-85a47f36460352@business.example.com';
 
     $imageModel = new Image($conn);
-    $image = $imageModel->getByTravelPackageId($_POST['travel_package_id']);
+    $image = $imageModel->getImagesByEntity('travel_package', $travelPackage['id'])->fetch_assoc();
     $imageUrl = $image['image_url'] ?? 'default.jpg';
 
     $result = $paypalService->createOrder(
@@ -83,7 +86,7 @@ class PaymentController extends Controller {
       echo 'Error creating booking in the database';
       exit();
     }
-    error_log("payment ids of the new entry". json_encode($bookingIDs));
+    error_log("payment ids of the new entry" . json_encode($bookingIDs));
     error_log(json_encode($bookingIDs));
 
     // Find the "approve" link in the response
@@ -115,7 +118,7 @@ class PaymentController extends Controller {
     $paypalService = new PayPalService();
 
     $token = $_POST['token'];
-    if(!$paypalService->verifyOrder($token)){
+    if (!$paypalService->verifyOrder($token)) {
       echo json_encode([
         'success' => false,
         'error' => "You might've not finished the payment correcty",
@@ -135,15 +138,23 @@ class PaymentController extends Controller {
       exit;
     }
     $data = $result['data'];
- 
+    /////
+    // ketu duhet te bejme update databazen me payment info
+    /////
     require_once app_path('models/Booking.php');
+    // require_once __DIR__ . '/../helpers/PayPalService.php';
+    // //ktu do bejme get te dhenat e marra nga payment
     $bookingRepo = new Booking($this->conn);
-    if(!$bookingRepo->finishBooking($_SESSION['booking_id'], $_SESSION['payment_id'])){
-      echo "payment is done, but there's a server problem, please contact the agency to mark your payment as done";
-    }
+    $bookingRepo->finishBooking($_SESSION['booking_id'], $_SESSION['payment_id']);
     unset($_SESSION['booking_id']);
     unset($_SESSION['payment_id']);
-    header('Location: /payment/success?orderId='. urlencode($data['id']));
+    // echo json_encode([
+    //   'orderId' => $data['id'],
+    //   'status' => $data['status'],          // COMPLETED, etc
+    //   'orderDetails' => $data,
+    //   'redirectUrl' => '/payment/success'. urlencode($data['id'])     // Where to redirect after success //duhet te shtoj edhe urlencoded per orderid
+    // ]);
+    header('Location: /payment/success?orderId=' . urlencode($data['id']));
     exit;
   }
 
@@ -154,7 +165,7 @@ class PaymentController extends Controller {
     // //ktu do bejme get te dhenat e marra nga payment
     // $bookingRepo = new Booking($this->conn);
     $paypalService = new PayPalService();
-    
+
     $data = $paypalService->getOrderDetails($_GET['orderId']);
 
     echo json_encode($data);
@@ -169,16 +180,25 @@ class PaymentController extends Controller {
     echo $_GET['message'];
     // self::loadView('user/booking/paymentFailure.php');
   }
-
   public function paymentCancel(): void
-  {
-    require_once app_path('models/Booking.php');
-    global $conn;
-    // $_SESSION['booking_id'] = 28;
-    $bookingRepo = new Booking($conn);
-    $bookingRepo->deleteAndReturnSeat($_SESSION['booking_id']);
+  { // do bej view tamam
+    parent::loadView('');
+    exit();
+  }
 
-    unset($_SESSION['booking_id']);
-    unset($_SESSION['payment_id']);
+  // API endpoints
+  public function getTotalPaymentsByDateRange(): void
+  {
+    require_once app_path('models/Payment.php');
+    $payment = new Payment($this->conn);
+
+    $startDate = $_GET['startDate'];
+    $endDate = $_GET['endDate'];
+
+    $result = $payment->getTotalPaymentsByDateRange($startDate, $endDate);
+
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit;
   }
 }

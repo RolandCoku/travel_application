@@ -1,8 +1,8 @@
 <?php
 $title = 'Add New Travel Agency';
 $cssFiles = [
-    '/admin/adminDashboard.css',
-    '/admin/travel-agency/create.css',
+    '/admin/adminDashboard.css?v=' . time(),
+    '/admin/travel-agency/create.css?v=' . time(),
     'boxicons-2.1.4/css/boxicons.min.css'
 ];
 require_once app_path('includes/layout-header.php'); ?>
@@ -20,18 +20,14 @@ require_once app_path('includes/layout-header.php'); ?>
 
         <!-- Add Travel Agency Form -->
         <div class="form-container">
-            <form id="create-agency-form" action="/agencies/store" method="POST">
+            <form id="create-agency-form" action="/admin/travel-agencies/store" method="POST">
                 <div class="form-group">
-                    <label for="user_id">Admin</label>
-                    <select id="user_id" name="user_id" class="form-control" required>
-                        <option value="">Select Admin</option>
-                        <?php if (isset($admins)) {
-                            foreach ($admins as $admin): ?>
-                                <option value="<?= $admin['id'] ?>"><?= $admin['name'] ?> (<?= $admin['email'] ?>)</option>
-                            <?php endforeach;
-                        } ?>
-                    </select>
+                    <label for="email">Admin</label>
+                    <!-- Search field for admin email -->
+                    <input type="email" id="email" name="email" class="form-control" required />
+                    <div id="suggestions-container" class="suggestions"></div>
                 </div>
+
 
                 <div class="form-group">
                     <label for="name">Agency Name</label>
@@ -92,80 +88,9 @@ require_once app_path('includes/layout-header.php'); ?>
 </div>
 
 <?php
-$jsFile = '/admin/adminDashboard.js';
+
+$jsFiles = [
+    '/admin/travel-agency/create.js?v=' . time(),
+];
 require_once app_path('includes/layout-footer.php'); ?>
 
-<style>
-    .form-container {
-        background: var(--color-white);
-        padding: var(--card-padding);
-        border-radius: var(--card-border-radius);
-        box-shadow: var(--box-shadow);
-        width: 100%;
-        margin: 2rem auto;
-    }
-
-    .form-group {
-        margin-bottom: 1.2rem;
-    }
-
-    .form-group label {
-        display: block;
-        font-weight: 500;
-        margin-bottom: 0.5rem;
-        color: var(--color-dark);
-    }
-
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-        width: 100%;
-        padding: 0.8rem;
-        border: 1px solid var(--color-light);
-        border-radius: var(--border-radius-1);
-        background: var(--color-info-light);
-        color: var(--color-dark);
-        font-size: 0.9rem;
-        outline: none;
-        transition: all 300ms ease;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
-        border-color: var(--color-primary);
-    }
-
-    .form-actions {
-        display: flex;
-        justify-content: space-between;
-        gap: 1rem;
-    }
-
-    .form-actions .btn {
-        padding: 0.8rem 1.6rem;
-        border: none;
-        border-radius: var(--border-radius-1);
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 300ms ease;
-    }
-
-    .form-actions .btn.primary {
-        background: var(--color-primary);
-        color: var(--color-white);
-    }
-
-    .form-actions .btn.primary:hover {
-        background: var(--color-primary-variant);
-    }
-
-    .form-actions .btn.secondary {
-        background: var(--color-light);
-        color: var(--color-dark);
-    }
-
-    .form-actions .btn.secondary:hover {
-        background: var(--color-info-light);
-    }
-</style>

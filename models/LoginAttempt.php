@@ -17,7 +17,12 @@ class LoginAttempt extends Model
             $loginAttempt['failed_attempts']++;
             $this->update($loginAttempt);
         } else {
-            $this->create(['user_id' => $user_id, 'failed_attempts' => 1]);
+            $this->create(['user_id' => $user_id, 'failed_attempts' => 1, 'lockout_time' => null]);
+        }
+
+        // Lockout the user if they have failed 7 times or more
+        if ($loginAttempt['failed_attempts'] >= 7) {
+            $this->lockout($user_id);
         }
     }
 
@@ -36,10 +41,10 @@ class LoginAttempt extends Model
         $loginAttempt = $this->getByUserId($user_id);
 
         if ($loginAttempt) {
-            $loginAttempt['lockout_time'] = date('Y-m-d H:i:s', strtotime('+5 minutes'));
+            $loginAttempt['lockout_time'] = date('Y-m-d H:i:s', strtotime('+30 minutes'));
             $this->update($loginAttempt);
         } else {
-            $this->create(['user_id' => $user_id, 'lockout_time' => date('Y-m-d H:i:s', strtotime('+5 minutes'))]);
+            $this->create(['user_id' => $user_id, 'lockout_time' => date('Y-m-d H:i:s', strtotime('+30 minutes'))]);
         }
     }
 
@@ -64,7 +69,20 @@ class LoginAttempt extends Model
         }
     }
 
-    public function getByUserId($user_id): false|array|null
+    public function getMinutesRemaining($user_id): int
+    {
+        $loginAttempt = $this->getByUserId($user_id);
+
+        if ($loginAttempt) {
+            $lockoutTime = strtotime($loginAttempt['lockout_time']);
+            $timeRemaining = $lockoutTime - time();
+            return ceil($timeRemaining / 60);
+        }
+
+        return 0;
+    }
+
+    private function getByUserId($user_id): false|array|null
     {
         $sql_select = "SELECT * FROM login_attempts WHERE user_id = ?";
 
@@ -78,4 +96,5 @@ class LoginAttempt extends Model
 
         return $result->fetch_assoc();
     }
+
 }

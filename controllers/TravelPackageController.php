@@ -89,4 +89,24 @@ class TravelPackageController extends Controller
     public function adminShow()
     {
     }
+
+    public function getAllPaginated()
+    {
+        $page = $_GET['page'] ?? 1;
+        $limit = $_GET['limit'] ?? 10;
+        $travelPackages = $this->travelPackage->paginate($page, $limit, ['travel_packages.id', 'travel_packages.name', 'travel_packages.description', 'price', 'start_date', 'end_date', 'agencies.name', 'seats', 'occupied_seats']);
+
+        header('Content-Type: application/json');
+        echo json_encode($travelPackages);
+        exit;
+    }
+
+    public function getTopPackages()
+    {
+        $limit = $_GET['limit'] ?? 5;
+        $travelPackages = $this->travelPackage->getTopPackages($limit, ['travel_packages.id', 'travel_packages.name']);
+        header('Content-Type: application/json');
+        echo json_encode($travelPackages);
+        exit;
+    }
 }

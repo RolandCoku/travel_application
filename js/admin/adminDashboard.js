@@ -50,6 +50,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    const fetchPaymentTotalByDateRange = async (start_date, end_date) => {
+        try {
+            return await fetchData(`/api/admin/payments?action=totalByDateRange&startDate=${start_date}&endDate=${end_date}`);
+        } catch (error) {
+            console.error("Error fetching payment total by date range:", error);
+            return 0;
+        }
+    }
+
     const displayUsers = (users) => {
         usersTableBody.innerHTML = ""; // Clear existing rows
 
@@ -130,10 +139,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
             document.querySelector(".new-users h1").textContent = await countUsersByDateRange(startDate, endDate);
             document.querySelector(".bookings h1").textContent = await countBookingsByDateRange(startDate, endDate);
+            document.querySelector(".expenses h1").textContent = await fetchPaymentTotalByDateRange(startDate, endDate);
         } catch (error) {
             console.error("Error updating card counts:", error);
             document.querySelector(".new-users h1").textContent = "Error";
             document.querySelector(".bookings h1").textContent = "Error";
+            document.querySelector(".expenses h1").textContent = "Error";
         }
     };
 

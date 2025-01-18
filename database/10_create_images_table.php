@@ -20,14 +20,14 @@ function runMigration($conn): void
         $createImagesTableQuery = "
             CREATE TABLE images (
                 id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                travel_package_id INT(6) UNSIGNED NOT NULL,
+                entity_type ENUM('agency', 'travel_package', 'user') NOT NULL, 
+                entity_id INT(6) UNSIGNED NOT NULL,
                 image_url VARCHAR(255) NOT NULL,
-                alt_text VARCHAR(255) NOT NULL,
-                type ENUM('main', 'secondary') DEFAULT 'secondary',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                FOREIGN KEY (travel_package_id) REFERENCES travel_packages(id) ON DELETE CASCADE
-            )
+                alt_text VARCHAR(255) DEFAULT NULL, 
+                type ENUM('main', 'secondary') DEFAULT 'secondary', 
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
+            );
         ";
 
         if ($conn->query($createImagesTableQuery) === TRUE) {

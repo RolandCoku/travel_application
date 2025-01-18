@@ -54,31 +54,16 @@ require_once app_path('includes/layout-header.php'); ?>
             </div>
         </div>
 
-        <div class="sales-analytics">
-            <h2>Latest Reviews</h2>
-            <div class="item">
-                <div>
-                    <h3>Paris</h3>
-                    <p>250 bookings</p>
-                </div>
-            </div>
-            <div class="item">
-                <div>
-                    <h3>Bali</h3>
-                    <p>200 bookings</p>
-                </div>
-            </div>
-            <div class="item">
-                <div>
-                    <h3>New York</h3>
-                    <p>180 bookings</p>
-                </div>
-            </div>
+        <div class="recent-updates">
+
         </div>
+
     </div>
 </div>
 
 <?php
-$jsFile = '/adminDashboard.js';
+$jsFiles = [
+        '/admin/reviews.js'
+];
 require_once app_path('includes/layout-footer.php');
 ?>

@@ -36,7 +36,6 @@ class UserController extends Controller
 
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             self::loadView('user/login');
-
         } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'] ?? '';
             $password = $_POST['password'] ?? '';
@@ -46,16 +45,13 @@ class UserController extends Controller
             $user = $this->user->getByEmail($email);
             if ($this->loginAttempt->isLockedOut($user['id'])) {
                 //Get the time remaining until the lockout is lifted
-                $lockoutTime = strtotime($this->loginAttempt->getByUserId($user['id'])['lockout_time']);
-                $timeRemaining = $lockoutTime - time();
-                $minutesRemaining = ceil($timeRemaining / 60);
-                redirect('/login', ['error' => 'You are locked out. Please try again in ' . $minutesRemaining . ' minutes.']);
+                $minutesRemaining = $this->loginAttempt->getMinutesRemaining($user['id']);
+                redirect('/login', ['error' => 'You are locked out. Please try again in ' . $minutesRemaining . ' minutes.'], 'login');
             }
 
             if (!$this->user->emailExists($email)) {
                 redirect('/login', ['error' => 'Invalid email or password'], 'login');
             }
-
 
             if (!$this->user->isConfirmed($email)) {
                 $token = $this->user->getByEmail($email)['email_confirmation_token'];
@@ -151,6 +147,7 @@ class UserController extends Controller
 
             if ($this->user->create($data)) {
                 $this->log->log($this->user->getByEmail($email)['id'], 'User created');
+
                 EmailHelpers::sendConfirmationEmail($email, $emailConfirmationToken);
                 redirect('/confirm-email?email=' . $email);
             } else {
@@ -201,6 +198,57 @@ class UserController extends Controller
         }
     }
 
+    public function forgotPassword(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            self::loadView('user/forgot-password');
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = $_POST['email'] ?? null;
+
+            if (!$this->user->emailExists($email)) {
+                redirect('/forgot-password', ['error' => 'Email not found'], 'forgot-password');
+            }
+
+            $token = bin2hex(random_bytes(16));
+            $this->user->setPasswordResetToken($email, $token);
+
+            EmailHelpers::sendPasswordResetEmail($email, $token);
+            $this->log->log($this->user->getByEmail($email)['id'], 'Password reset email sent');
+
+            self::loadView('user/password-reset-email-sent', ['email' => $email]);
+        }
+    }
+
+    public function resetPassword(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $token = $_GET['token'] ?? null;
+            $email = $_GET['email'] ?? null;
+
+            if (!$this->user->findByPasswordResetToken($token)) {
+                redirect('/forgot-password', ['error' => 'Invalid or expired password reset token.'], 'forgot-password');
+            }
+            self::loadView('user/reset_password', ['email' => $email]);
+
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = $_POST['email'] ?? null;
+            $newPassword = $_POST['new_password'] ?? null;
+            $confirmPassword = $_POST['confirm_password'] ?? null;
+
+            if ($newPassword !== $confirmPassword) {
+                redirect('/reset-password?email=' . $email, ['error' => 'Passwords do not match'], 'reset-password');
+            }
+
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+            $this->user->resetPassword($email, $hashedPassword);
+            $this->user->clearPasswordResetToken($email);
+            $this->log->log($this->user->getByEmail($email)['id'], 'Password reset');
+
+            redirect('/login', ['success' => 'Password reset successfully. Please login to your account!'], 'login');
+        }
+    }
+
     public function accountDashboard(): void
     {
         $user = $this->user->getByEmail($_SESSION['user_email']);
@@ -235,6 +283,24 @@ class UserController extends Controller
         $nrUsers = $this->user->countByDateRange($startDate, $endDate);
         header('Content-Type: application/json');
         echo json_encode($nrUsers);
+        exit;
+    }
+
+    #[NoReturn] public function searchUsers(): void
+    {
+        $searchQuery = $_GET['search_query'] ?? null;
+        $limit = $_GET['limit'] ?? 10;
+        $offset = $_GET['offset'] ?? 0;
+
+        $result = $this->user->search($searchQuery, $limit, $offset, ['id', 'name', 'email', 'role']);
+
+        $users = [];
+        while ($row = $result->fetch_assoc()) {
+            $users[] = $row;
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($users);
         exit;
     }
 
