@@ -14,7 +14,6 @@ class PaymentController extends Controller {
   { // krijon nje approved booking dhe pending payment dhe ben redirect drejt paypal
     // ketu duhet rishikuar radha e krijimit te booking, payment dhe paypal order
     require_once app_path('models/TravelPackage.php');
-
     require_once app_path('helpers/PayPalService.php');
     global $conn;
 
