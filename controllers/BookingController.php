@@ -151,13 +151,15 @@ class BookingController extends Controller
   public function getBookingsByDateRangeForAgency(): void
   {
     $bookings = $this->booking->getByDateRangeForAgency($_GET['start_date'], $_GET['end_date'], $_SESSION['agency_id']);
+    header('Content-Type: application/json');
     echo json_encode($bookings);
     exit;
   }
 
   public function countBookingsByDateRangeForAgency(): void
   {
-    $nrBookings = $this->booking->countByDateRange($_GET['start_date'], $_GET['end_date']);
+    $agency_id = $_SESSION['agency_id'];
+    $nrBookings = $this->booking->countByDateRangeForAgency($_GET['start_date'], $_GET['end_date'], );
     header('Content-Type: application/json');
     echo json_encode($nrBookings);
     exit;

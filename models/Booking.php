@@ -169,4 +169,21 @@ class Booking extends Model
 
     return $data;
   }
+
+  public function countByDateRangeForAgency($startDate, $endDate, $agencyId)
+  {
+      $queryString = "SELECT COUNT(*) FROM bookings
+                      JOIN travel_packages ON bookings.travel_package_id=travel_packages.id
+                      WHERE created_at BETWEEN ? AND ?
+                      AND travel_packages.agency_id = ?
+                      ";
+
+      $getQuery = $this->conn->prepare("$queryString");
+
+      $getQuery->bind_param('ssi', $startDate, $endDate, $agencyId);
+      $getQuery->execute();
+      $result = $getQuery->get_result();
+
+      return $result->fetch_row()[0];
+  }
 }
