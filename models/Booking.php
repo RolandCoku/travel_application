@@ -64,44 +64,61 @@ class Booking extends Model
     return $stmt->get_result();
   }
 
-  public function paginate(int $page, int $limit, array $keys = ['*']): array
-  {
+  public function paginate(int $page, int $limit, array $keys = ['*'], ?int $agencyId = null): array
+{
     $offset = ($page - 1) * $limit;
 
     $aliasedKeys = array_map(function ($key) {
-      // Replace the dot (.) with an underscore (_) to create an alias for the column to avoid ambiguity
-      return "$key AS " . str_replace('.', '_', $key);
+        // Replace the dot (.) with an underscore (_) to create an alias for the column to avoid ambiguity
+        return "$key AS " . str_replace('.', '_', $key);
     }, $keys);
-
 
     $aliasedKeysString = implode(', ', $aliasedKeys);
 
     $query = "SELECT $aliasedKeysString FROM $this->table
-                        JOIN users ON bookings.user_id = users.id
-                        JOIN travel_packages ON bookings.travel_package_id = travel_packages.id
-                        JOIN agencies ON travel_packages.agency_id = agencies.id
-                        LIMIT ? OFFSET ?;
-                        ";
+                JOIN users ON bookings.user_id = users.id
+                JOIN travel_packages ON bookings.travel_package_id = travel_packages.id";
+
+    if ($agencyId !== null) {
+        $query .= " JOIN payments ON payments.booking_id=bookings.id 
+        WHERE travel_packages.agency_id = ?";
+    } else {
+      $query .= " JOIN agencies ON travel_packages.agency_id = agencies.id";
+    }
+
+    $query .= " LIMIT ? OFFSET ?";
 
     $stmt = $this->conn->prepare($query);
 
-    $stmt->bind_param('ii', $limit, $offset);
+    $bindParams = [];
+    
+    if ($agencyId !== null) {
+        $bindParams[] = $agencyId;
+    }
+
+    $bindParams[] = $limit;
+    $bindParams[] = $offset;
+
+
+    $stmt->bind_param(str_repeat('i', count($bindParams)), ...$bindParams);
     $stmt->execute();
     $result = $stmt->get_result();
 
     $data = [];
     while ($row = $result->fetch_assoc()) {
-      $data[] = $row;
+        $data[] = $row;
     }
 
-    //Set the current page and the total number of pages
+    // Set the current page and the total number of pages
     $currentPage = $page;
-    $totalPages = ceil($this->conn->query("SELECT COUNT(*) FROM bookings")->fetch_row()[0] / $limit);
+    $totalPages = ceil($this->conn->query("SELECT COUNT(*) FROM bookings" . ($agencyId !== null ? "
+    JOIN travel_packages ON bookings.travel_package_id = travel_packages.id
+    WHERE travel_packages.agency_id = $agencyId" : "") )->fetch_row()[0] / $limit);
 
     return [
-      'currentPage' => $currentPage,
-      'totalPages' => $totalPages,
-      'data' => $data
+        'currentPage' => $currentPage,
+        'totalPages' => $totalPages,
+        'data' => $data
     ];
-  }
+}
 }
