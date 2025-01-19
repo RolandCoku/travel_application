@@ -38,7 +38,9 @@ class BookingController extends Controller
 
   public function create(): void
   {
-    $_SESSION['user_id'] = 1; // sa per prove
+    if(!isset($_SESSION['user_id'])){
+      $_SESSION['user_id'] = 1; // sa per prove
+    }
     require_once app_path('models/TravelAgency.php');
     require_once app_path('models/TravelPackage.php');
     global $conn;

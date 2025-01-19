@@ -75,6 +75,7 @@ class PaymentController extends Controller
       'booking_date' => $travelPackage['start_date'], //ketu sjam i sigurt, ndoshta do behet me post
       'total_price' => $travelPackage['price'],
     ];
+    error_log($booking['paypal_order_id']);
 
     require_once app_path('models/Booking.php');
     $bookingRepo = new Booking($conn);
@@ -94,6 +95,7 @@ class PaymentController extends Controller
       if ($link['rel'] === 'approve') {
         $_SESSION['payment_id'] = $bookingIDs['paymentId']; // payment id ne databaze
         $_SESSION['booking_id'] = $bookingIDs['bookingId'];
+        $_SESSION['travel_package_id'] = $_POST['travel_package_id'];
         $approveUrl = $link['href'];
         header('Location: ' . $approveUrl); // Redirect to PayPal
         exit();
@@ -168,21 +170,21 @@ class PaymentController extends Controller
 
     $data = $paypalService->getOrderDetails($_GET['orderId']);
 
-    echo json_encode($data);
+    // echo json_encode($data);
     // echo 'payment was successful';
-    // self::loadView('user/booking/paymentSuccess.php', $data);
+    self::loadView('user/bookings/paymentSuccess', $data);
   }
 
   public function paymentFailure(): void
   {
     //ktu do bejme get errorin
     //dhe ndoshta heqim nga databaza pagesen e fundit qe deshtoi
-    echo $_GET['message'];
-    // self::loadView('user/booking/paymentFailure.php');
+    // echo $_GET['message'];
+    self::loadView('user/bookings/paymentFailure');
   }
   public function paymentCancel(): void
   { // do bej view tamam
-    parent::loadView('');
+    header('Location: /bookings/create?travel_package_id=' . $_SESSION['travel_package_id']);
     exit();
   }
 
