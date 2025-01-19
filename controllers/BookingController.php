@@ -96,7 +96,8 @@ class BookingController extends Controller
 
     //API endpoints
 
-    #[NoReturn] public function getAllPaginated(): void
+    // #[NoReturn] 
+    public function getAllPaginated(): void
     {
         $bookings = $this->booking->paginate($_GET['page'], $_GET['limit'], ['bookings.id', 'users.name', 'email', 'travel_packages.name', 'agencies.name', 'booking_date', 'booking_status']);
         header('Content-Type: application/json');
@@ -119,7 +120,8 @@ class BookingController extends Controller
         exit;
     }
 
-    #[NoReturn] public function getTopDestinations(): void
+    // #[NoReturn] 
+    public function getTopDestinations(): void
     {
         $limit = $_GET['limit'] ?? 3;
         $result = $this->booking->getTopDestinations($limit);
