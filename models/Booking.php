@@ -60,7 +60,7 @@ class Booking extends Model
       if (!$bookingStmt) {
         throw new Exception("Booking prepare statement failed: " . $this->conn->error);
       }
-      $bookingStmt->bind_param("iis", $obj['user_id'], $obj['travel_package_id'], $obj['booking_date']);
+      $bookingStmt->bind_param("iss", $obj['user_id'], $obj['travel_package_id'], $obj['booking_date']);
       if (!$bookingStmt->execute()) {
         throw new Exception("Booking execute statement failed: " . $bookingStmt->error);
       }
