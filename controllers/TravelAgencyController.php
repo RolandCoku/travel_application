@@ -17,7 +17,6 @@ class TravelAgencyController extends Controller
         $this->log = new Log($conn);
     }
 
-
     public static function index(): void
     {
         self::loadView('user/travel-agency/index');
@@ -27,7 +26,6 @@ class TravelAgencyController extends Controller
     {
         self::loadView('user/travel-agency/show');
     }
-
 
     // Admin views
     public function adminDashboard(): void
@@ -111,12 +109,21 @@ class TravelAgencyController extends Controller
         header('Content-Type: application/json');
         echo json_encode($agencies);
         exit;
-
     }
 
     #[NoReturn] public function getTopAgencies(): void
     {
         $agencies = $this->travelAgency->getTopAgencies($_GET['limit'] ?? 5);
+        header('Content-Type: application/json');
+        echo json_encode($agencies);
+        exit;
+    }
+
+    #[NoReturn] public function getPaginatedWithImages(): void
+    {
+        $page = $_GET['page'] ?? 1;
+        $limit = $_GET['limit'] ?? 10;
+        $agencies = $this->travelAgency->paginateWithImages($page, $limit, ['agencies.id', 'agencies.name', 'agencies.description', 'phone', 'address', 'image_url', 'alt_text']);
         header('Content-Type: application/json');
         echo json_encode($agencies);
         exit;

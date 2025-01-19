@@ -142,6 +142,43 @@ class TravelAgency extends Model
         return $data;
     }
 
+    public function paginateWithImages(mixed $page, mixed $limit, array $array): array
+    {
+        //Get the agencies with their main images
+        $offset = ($page - 1) * $limit;
 
+        if (!empty($array)) {
+            $keys = implode(", ", $array);
+        } else {
+            $keys = "*";
+        }
 
+        $queryString = "SELECT $keys FROM agencies
+                        LEFT JOIN images ON agencies.id = images.entity_id AND images.entity_type = 'agency' AND images.type = 'main'
+                        LIMIT ? OFFSET ?;
+                        ";
+
+        $getQuery = $this->conn->prepare("$queryString");
+
+        $getQuery->bind_param('ii', $limit, $offset);
+
+        $getQuery->execute();
+
+        $result = $getQuery->get_result();
+
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[$row['name']] = $row;
+        }
+
+        //Set the current page and the total number of pages
+        $currentPage = $page;
+        $totalPages = ceil($this->conn->query("SELECT COUNT(*) FROM agencies")->fetch_row()[0] / $limit);
+
+        return [
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages,
+            'data' => $data
+        ];
+    }
 }

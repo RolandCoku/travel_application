@@ -163,31 +163,31 @@ switch ($route) {
         break;
 
     // Payment processing routes
-  case '/payment/processing':
-    require_once app_path('controllers/PaymentController.php');
-    $paymentController = new PaymentController();
-    $paymentController->paypalReturn();
-    break;
-  case '/payment/cancel':
-    require_once app_path('controllers/PaymentController.php');
-    $paymentController = new PaymentController();
-    $paymentController->paymentCancel();
-    break;
-  case '/payment/capture':
-    require_once app_path('controllers/PaymentController.php');
-    $paymentController = new PaymentController();
-    $paymentController->captureOrder(); // return a json, will be fetched from js
-    break;
-  case '/payment/success':
-    require_once app_path('controllers/PaymentController.php');
-    $paymentController = new PaymentController();
-    $paymentController->paymentSuccess();
-    break;
-  case '/payment/error':
-    require_once app_path('controllers/PaymentController.php');
-    $paymentController = new PaymentController();
-    $paymentController->paymentFailure();
-    break;
+    case '/payment/processing':
+        require_once app_path('controllers/PaymentController.php');
+        $paymentController = new PaymentController();
+        $paymentController->paypalReturn();
+        break;
+    case '/payment/cancel':
+        require_once app_path('controllers/PaymentController.php');
+        $paymentController = new PaymentController();
+        $paymentController->paymentCancel();
+        break;
+    case '/payment/capture':
+        require_once app_path('controllers/PaymentController.php');
+        $paymentController = new PaymentController();
+        $paymentController->captureOrder(); // return a json, will be fetched from js
+        break;
+    case '/payment/success':
+        require_once app_path('controllers/PaymentController.php');
+        $paymentController = new PaymentController();
+        $paymentController->paymentSuccess();
+        break;
+    case '/payment/error':
+        require_once app_path('controllers/PaymentController.php');
+        $paymentController = new PaymentController();
+        $paymentController->paymentFailure();
+        break;
     // Admin Booking Routes
     case '/admin/bookings/show':
         // TODO: Fetch booking details (Select client name, client email, travel package name, booking date, booking status, payment amount, payment status) from id
@@ -233,7 +233,7 @@ switch ($route) {
                 exit;
         }
 
-    // Travel Agencies API Routes
+    // Travel Agencies admin API Routes
     case '/api/admin/travel-agencies':
         $action = $_GET['action'] ?? null;
 
@@ -243,6 +243,23 @@ switch ($route) {
             case 'topAgencies':
                 $travelAgencyController->getTopAgencies();
 
+            default:
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action parameter']);
+                exit;
+        }
+    //Travel Agencies user API Routes
+    case '/api/travel-agencies':
+        $action = $_GET['action'] ?? null;
+
+        switch ($action) {
+            case 'paginate':
+                $travelAgencyController->paginateTravelAgencies();
+            case 'topAgencies':
+                $travelAgencyController->getTopAgencies();
+            case 'getPaginatedWithImages':
+                $travelAgencyController->getPaginatedWithImages();
             default:
                 header('Content-Type: application/json');
                 http_response_code(400);
