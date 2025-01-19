@@ -291,10 +291,10 @@ switch ($route) {
       switch ($action) {
           case 'paginate':
               $bookingController->getAllPaginatedForAgency();
-          // case 'countByDate':
-          //     $bookingController->countBookingsByDateRange();
-          // case 'topDestinations':
-          //     $bookingController->getTopDestinations();
+          case 'countByDate':
+              $bookingController->countBookingsByDateRangeForAgency();
+          case 'topDestinations':
+              $bookingController->getTopDestinationsForAgency();
 
           default:
               header('Content-Type: application/json');

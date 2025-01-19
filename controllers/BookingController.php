@@ -150,7 +150,7 @@ class BookingController extends Controller
   }
   public function getBookingsByDateRangeForAgency(): void
   {
-    $bookings = $this->booking->getByDateRange($_GET['start_date'], $_GET['end_date']);
+    $bookings = $this->booking->getByDateRangeForAgency($_GET['start_date'], $_GET['end_date'], $_SESSION['agency_id']);
     echo json_encode($bookings);
     exit;
   }
@@ -163,11 +163,12 @@ class BookingController extends Controller
     exit;
   }
 
-  // #[NoReturn] 
   public function getTopDestinationsForAgency(): void
   {
     $limit = $_GET['limit'] ?? 3;
-    $result = $this->booking->getTopDestinations($limit);
+    $agencyId = $_SESSION['agency_id'] ?? 37;
+
+    $result = $this->booking->getTopDestinations($limit, $agencyId);
     header('Content-Type: application/json');
 
     $topDestinations = [];

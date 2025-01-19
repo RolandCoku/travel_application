@@ -49,28 +49,54 @@ class Booking extends Model
     return true;
   }
 
-  public function getTopDestinations($limit = 3): false|mysqli_result
+  public function getTopDestinations($limit = 3, ?int $agency_id = null): false|mysqli_result
   {
-    $query = "SELECT travel_packages.name, COUNT(bookings.id) as bookings
-                  FROM bookings
-                  JOIN travel_packages ON bookings.travel_package_id = travel_packages.id
-                  GROUP BY travel_packages.name
-                  ORDER BY bookings DESC
-                  LIMIT ?";
+    $query = "SELECT travel_packages.name, COUNT(bookings.id) AS bookings
+        FROM bookings
+        JOIN travel_packages ON bookings.travel_package_id = travel_packages.id";
+
+    $whereClause = "";
+    $orderByClause = " GROUP BY travel_packages.name ORDER BY bookings DESC";
+    $limitClause = " LIMIT ?";
+
+    $bindParams = [];
+    $bindTypes = "";
+
+    if ($agency_id) {
+        $whereClause = " WHERE travel_packages.agency_id = ?";
+        $bindParams[] = $agency_id;
+        $bindTypes .= "i";
+    }
+
+    $query .= $whereClause . $orderByClause . $limitClause;
+    $bindParams[] = $limit;
+    $bindTypes .= "i";
+
     $stmt = $this->conn->prepare($query);
-    $stmt->bind_param('i', $limit);
-    $stmt->execute();
+    if (!$stmt) {
+        error_log("Error preparing statement: " . $this->conn->error);
+        return false;
+    }
+
+    if (!empty($bindParams)) {
+        $stmt->bind_param($bindTypes, ...$bindParams);
+    }
+
+    if (!$stmt->execute()) {
+        error_log("Error executing query: " . $stmt->error);
+        return false;
+    }
 
     return $stmt->get_result();
   }
 
   public function paginate(int $page, int $limit, array $keys = ['*'], ?int $agencyId = null): array
-{
+  {
     $offset = ($page - 1) * $limit;
 
     $aliasedKeys = array_map(function ($key) {
-        // Replace the dot (.) with an underscore (_) to create an alias for the column to avoid ambiguity
-        return "$key AS " . str_replace('.', '_', $key);
+      // Replace the dot (.) with an underscore (_) to create an alias for the column to avoid ambiguity
+      return "$key AS " . str_replace('.', '_', $key);
     }, $keys);
 
     $aliasedKeysString = implode(', ', $aliasedKeys);
@@ -80,7 +106,7 @@ class Booking extends Model
                 JOIN travel_packages ON bookings.travel_package_id = travel_packages.id";
 
     if ($agencyId !== null) {
-        $query .= " JOIN payments ON payments.booking_id=bookings.id 
+      $query .= " JOIN payments ON payments.booking_id=bookings.id 
         WHERE travel_packages.agency_id = ?";
     } else {
       $query .= " JOIN agencies ON travel_packages.agency_id = agencies.id";
@@ -91,9 +117,9 @@ class Booking extends Model
     $stmt = $this->conn->prepare($query);
 
     $bindParams = [];
-    
+
     if ($agencyId !== null) {
-        $bindParams[] = $agencyId;
+      $bindParams[] = $agencyId;
     }
 
     $bindParams[] = $limit;
@@ -106,19 +132,41 @@ class Booking extends Model
 
     $data = [];
     while ($row = $result->fetch_assoc()) {
-        $data[] = $row;
+      $data[] = $row;
     }
 
     // Set the current page and the total number of pages
     $currentPage = $page;
     $totalPages = ceil($this->conn->query("SELECT COUNT(*) FROM bookings" . ($agencyId !== null ? "
     JOIN travel_packages ON bookings.travel_package_id = travel_packages.id
-    WHERE travel_packages.agency_id = $agencyId" : "") )->fetch_row()[0] / $limit);
+    WHERE travel_packages.agency_id = $agencyId" : ""))->fetch_row()[0] / $limit);
 
     return [
-        'currentPage' => $currentPage,
-        'totalPages' => $totalPages,
-        'data' => $data
+      'currentPage' => $currentPage,
+      'totalPages' => $totalPages,
+      'data' => $data
     ];
-}
+  }
+
+  public function getByDateRangeForAgency($startDate, $endDate, $agency_id): array
+  {
+    $queryString = "SELECT * FROM bookings
+    JOIN travel_packages ON bookings.travel_package_id=travel_packages.id
+    WHERE created_at BETWEEN ? AND ?
+    AND travel_packages.agency_id = ?;
+    ";
+
+    $getQuery = $this->conn->prepare("$queryString");
+
+    $getQuery->bind_param('ssi', $startDate, $endDate, $agency_id);
+    $getQuery->execute();
+    $result = $getQuery->get_result();
+
+    $data = [];
+    while ($row = $result->fetch_assoc()) {
+      $data[$row['id']] = $row;
+    }
+
+    return $data;
+  }
 }
