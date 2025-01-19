@@ -9,6 +9,71 @@ class TravelAgency extends Model
         parent::__construct($conn, "agencies", TravelAgency::KEYS);
     }
 
+    public function create($obj): bool|string
+    {
+        $agencyData = [
+            'user_id' => $obj['user_id'],
+            'name' => $obj['name'],
+            'description' => $obj['description'],
+            'address' => $obj['address'],
+            'phone' => $obj['phone'],
+            'website' => $obj['website'],
+        ];
+
+        if (parent::create($agencyData) === false) {
+            return false;
+        }
+
+        $agencyId = $this->conn->insert_id;
+
+        // Handle main image
+        $image = $_FILES['main_image'];
+        $imageName = FileHelpers::uploadImage($image);
+
+        $imageData = [
+            'entity_type' => 'agency',
+            'entity_id' => $agencyId,
+            'image_url' => $imageName,
+            'alt_text' => $obj['name'],
+            'type' => 'main',
+        ];
+
+        $imageModel = new Image($this->conn);
+        $imageModel->create($imageData);
+
+        // Handle secondary images
+        if (isset($_FILES['secondary_images']) && is_array($_FILES['secondary_images']['name'])) {
+            foreach ($_FILES['secondary_images']['name'] as $index => $secondaryName) {
+                // Prepare secondary image data
+                $secondaryImage = [
+                    'name' => $_FILES['secondary_images']['name'][$index],
+                    'type' => $_FILES['secondary_images']['type'][$index],
+                    'tmp_name' => $_FILES['secondary_images']['tmp_name'][$index],
+                    'error' => $_FILES['secondary_images']['error'][$index],
+                    'size' => $_FILES['secondary_images']['size'][$index],
+                ];
+
+                if ($secondaryImage['error'] === UPLOAD_ERR_OK) {
+                    // Upload secondary image
+                    $secondaryImageName = FileHelpers::uploadImage($secondaryImage);
+
+                    $secondaryImageData = [
+                        'entity_type' => 'agency',
+                        'entity_id' => $agencyId,
+                        'image_url' => $secondaryImageName,
+                        'alt_text' => $obj['name'],
+                        'type' => 'secondary',
+                    ];
+
+                    // Save secondary image data
+                    $imageModel->create($secondaryImageData);
+                }
+            }
+        }
+
+        return true;
+    }
+
     public function paginate(int $page, int $limit, array $keys): array
     {
 

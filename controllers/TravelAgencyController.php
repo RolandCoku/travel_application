@@ -75,7 +75,9 @@ class TravelAgencyController extends Controller
             'description' => $_POST['description'],
             'address' => $_POST['address'],
             'phone' => $_POST['phone'],
-            'website' => $_POST['website']
+            'website' => $_POST['website'],
+            'main_image' => $_FILES['main_image'],
+            'secondary_images' => $_FILES['secondary_images']
         ];
 
         if ($this->travelAgency->create($newAgency)) {

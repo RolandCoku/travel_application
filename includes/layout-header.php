@@ -7,6 +7,12 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="<?= base_url("/css/style.css?v=" . time()); ?>">
 
+    <?php if (isset($links)): ?>
+        <?php foreach ($links as $link): ?>
+            <link rel="stylesheet" href="<?= $link ?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
+
     <!-- TODO: REMOVE THIS LATER TO LEAVE ONLY THE ARRAY -->
     <?php if (isset($cssFile)): ?>
         <link rel="stylesheet" href="<?= base_url("/css/$cssFile"); ?>">

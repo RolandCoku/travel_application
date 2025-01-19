@@ -20,7 +20,7 @@ require_once app_path('includes/layout-header.php'); ?>
 
         <!-- Add Travel Agency Form -->
         <div class="form-container">
-            <form id="create-agency-form" action="/admin/travel-agencies/store" method="POST">
+            <form id="create-agency-form" action="/admin/travel-agencies/store" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="email">Admin</label>
                     <!-- Search field for admin email -->
@@ -54,9 +54,20 @@ require_once app_path('includes/layout-header.php'); ?>
                     <input type="url" id="website" name="website" class="form-control" required />
                 </div>
 
+                <div class="form-group">
+                    <label for="main_image">Main Image</label>
+                    <input type="file" id="image" name="main_image" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="secondary_images">Secondary Images</label>
+                    <input type="file" id="secondary_images" name="secondary_images[]" class="form-control" multiple required />
+                    <small class="text-muted">You can upload up to 4 images.</small>
+                </div>
+
                 <div class="form-actions">
                     <button type="submit" class="btn primary">Register a new agency</button>
-                    <a href="/admin/agencies" class="btn secondary">Cancel</a>
+                    <a href="/admin/travel-agencies" class="btn secondary">Cancel</a>
                 </div>
             </form>
         </div>

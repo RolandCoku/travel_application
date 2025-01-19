@@ -11,6 +11,7 @@ $scriptDir = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT
 
 define('BASE_URL', $protocol . $host . $scriptDir);
 
+
 // Function to generate file paths
 function app_path($path = ''): string
 {

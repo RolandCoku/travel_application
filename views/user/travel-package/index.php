@@ -535,6 +535,48 @@
                     <p>Brand new waterfalls in our curated itineraries.</p>
                 </div>
             </div>
+
+
+            <!-- Slide 2 -->
+            <div class="swiper-slide">
+                <img src="https://via.placeholder.com/300x200?text=NewPackage+2" alt="New Package 2">
+                <div class="content">
+                    <h3>Winter Wonderland</h3>
+                    <p>See our newly introduced snowy lodges.</p>
+                </div>
+            </div>
+            <!-- Slide 3 -->
+            <div class="swiper-slide">
+                <img src="https://via.placeholder.com/300x200?text=NewPackage+3" alt="New Package 3">
+                <div class="content">
+                    <h3>Desert Exploration</h3>
+                    <p>Ride across dunes in a new adventurous route.</p>
+                </div>
+            </div>
+            <!-- Slide 4 -->
+            <div class="swiper-slide">
+                <img src="https://via.placeholder.com/300x200?text=NewPackage+4" alt="New Package 4">
+                <div class="content">
+                    <h3>Hidden Gem Tour</h3>
+                    <p>Explore fresh undiscovered scenic spots.</p>
+                </div>
+            </div>
+            <!-- Slide 5 -->
+            <div class="swiper-slide">
+                <img src="https://via.placeholder.com/300x200?text=NewPackage+5" alt="New Package 5">
+                <div class="content">
+                    <h3>Historic Trails</h3>
+                    <p>Visit heritage sites on our latest walking tours.</p>
+                </div>
+            </div>
+            <!-- Slide 6 -->
+            <div class="swiper-slide">
+                <img src="https://via.placeholder.com/300x200?text=NewPackage+6" alt="New Package 6">
+                <div class="content">
+                    <h3>Waterfall Escapes</h3>
+                    <p>Brand new waterfalls in our curated itineraries.</p>
+                </div>
+            </div>
             <!-- More slides if needed -->
         </div>
         <!-- Swiper Controls -->
