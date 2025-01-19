@@ -139,7 +139,8 @@ class BookingController extends Controller
   public function getAllPaginatedForAgency(): void
   {
     error_log("agency request sent");
-    $bookings = $this->booking->paginate($_GET['page'], $_GET['limit'], ['bookings.id', 'users.name', 'email', 'travel_packages.name', 'booking_date', 'booking_status', 'payments.amount', 'payments.payment_status'], $_SESSION['agency_id']);
+    $agencyId = $_SESSION['agency_id'] ?? 37; // null coalescing do hiqet ketu
+    $bookings = $this->booking->paginate($_GET['page'], $_GET['limit'], ['bookings.id', 'users.name', 'email', 'travel_packages.name', 'booking_date', 'booking_status', 'payments.amount', 'payments.payment_status'], $agencyId);
     // error_log(json_encode($bookings));
     header('Content-Type: application/json');
     echo json_encode($bookings);
@@ -165,7 +166,8 @@ class BookingController extends Controller
   public function getTopDestinationsForAgency(): void
   {
     $limit = $_GET['limit'] ?? 3;
-    $agencyId = $_SESSION['agency_id'];
+
+    $agencyId = $_SESSION['agency_id'] ?? 37; // null coalescing do hiqet ketu
 
     $result = $this->booking->getTopDestinations($limit, $agencyId);
     header('Content-Type: application/json');
