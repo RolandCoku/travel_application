@@ -11,17 +11,17 @@ class Payment extends Model
     parent::__construct($conn, "payments", Payment::KEYS);
   }
 
-  public function setOrderId($paymentId, $paypalOrderId)
-  {
-    $updateQuery = $this->conn->prepare("UPDATE payments
-                                               SET paypal_order_id=?
-                                               WHERE id=?;
-                                        ");
+  // public function setOrderId($paymentId, $paypalOrderId)
+  // {
+  //   $updateQuery = $this->conn->prepare("UPDATE payments
+  //                                              SET paypal_order_id=?
+  //                                              WHERE id=?;
+  //                                       ");
 
-    $updateQuery->bind_param('si', $paypalOrderId, $paymentId);
+  //   $updateQuery->bind_param('si', $paypalOrderId, $paymentId);
 
-    return $updateQuery->execute();
-  }
+  //   return $updateQuery->execute();
+  // }
 
   // public function completePayment($paymentId)
   // {
