@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log(data);
       displayBookings(data);
       setupPagination("#pagination-container", currentPage, totalPages, fetchBookings);
+// eslint-disable-next-line no-unused-vars
     } catch (error) {
       bookingsTableBody.innerHTML = "<tr><td colspan='7'>Error loading bookings</td></tr>";
     }
