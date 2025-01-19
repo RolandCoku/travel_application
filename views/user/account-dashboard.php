@@ -220,6 +220,127 @@
         .profile-card strong {
             color: #005bff;
         }
+        .booking-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .booking-card {
+            display: inline-block;
+            gap: 10px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+        .booking-card:hover {
+            background-color: #f0f8ff;
+            outline: 3px solid #2891ff;
+            outline-offset: 4px;
+            box-shadow: 0 0 15px rgba(41, 145, 255, 0.6);
+        }
+
+        .booking-card img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .booking-card h4 {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .booking-card p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .booking-card .btn {
+            text-align: center;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, #005bff, #2891ff);
+            color: #ffffff;
+            margin-top: 1rem;
+        }
+        .profile-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .profile-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px; /* Fixed width for consistency */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .profile-card:hover {
+            background-color: #f0f8ff;
+            outline: 3px solid #2891ff;
+            outline-offset: 4px;
+            box-shadow: 0 0 15px rgba(41, 145, 255, 0.6);
+        }
+
+        .profile-card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .avatar {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .user-info h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .user-info .review-date {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .review-body {
+            margin-top: 10px;
+        }
+
+        .rating {
+            margin-bottom: 10px;
+        }
+
+        .star {
+            font-size: 1.5rem;
+            color: #ffb400; /* Yellow for filled stars */
+        }
+
+        .star:last-child {
+            color: #ddd; /* Grey for empty stars */
+        }
+
+        .review-body p {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+
 
         /*
           ========================================
@@ -247,7 +368,6 @@
                 border-right: none;
                 border-bottom: 1px solid #eee;
                 padding: 1rem;
-                overflow-x: auto; /* allow horizontal scroll if needed */
                 justify-content: start;
                 align-items: flex-start;
             }
@@ -266,6 +386,7 @@
             .profile-content {
                 padding: 1rem;
             }
+
         }
     </style>
 </head>
@@ -330,16 +451,66 @@
         <!-- Bookings Section -->
         <section id="bookings" class="profile-section">
             <h1>Your Bookings</h1>
-            <div class="profile-card">
-                <p>You currently have no bookings.</p>
+            <div class="booking-grid">
+                <div class="booking-card">
+                    <img src="https://via.placeholder.com/300x200?text=Beach+Escape" alt="Beach Escape">
+                    <h4>Beach Escape</h4>
+                    <p>Date: 2025-02-20</p>
+                    <p>Status: Confirmed</p>
+                    <a href="#" class="btn">View Details</a>
+                </div>
+                <div class="booking-card">
+                    <img src="https://via.placeholder.com/300x200?text=Mountain+Trails" alt="Mountain Trails">
+                    <h4>Mountain Trails</h4>
+                    <p>Date: 2025-03-15</p>
+                    <p>Status: Pending</p>
+                    <a href="#" class="btn">View Details</a>
+                </div>
             </div>
         </section>
 
         <!-- Reviews Section -->
         <section id="reviews" class="profile-section">
             <h1>Your Reviews</h1>
-            <div class="profile-card">
-                <p>You haven't written any reviews yet.</p>
+            <div class="profile-cards">
+                <div class="profile-card">
+                    <div class="profile-card-header">
+                        <img src="https://via.placeholder.com/50" alt="User Avatar" class="avatar">
+                        <div class="user-info">
+                            <h3>John Doe</h3>
+                            <span class="review-date">January 19, 2025</span>
+                        </div>
+                    </div>
+                    <div class="review-body">
+                        <div class="rating">
+                            <span class="star">&#9733;</span>
+                            <span class="star">&#9733;</span>
+                            <span class="star">&#9733;</span>
+                            <span class="star">&#9733;</span>
+                            <span class="star">&#9734;</span>
+                        </div>
+                        <p>"It was an amazing experience! I loved every moment of it."</p>
+                    </div>
+                </div>
+                <div class="profile-card">
+                    <div class="profile-card-header">
+                        <img src="https://via.placeholder.com/50" alt="User Avatar" class="avatar">
+                        <div class="user-info">
+                            <h3>John Doe</h3>
+                            <span class="review-date">January 19, 2025</span>
+                        </div>
+                    </div>
+                    <div class="review-body">
+                        <div class="rating">
+                            <span class="star">&#9733;</span>
+                            <span class="star">&#9733;</span>
+                            <span class="star">&#9733;</span>
+                            <span class="star">&#9733;</span>
+                            <span class="star">&#9734;</span>
+                        </div>
+                        <p>"It was an amazing experience! I loved every moment of it."</p>
+                    </div>
+                </div>
             </div>
         </section>
 
