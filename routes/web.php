@@ -73,6 +73,9 @@ switch ($route) {
         //TODO: - Fetch the data for total income in 7 days
         $adminController->dashboard();
         break;
+    case '/admin/profile':
+        $adminController->profile();
+        break;
     case '/admin/travel-agencies':
         $adminController->agencies();
         break;

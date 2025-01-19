@@ -32,4 +32,9 @@ class AdminController extends Controller
         self::loadView('admin/travel-agency/create');
     }
 
+    public function profile(): void
+    {
+        self::loadView('admin/profile');
+    }
+
 }

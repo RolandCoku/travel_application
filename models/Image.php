@@ -3,12 +3,12 @@ require_once __DIR__ . '/Model.php';
 
 class Image extends Model
 {
-  private const array KEYS = ['entity_type', 'entity_id', 'image_url', 'alt_text', 'type'];
+    private const KEYS = ['entity_type', 'entity_id', 'image_url', 'alt_text', 'type'];
 
-  public function __construct(mysqli $conn)
-  {
-    parent::__construct($conn, "images", Image::KEYS);
-  }
+    public function __construct(mysqli $conn)
+    {
+        parent::__construct($conn, "images", Image::KEYS);
+    }
 
     public function getImagesByEntity($entityType, $entityId): false|mysqli_result
     {
