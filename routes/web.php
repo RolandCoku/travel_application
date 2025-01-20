@@ -137,6 +137,7 @@ switch ($route) {
         break;
     case '/travel-agency/admin/travel-packages/store':
         //TODO: Handle form submission
+        error_log("So it did enter here");
         $travelPackageController->store();
         break;
     case '/travel-agency/admin/travel-packages/edit':
