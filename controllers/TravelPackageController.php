@@ -1,5 +1,7 @@
 <?php
 
+use JetBrains\PhpStorm\NoReturn;
+
 require_once __DIR__ . '/../models/TravelPackage.php';
 require_once __DIR__ . '/../models/TravelAgency.php';
 
@@ -17,21 +19,17 @@ class TravelPackageController extends Controller
 
     public function index(): void
     {
-        $travelPackages = $this->travelPackage->getAll();
-        self::loadView('user/travel-package/index', ['travelPackages' => $travelPackages]);
+        self::loadView('user/travel-package/index');
     }
 
     public function show(): void
     {
-//        $travelPackage = $this->travelPackage->getById($_GET['id']);
         self::loadView('user/travel-package/show');
     }
 
     public function create(): void
     {
-        $travelAgencies = $this->travelAgency->getAll();
-
-        self::loadView('admin/travel-agency/travel-package/create', ['agencies' => $travelAgencies]);
+        self::loadView('admin/travel-agency/travel-package/create');
     }
 
     public function store(): void
@@ -105,6 +103,65 @@ class TravelPackageController extends Controller
     {
         $limit = $_GET['limit'] ?? 5;
         $travelPackages = $this->travelPackage->getTopPackages($limit, ['travel_packages.id', 'travel_packages.name']);
+        header('Content-Type: application/json');
+        echo json_encode($travelPackages);
+        exit;
+    }
+
+    #[NoReturn] public function getPaginatedWithImages(): void
+    {
+        $page = $_GET['page'] ?? 1;
+        $limit = $_GET['limit'] ?? 10;
+        $result = $this->travelPackage->paginateWithImages($page, $limit);
+
+        $travelPackages = [];
+
+        while ($row = $result->fetch_assoc()){
+            $mainImage = [];
+
+            if (!empty($row['main_image_url'])){
+                $mainImage = [
+                    'image_url' => $row['main_image_url'],
+                    'alt_text' => $row['main_image_alt_text']
+                ];
+            }
+
+            $secondaryImages = [];
+
+            if (!empty($row['secondary_image_urls'])){
+                $secondaryImageUrls = explode(',', $row['secondary_image_urls']);
+                $secondaryImageAltTexts = explode(',', $row['secondary_image_alt_texts']);
+
+                foreach ($secondaryImageUrls as $key => $secondaryImageUrl){
+                    $secondaryImages[] = [
+                        'image_url' => $secondaryImageUrl,
+                        'alt_text' => $secondaryImageAltTexts[$key]
+                    ];
+                }
+            }
+
+            $travelPackages[] = [
+                'id' => $row['id'],
+                'name' => $row['name'],
+                'description' => $row['description'],
+                'location' => $row['location'],
+                'price' => $row['price'],
+                'start_date' => $row['start_date'],
+                'end_date' => $row['end_date'],
+                'free_seats' => $row['seats'] - $row['occupied_seats'],
+                'main_image' => $mainImage,
+                'secondary_images' => $secondaryImages
+            ];
+        }
+
+        $totalPages = $this->travelPackage->getTotalPages($limit);
+
+        $travelPackages = [
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'data' => $travelPackages
+        ];
+
         header('Content-Type: application/json');
         echo json_encode($travelPackages);
         exit;

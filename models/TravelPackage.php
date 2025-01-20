@@ -165,4 +165,42 @@ class TravelPackage extends Model
 
         return $data;
     }
+
+    public function paginateWithImages(mixed $page, mixed $limit)
+    {
+        //Get packages with their main and secondary images
+        $offset = ($page - 1) * $limit;
+
+
+        $queryString = "SELECT tp.*, mi.image_url AS main_image_url,
+                        mi.alt_text AS main_image_alt_text,
+                        GROUP_CONCAT(si.image_url) AS secondary_image_urls,
+                        GROUP_CONCAT(si.alt_text) AS secondary_image_alt_texts
+                        FROM travel_packages tp
+                        LEFT JOIN images mi 
+                        ON tp.id = mi.entity_id 
+                        AND mi.entity_type = 'travel_package' 
+                        AND mi.type = 'main'
+                        LEFT JOIN images si 
+                        ON tp.id = si.entity_id 
+                        AND si.entity_type = 'travel_package' 
+                        AND si.type = 'secondary'
+                        GROUP BY tp.id
+                        LIMIT ? OFFSET ?;
+                        ";
+
+        $getQuery = $this->conn->prepare("$queryString");
+
+        $getQuery->bind_param('ii', $limit, $offset);
+
+        $getQuery->execute();
+
+        return $getQuery->get_result();
+    }
+
+    public function getTotalPages(mixed $limit): int
+    {
+        $totalRows = $this->conn->query("SELECT COUNT(*) FROM $this->table")->fetch_row()[0];
+        return ceil($totalRows / $limit);
+    }
 }
