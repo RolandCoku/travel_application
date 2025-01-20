@@ -148,6 +148,41 @@ function seedImagesTable($conn): void
                   VALUES ('$entityType', $entityId, '$imageUrl', '$altText', '$type')";
         $conn->query($query);
     }
+
+    for ($i = 0; $i < 50; $i++) {
+        $entityType = 'travel_package';
+        $entityId = mt_rand(1, 50);
+        $imageUrl = $images[array_rand($images)];
+        $altText = "Image $i";
+        $type = 'main';
+
+        $query = "INSERT INTO images (entity_type, entity_id, image_url, alt_text, type) 
+                  VALUES ('$entityType', $entityId, '$imageUrl', '$altText', '$type')";
+        $conn->query($query);
+
+        $entityType = 'travel_package';
+        $entityId = mt_rand(1, 50);
+        $imageUrl = $images[array_rand($images)];
+        $altText = "Image $i";
+        $type = 'secondary';
+
+        $query = "INSERT INTO images (entity_type, entity_id, image_url, alt_text, type) 
+                  VALUES ('$entityType', $entityId, '$imageUrl', '$altText', '$type')";
+
+        $conn->query($query);
+
+        $entityType = 'travel_package';
+        $entityId = mt_rand(1, 50);
+        $imageUrl = $images[array_rand($images)];
+        $altText = "Image $i";
+        $type = 'secondary';
+
+        $query = "INSERT INTO images (entity_type, entity_id, image_url, alt_text, type) 
+                  VALUES ('$entityType', $entityId, '$imageUrl', '$altText', '$type')";
+
+        $conn->query($query);
+    }
+
 }
 
 function seedPaymentsTable($conn): void

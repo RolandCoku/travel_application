@@ -233,6 +233,7 @@ NAVBAR
 
 .agency-content {
     padding: 1rem;
+    width: 90%;
 }
 
 .agency-content h3 {
@@ -246,6 +247,68 @@ NAVBAR
     font-size: 0.9rem;
     line-height: 1.4;
 }
+
+.show-more-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    text-decoration: none;
+    width: 100%;
+}
+
+/*Book now button */
+.package-content .btn {
+    padding: 10px 20px;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.package-content .btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #2891ff, #005bff);
+}
+
+
+.location-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0 0 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.location-container span {
+    font-weight: 600;
+}
+
+.location-container p {
+    margin: 0 0 10px 0;
+}
+
+.swiper-slide .package-content .price {
+    color: #2891ff; /* Ensure direct targeting */
+    margin-left: auto;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.location-icon {
+    font-size: 20px; /* Adjust icon size */
+    color: #2891ff; /* Icon color */
+    margin-top: -18px;
+    align-items: center;
+}
+
+/*.show-more-button:hover {*/
+/*    background-color: #0056b3; !* Darker shade on hover *!*/
+/*}*/
+
+/*.show-more-button:focus {*/
+/*    outline: 2px solid #0056b3; !* Accessibility focus outline *!*/
+/*    outline-offset: 2px;*/
+/*}*/
+
 
 /*
   ========================================
@@ -303,6 +366,7 @@ NAVBAR
 
 .package-content {
     padding: 1rem;
+    width: 90%;
 }
 
 .package-content h3 {

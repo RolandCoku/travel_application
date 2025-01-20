@@ -46,7 +46,7 @@ require_once app_path('includes/layout-header.php');
     <h2>Featured Agency</h2>
     <div class="swiper swiper-agency">
         <div class="swiper-wrapper">
-
+            <!-- Agencies cards will be dynamically added here -->
         </div>
         <!-- Add Arrows -->
         <div class="swiper-button-next"></div>
@@ -61,49 +61,7 @@ require_once app_path('includes/layout-header.php');
     <h2>Featured Travel Packages</h2>
     <div class="swiper swiper-packages">
         <div class="swiper-wrapper">
-            <!-- Slide 1 -->
-            <div class="swiper-slide">
-                <img src="<?= BASE_URL . 'img/assets/agencies/agency-4.webp' ?>" alt="Beach Paradise" loading="lazy">
-                <div class="package-content">
-                    <h3>Beach Paradise</h3>
-                    <p>Relax on the most pristine beaches.</p>
-                </div>
-            </div>
-            <!-- Slide 2 -->
-            <div class="swiper-slide">
-                <img src="<?= BASE_URL . 'img/assets/agencies/agency-5.webp' ?>" alt="Mountain Retreat" loading="lazy">
-                <div class="package-content">
-                    <h3>Mountain Retreat</h3>
-                    <p>Rejuvenate in the serene mountains.</p>
-                </div>
-            </div>
-            <!-- Slide 3 -->
-            <div class="swiper-slide">
-                <img src="<?= BASE_URL . 'img/assets/agencies/agency-6.webp' ?>" alt="City Explorer" loading="lazy">
-                <div class="package-content">
-                    <h3>City Explorer</h3>
-                    <p>Discover vibrant cityscapes.</p>
-                </div>
-            </div>
-
-            <!-- Slide 3 -->
-            <div class="swiper-slide">
-                <img src="<?= BASE_URL . 'img/assets/agencies/agency-8.webp' ?>" alt="City Explorer" loading="lazy">
-                <div class="package-content">
-                    <h3>City Explorer</h3>
-                    <p>Discover vibrant cityscapes.</p>
-                </div>
-            </div>
-
-            <!-- Slide 3 -->
-            <div class="swiper-slide">
-                <img src="<?= BASE_URL . 'img/assets/agencies/agency-7.webp' ?>" alt="City Explorer" loading="lazy">
-                <div class="package-content">
-                    <h3>City Explorer</h3>
-                    <p>Discover vibrant cityscapes.</p>
-                </div>
-            </div>
-            <!-- Add more slides as needed -->
+            <!-- Travel packages cards will be dynamically added here -->
         </div>
         <!-- Add Arrows -->
         <div class="swiper-button-next"></div>

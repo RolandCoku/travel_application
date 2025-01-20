@@ -208,7 +208,7 @@ switch ($route) {
 
     /* ADMIN API ROUTES TO FETCH DATA FOR DASHBOARD */
 
-    // Users API Routes
+    // Users admin API Routes
     case '/api/admin/users':
         $action = $_GET['action'] ?? null;
 
@@ -267,7 +267,7 @@ switch ($route) {
                 exit;
         }
 
-    // Travel Packages API Routes
+    // Travel Packages admin API Routes
     case '/api/admin/travel-packages':
         $action = $_GET['action'] ?? null;
 
@@ -277,6 +277,23 @@ switch ($route) {
             case 'topPackages':
                 $travelPackageController->getTopPackages();
 
+            default:
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action parameter']);
+                exit;
+        }
+
+    case '/api/travel-packages':
+        $action = $_GET['action'] ?? null;
+
+        switch ($action) {
+            case 'paginate':
+                $travelPackageController->getAllPaginated();
+            case 'topPackages':
+                $travelPackageController->getTopPackages();
+            case 'getPaginatedWithImages':
+                $travelPackageController->getPaginatedWithImages();
             default:
                 header('Content-Type: application/json');
                 http_response_code(400);
