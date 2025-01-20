@@ -5,108 +5,118 @@ require_once __DIR__ . '/../models/TravelAgency.php';
 
 class TravelPackageController extends Controller
 {
-    private TravelPackage $travelPackage;
-    private TravelAgency $travelAgency;
+  private TravelPackage $travelPackage;
+  private TravelAgency $travelAgency;
 
-    public function __construct()
-    {
-        global $conn;
-        $this->travelPackage = new TravelPackage($conn);
-        $this->travelAgency = new TravelAgency($conn);
+  public function __construct()
+  {
+    global $conn;
+    $this->travelPackage = new TravelPackage($conn);
+    $this->travelAgency = new TravelAgency($conn);
+  }
+
+  public function index(): void
+  {
+    $travelPackages = $this->travelPackage->getAll();
+    self::loadView('user/travel-package/index', ['travelPackages' => $travelPackages]);
+  }
+
+  public function show(): void
+  {
+    //        $travelPackage = $this->travelPackage->getById($_GET['id']);
+    self::loadView('user/travel-package/show');
+  }
+
+  public function create(): void
+  {
+    $travelAgencies = $this->travelAgency->getAll();
+
+    self::loadView('admin/travel-agency/travel-package/create', ['agencies' => $travelAgencies]);
+  }
+
+  public function store(): void
+  {
+    $travelPackage = [
+      'name' => $_POST['name'],
+      'description' => $_POST['description'],
+      'price' => $_POST['price'],
+      'start_date' => $_POST['start_date'],
+      'end_date' => $_POST['end_date'],
+      'agency_id' => $_POST['agency_id']
+    ];
+
+    if ($this->travelPackage->create($travelPackage)) {
+      header('Location: /travel-packages');
+    } else {
+      echo 'Error creating travel package';
     }
+  }
 
-    public function index(): void
-    {
-        $travelPackages = $this->travelPackage->getAll();
-        self::loadView('user/travel-package/index', ['travelPackages' => $travelPackages]);
+  public function edit(): void
+  {
+    // $travelPackage = $this->travelPackage->getById($_GET['id']);
+    // $travelPackage['images'] = $this->travelPackage->images($travelPackage['id']);
+    // $travelAgencies = $this->travelAgency->getAll();
+
+    self::loadView('admin/travel-agency/travel-package/edit');
+  }
+
+  public function update(): void
+  {
+    $travelPackage = [
+      'id' => $_POST['id'],
+      'name' => $_POST['name'],
+      'description' => $_POST['description'],
+      'price' => $_POST['price'],
+      'start_date' => $_POST['start_date'],
+      'end_date' => $_POST['end_date'],
+      'agency_id' => $_POST['agency_id']
+    ];
+
+    if ($this->travelPackage->update($travelPackage)) {
+      header('Location: /travel-packages');
+    } else {
+      echo 'Error updating travel package';
     }
+  }
 
-    public function show(): void
-    {
-//        $travelPackage = $this->travelPackage->getById($_GET['id']);
-        self::loadView('user/travel-package/show');
-    }
+  public function destroy(): void
+  {
+    $this->travelPackage->delete($_GET['id']);
+    header('Location: /travel-packages');
+  }
 
-    public function create(): void
-    {
-        $travelAgencies = $this->travelAgency->getAll();
+  public function adminShow() {}
 
-        self::loadView('admin/travel-agency/travel-package/create', ['agencies' => $travelAgencies]);
-    }
+  public function getAllPaginated()
+  {
+    $page = $_GET['page'] ?? 1;
+    $limit = $_GET['limit'] ?? 10;
+    $travelPackages = $this->travelPackage->paginate($page, $limit, ['travel_packages.id', 'travel_packages.name', 'travel_packages.description', 'price', 'start_date', 'end_date', 'agencies.name', 'seats', 'occupied_seats']);
 
-    public function store(): void
-    {
-        $travelPackage = [
-            'name' => $_POST['name'],
-            'description' => $_POST['description'],
-            'price' => $_POST['price'],
-            'start_date' => $_POST['start_date'],
-            'end_date' => $_POST['end_date'],
-            'agency_id' => $_POST['agency_id']
-        ];
+    header('Content-Type: application/json');
+    echo json_encode($travelPackages);
+    exit;
+  }
 
-        if ($this->travelPackage->create($travelPackage)) {
-            header('Location: /travel-packages');
-        } else {
-            echo 'Error creating travel package';
-        }
-    }
+  public function getTopPackages()
+  {
+    $limit = $_GET['limit'] ?? 5;
+    $travelPackages = $this->travelPackage->getTopPackages($limit, ['travel_packages.id', 'travel_packages.name']);
+    header('Content-Type: application/json');
+    echo json_encode($travelPackages);
+    exit;
+  }
+  // For specific agency now
+  public function getAllPaginatedForAgency()
+  {
+    $agency = $_SESSION['agency_id'] ?? 37;
+    $page = $_GET['page'] ?? 1;
+    $limit = $_GET['limit'] ?? 10;
+    $travelPackages = $this->travelPackage->paginateForAgency($page, $limit, $agency);
 
-    public function edit(): void
-    {
-//        $travelPackage = $this->travelPackage->getById($_GET['id']);
-//        $travelPackage['images'] = $this->travelPackage->images($travelPackage['id']);
-//        $travelAgencies = $this->travelAgency->getAll();
-
-        self::loadView('admin/travel-agency/travel-package/edit');
-    }
-
-    public function update(): void
-    {
-        $travelPackage = [
-            'id' => $_POST['id'],
-            'name' => $_POST['name'],
-            'description' => $_POST['description'],
-            'price' => $_POST['price'],
-            'start_date' => $_POST['start_date'],
-            'end_date' => $_POST['end_date'],
-            'agency_id' => $_POST['agency_id']
-        ];
-
-        if ($this->travelPackage->update($travelPackage)) {
-            header('Location: /travel-packages');
-        } else {
-            echo 'Error updating travel package';
-        }
-    }
-
-    public function destroy(): void
-    {
-        $this->travelPackage->delete($_GET['id']);
-        header('Location: /travel-packages');
-    }
-
-    public function adminShow()
-    {
-    }
-
-    public function getAllPaginated()
-    {
-        $page = $_GET['page'] ?? 1;
-        $limit = $_GET['limit'] ?? 10;
-        $travelPackages = $this->travelPackage->paginate($page, $limit, ['travel_packages.id', 'travel_packages.name', 'travel_packages.description', 'price', 'start_date', 'end_date', 'agencies.name', 'seats', 'occupied_seats']);
-
-        header('Content-Type: application/json');
-        echo json_encode($travelPackages);
-        exit;
-    }
-
-    public function getTopPackages()
-    {
-        $limit = $_GET['limit'] ?? 5;
-        $travelPackages = $this->travelPackage->getTopPackages($limit, ['travel_packages.id', 'travel_packages.name']);
-        header('Content-Type: application/json');
-        echo json_encode($travelPackages);
-        exit;
-    }
+    header('Content-Type: application/json');
+    echo json_encode($travelPackages);
+    exit;
+  }
 }

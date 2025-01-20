@@ -319,6 +319,23 @@ switch ($route) {
               echo json_encode(['error' => 'Invalid action parameter']);
               exit;
       }
+    // Travel Package Api for Travel Agencies
+
+    case '/api/travel-agency/travel-packages':
+      $action = $_GET['action'] ?? null;
+
+      switch ($action) {
+          case 'paginate':
+              $travelPackageController->getAllPaginatedForAgency();
+          case 'topPackages':
+              $bookingController->getTopDestinationsForAgency();
+
+          default:
+              header('Content-Type: application/json');
+              http_response_code(400);
+              echo json_encode(['error' => 'Invalid action parameter']);
+              exit;
+      }
 
     // Reviews API Routes
     case '/api/admin/reviews':
