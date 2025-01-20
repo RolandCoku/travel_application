@@ -77,8 +77,8 @@ class PaymentController extends Controller
     ];
     error_log($booking['paypal_order_id']);
 
-    require_once app_path('models/Booking.php');
-    $bookingRepo = new Booking($conn);
+    require_once app_path('models/Payment.php');
+    $bookingRepo = new Payment($conn);
 
     $bookingIDs = $bookingRepo->createAndGetPaymentId($booking, $travelPackage['id']);
 
@@ -143,10 +143,10 @@ class PaymentController extends Controller
     /////
     // ketu duhet te bejme update databazen me payment info
     /////
-    require_once app_path('models/Booking.php');
+    require_once app_path('models/Payment.php');
     // require_once __DIR__ . '/../helpers/PayPalService.php';
     // //ktu do bejme get te dhenat e marra nga payment
-    $bookingRepo = new Booking($this->conn);
+    $bookingRepo = new Payment($this->conn);
     $bookingRepo->finishBooking($_SESSION['booking_id'], $_SESSION['payment_id']);
     unset($_SESSION['booking_id']);
     unset($_SESSION['payment_id']);
