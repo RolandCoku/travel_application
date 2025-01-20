@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__ . '/../config/db_connection.php';
-
 global $conn;
 
 function seedUsersTable($conn): void
@@ -125,14 +124,28 @@ function seedCategoryTravelPackageTable($conn): void
 function seedImagesTable($conn): void
 {
     echo PHP_EOL . "Seeding images table...";
-    for ($i = 0; $i < 50; $i++) {
-        $travelPackageId = mt_rand(1, 50);
-        $imageUrl = "https://example.com/image$i.jpg";
-        $altText = "Image $i";
-        $type = $i % 2 === 0 ? 'main' : 'secondary';
 
-        $query = "INSERT INTO images (travel_package_id, image_url, alt_text, type) 
-                  VALUES ($travelPackageId, '$imageUrl', '$altText', '$type')";
+    $images = [
+        'agency-1.webp',
+        'agency-2.webp',
+        'agency-3.webp',
+        'agency-4.webp',
+        'agency-5.webp',
+        'agency-6.webp',
+        'agency-7.webp',
+        'agency-8.webp',
+        'agency-9.webp',
+    ];
+
+    for ($i = 0; $i < 50; $i++) {
+        $entityType = 'agency';
+        $entityId = mt_rand(1, 50);
+        $imageUrl = $images[array_rand($images)];
+        $altText = "Image $i";
+        $type = 'main';
+
+        $query = "INSERT INTO images (entity_type, entity_id, image_url, alt_text, type) 
+                  VALUES ('$entityType', $entityId, '$imageUrl', '$altText', '$type')";
         $conn->query($query);
     }
 }

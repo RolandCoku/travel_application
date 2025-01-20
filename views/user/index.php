@@ -47,48 +47,6 @@ require_once app_path('includes/layout-header.php');
     <div class="swiper swiper-agency">
         <div class="swiper-wrapper">
 
-            <!-- Slide 1 -->
-            <div class="swiper-slide">
-                <img src="/img/assets/agencies/agency-6.webp" alt="Beach Paradise" loading="lazy">
-                <div class="agency-content">
-                    <h3>Beach Paradise</h3>
-                    <p>Relax on the most pristine beaches.</p>
-                    <p><strong>Address:</strong> 123 Beach Road</p>
-                    <p><strong>Phone:</strong> +1 234 567 890</p>
-                </div>
-            </div>
-            <!-- Slide 2 -->
-            <div class="swiper-slide">
-                <img src="<?= BASE_URL . 'img/assets/agencies/agency-5.webp' ?>" alt="City Explorer" loading="lazy">
-                <div class="agency-content">
-                    <h3>City Explorer</h3>
-                    <p>Discover vibrant cityscapes.</p>
-                </div>
-            </div>
-            <!-- Slide 3 -->
-            <div class="swiper-slide">
-                <img src="<?= BASE_URL .'img/assets/agencies/agency-4.webp' ?>" alt="Mountain Retreat" loading="lazy">
-                <div class="agency-content">
-                    <h3>Mountain Retreat</h3>
-                    <p>Rejuvenate in the serene mountains.</p>
-                </div>
-            </div>
-            <!-- Slide 4 -->
-            <div class="swiper-slide">
-                <img src="<?= BASE_URL .'img/assets/agencies/agency-3.webp' ?>" alt="City Explorer" loading="lazy">
-                <div class="agency-content">
-                    <h3>City Explorer</h3>
-                    <p>Discover vibrant cityscapes.</p>
-                </div>
-            </div>
-            <!-- Slide 5 -->
-            <div class="swiper-slide">
-                <img src="<?= BASE_URL .'img/assets/agencies/agency-2.webp' ?>" alt="City Explorer" loading="lazy">
-                <div class="agency-content">
-                    <h3>City Explorer</h3>
-                    <p>Discover vibrant cityscapes.</p>
-                </div>
-            </div>
         </div>
         <!-- Add Arrows -->
         <div class="swiper-button-next"></div>

@@ -307,6 +307,51 @@
             font-weight: 600;
         }
 
+        /*Book now button */
+
+        .content .btn {
+            text-align: center;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, #005bff, #2891ff);
+            color: #ffffff;
+        }
+        .content .btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #2891ff, #005bff);
+        }
+
+        .content p{
+            margin-bottom: 1rem;
+        }
+        .location-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .swiper-slide .content .location-container .price {
+            color: #2891ff; /* Ensure direct targeting */
+            margin-left: auto;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .location-icon {
+            font-size: 20px; /* Adjust icon size */
+            color: #2891ff; /* Icon color */
+            margin-top: -18px;
+            align-items: center;
+        }
+
+
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .nav-links ul {
@@ -369,6 +414,12 @@
                 <div class="content">
                     <h3>Beach Escape</h3>
                     <p>Relax at a seaside resort with Agency A.</p>
+                    <div class="location-container">
+                        <span class="location-icon ri-map-pin-line"></span>
+                        <p>Your location text here</p>
+                        <p class="price"> Price</p>
+                    </div>
+                    <a href="#" class="btn"> Book now</a>
                 </div>
             </div>
             <!-- Slide 2 -->
@@ -377,6 +428,12 @@
                 <div class="content">
                     <h3>Tropical Paradise</h3>
                     <p>Discover lush rainforests and clear waters.</p>
+                    <div class="location-container">
+                        <span class="location-icon ri-map-pin-line"></span>
+                        <p>Your location text here</p>
+                        <p class="price">Price</p>
+                    </div>
+                    <a href="#" class="btn"> Book now</a>
                 </div>
             </div>
             <!-- Slide 3 -->
@@ -385,6 +442,12 @@
                 <div class="content">
                     <h3>City Adventures</h3>
                     <p>Explore a vibrant city with Agency B.</p>
+                    <div class="location-container">
+                        <span class="location-icon ri-map-pin-line"></span>
+                        <p>Your location text here</p>
+                        <p class="price">Price</p>
+                    </div>
+                    <a href="#" class="btn"> Book now</a>
                 </div>
             </div>
             <!-- Slide 4 -->
@@ -393,6 +456,12 @@
                 <div class="content">
                     <h3>Mountain Trails</h3>
                     <p>Experience thrilling hikes and breathtaking views.</p>
+                    <div class="location-container">
+                        <span class="location-icon ri-map-pin-line"></span>
+                        <p>Your location text here</p>
+                        <p class="price">Price</p>
+                    </div>
+                    <a href="#" class="btn"> Book now</a>
                 </div>
             </div>
             <!-- Slide 5 -->
@@ -401,6 +470,12 @@
                 <div class="content">
                     <h3>Safari Tour</h3>
                     <p>Spot wildlife in their natural habitat.</p>
+                    <div class="location-container">
+                        <span class="location-icon ri-map-pin-line"></span>
+                        <p>Your location text here</p>
+                        <p class="price">Price</p>
+                    </div>
+                    <a href="#" class="btn"> Book now</a>
                 </div>
             </div>
             <!-- Slide 6 -->
@@ -409,6 +484,12 @@
                 <div class="content">
                     <h3>Cultural Immersion</h3>
                     <p>Dive into local traditions and cuisine.</p>
+                    <div class="location-container">
+                        <span class="location-icon ri-map-pin-line"></span>
+                        <p>Your location text here</p>
+                        <p class="price">Price</p>
+                    </div>
+                    <a href="#" class="btn"> Book now</a>
                 </div>
             </div>
             <!-- More slides if needed -->
