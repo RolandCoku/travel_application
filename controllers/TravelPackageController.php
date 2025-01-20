@@ -166,4 +166,17 @@ class TravelPackageController extends Controller
         echo json_encode($travelPackages);
         exit;
     }
+
+      // For specific agency now
+  public function getAllPaginatedForAgency()
+  {
+    $agency = $_SESSION['agency_id'] ?? 37;
+    $page = $_GET['page'] ?? 1;
+    $limit = $_GET['limit'] ?? 10;
+    $travelPackages = $this->travelPackage->paginateForAgency($page, $limit, $agency);
+
+    header('Content-Type: application/json');
+    echo json_encode($travelPackages);
+    exit;
+  }
 }
