@@ -6,7 +6,7 @@ require_once __DIR__ . '/../helpers/FileHelpers.php';
 
 class TravelPackage extends Model
 {
-    private const KEYS = ['name', 'description', 'price', 'start_date', 'end_date', 'agency_id'];
+    private const KEYS = ['name', 'description', 'location', 'price', 'start_date', 'end_date', 'agency_id'];
 
     public function __construct(mysqli $conn)
     {

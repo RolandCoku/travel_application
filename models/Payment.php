@@ -38,7 +38,7 @@ class Payment extends Model
       if (!$paymentStmt) {
         throw new Exception("Payment prepare statement failed: " . $this->conn->error);
       }
-      $paymentStmt->bind_param("isdd", $bookingId, $obj['booking_date'], $obj['paypal_order_id'], $obj['total_price']);
+      $paymentStmt->bind_param("issd", $bookingId, $obj['booking_date'], $obj['paypal_order_id'], $obj['total_price']);
       if (!$paymentStmt->execute()) {
         throw new Exception("Payment execute statement failed: " . $paymentStmt->error);
       }

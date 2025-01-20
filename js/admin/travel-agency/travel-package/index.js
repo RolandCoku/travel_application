@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       <i class="bx bx-menu dropdown-button"></i>
                       <div class="dropdown-content">
                           <a href="/travel-agency/admin/travel-packages/edit?id=${pkg.travel_packages_id}" class="edit">Edit</a>
-                          <a href="/travel-agency/admin/travel-packages/update?id=${pkg.travel_packages_id}" class="delete">Delete</a>
+                          <a href="/travel-agency/admin/travel-packages/destroy?id=${pkg.travel_packages_id}" class="delete">Delete</a>
                       </div>
                   </div>
               </td>
