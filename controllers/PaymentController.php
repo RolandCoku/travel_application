@@ -28,6 +28,8 @@ class PaymentController extends Controller
     $paypalService = new PayPalService();
     $agencyModel = new TravelAgency($conn);
 
+    $quantity = $_POST['seats_booked'];
+
     $travelPackage = $travelPackageRepo->getById($_POST['travel_package_id']);
     $nextSeats = $travelPackage['occupied_seats'] + 1;
     if ($nextSeats > $travelPackage['seats']) {
@@ -60,6 +62,7 @@ class PaymentController extends Controller
       $travelPackage['name'],
       $travelPackage['description'],
       $agencyEmail,
+      $quantity,
       $imageUrl
     );
 
@@ -75,14 +78,16 @@ class PaymentController extends Controller
     // error_log($order);
 
     // $user_id eshte edhe ne get
+    error_log('Booked seats nr: '.$_POST['seats_booked']);
     $booking = [
       'user_id' => $_SESSION['user_id'],
       'travel_package_id' => $_POST['travel_package_id'],
+      'booked_seats' => $_POST['seats_booked'],
       // 'payment_method' => $_POST['payment_method'],
       'paypal_order_id' => $order['id'],
       'agency_id' => $travelPackage['agency_id'],
       'booking_date' => $travelPackage['start_date'], //ketu sjam i sigurt, ndoshta do behet me post
-      'total_price' => $travelPackage['price'],
+      'total_price' => $travelPackage['price'] * $quantity,
     ];
     error_log($booking['paypal_order_id']);
 

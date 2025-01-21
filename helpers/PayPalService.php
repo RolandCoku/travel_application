@@ -80,11 +80,11 @@ class PayPalService
     }
   }
 
-  public function createOrder(string $amount, $name, $description, $sellerPayPalId, $imageUrl = '', $currency = 'USD') //Duhet te vendos nje default image me te mire
+  public function createOrder(string $amount, $name, $description, $sellerPayPalId, $quantity = 1, $imageUrl = '', $currency = 'USD') //Duhet te vendos nje default image me te mire
   { // vlerat monetare do jene ne string ose int, jo float
-    return $this->safeApiCall(function () use ($amount, $name, $description, $sellerPayPalId, $imageUrl, $currency) {
+    return $this->safeApiCall(function () use ($amount, $name, $description, $sellerPayPalId, $quantity, $imageUrl, $currency) {
 
-      $quantity = 1; //maybe later we make quantity a variable too
+      // $quantity = 1; //maybe later we make quantity a variable too
 
       $cents = bcmul($amount, "100");
       $unitAmountInCents = intval($cents);
@@ -94,6 +94,7 @@ class PayPalService
 
       $individualPrice = $unitAmountInCents; //this is in cents
       $itemTotal = $individualPrice * $quantity;
+      error_log("Item total is: ". $itemTotal);
 
       $formattedIndividualPrice = bcdiv((string) $individualPrice, '100', 2);
       $formattedItemTotal = bcdiv((string)$itemTotal, '100', 2);
