@@ -1,131 +1,317 @@
-/* Travel Package Page index Styles */
-body.travel-packages-page {
-    background-color: #599db1;
-    color: #333;
-    line-height: 1.6;
-}
+@import "../../style.css";
 
-.page-header {
-    text-align: center;
-    padding: 20px;
-    color: #fff;
-    background: #033649;
-    margin-bottom: 20px;
-}
-
-.page-header h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
-}
-
-.page-header p {
-    font-size: 1.2em;
-    margin: 0;
-}
-
-.package-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 10px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+/*
+  ========================================
+  HERO SECTION
+  ========================================
+*/
+.packages-hero {
+    width: 100%;
+    height: 50vh;
+    margin-top: 87px; /* to offset navbar height */
+    background: url('/img/assets/home/slider-sea.webp') no-repeat center center/cover;
+    position: relative;
+    display: flex;
+    align-items: center;
     justify-content: center;
 }
+.packages-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+.hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: #fff;
+    max-width: 600px;
+}
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+.hero-content p {
+    font-size: 1.2rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
 
-.package {
-    background: #f9f9f9;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
+/*
+  ========================================
+  PACKAGES SECTION
+  ========================================
+*/
+.section-packages {
+    padding: 3rem 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+.section-packages h2 {
+    font-size: 2rem;
+    color: #005bff;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+.swiper {
     position: relative;
 }
-
-.package-image {
-    width: 100%;
-    height: 200px;
+.swiper .swiper-wrapper {
+    padding-bottom: 3rem;
+}
+.swiper .swiper-slide {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
-    background: #ddd;
-}
-
-.package-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    cursor: grab;
     transition: transform 0.3s ease;
 }
-
-.package-image:hover img {
-    transform: scale(1.1);
+.swiper .swiper-slide:hover {
+    transform: translateY(-5px);
+}
+.swiper .swiper-slide img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+.swiper .content {
+    padding: 1rem;
+    text-align: center;
+}
+.swiper .content h3 {
+    margin: 0.5rem 0;
+    color: #005bff;
+    font-size: 1.2rem;
+}
+.swiper .content p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+.swiper .swiper-button-next,
+.swiper .swiper-button-prev {
+    color: #2891ff;
+    transition: color 0.3s ease;
+}
+.swiper .swiper-button-next:hover,
+.swiper .swiper-button-prev:hover {
+    color: #005bff;
+}
+.swiper .swiper-pagination-bullet {
+    background: #2891ff;
+    opacity: 0.7;
+}
+.swiper .swiper-pagination-bullet-active {
+    background: #005bff;
+    opacity: 1;
 }
 
-.package-details {
-    padding: 20px;
+.package-content {
+    padding: 1rem;
+    width: 90%;
+}
+
+.package-content h3 {
+    margin: 0.5rem 0;
+    color: #2891ff;
+    font-size: 1.2rem;
+}
+
+.package-content p {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.4;
+    padding: 5px 0;
+}
+
+.package-content p strong {
+    color: #2891ff;
+}
+
+
+.show-more-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    text-decoration: none;
+    width: 100%;
+}
+
+/*Book now button */
+.package-content .btn {
+    padding: 10px 20px;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.package-content .btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #2891ff, #005bff);
+}
+
+
+.location-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0 0 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.location-container span {
+    font-weight: 600;
+}
+
+.location-container p {
+    margin: 0 0 10px 0;
+}
+
+.swiper-slide .package-content .price {
+    color: #2891ff; /* Ensure direct targeting */
+    margin-left: auto;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.location-icon {
+    font-size: 20px; /* Adjust icon size */
+    color: #2891ff; /* Icon color */
+    margin-top: -18px;
+    align-items: center;
+}
+
+/* Rating Stars Styling */
+.package-content .rating {
+    margin-bottom: 10px;
+}
+
+.package-content .rating i {
+    font-size: 1.2em;
+    margin-right: 2px;
+    transition: color 0.3s ease;
+}
+
+/* Optional: Hover Effect for Stars */
+.package-content .rating i:hover {
+    color: #FFA500; /* Orange color on hover */
+}
+
+/*
+  ========================================
+  FOOTER
+  ========================================
+*/
+.footer {
+    background: #f5f9ff;
+    padding: 2rem;
+    border-top: 1px solid #eee;
+    margin-top: 3rem;
+}
+.footer .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+.footer-content {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    flex-grow: 1;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
-
-.package-details h2 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
-    color: #033649;
-    text-align: center;
+.footer-content .logo img {
+    height: 50px;
+    object-fit: contain;
 }
-
-.package-details p {
-    font-size: 1em;
-    color: #666;
-    text-align: left;
-    line-height: 1.5;
-    flex-grow: 1;
-}
-
-.package-actions {
+.footer-links {
     display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
     justify-content: center;
-    margin-top: auto;
-    padding: 10px 0;
-    gap: 10px;
+    flex-wrap: wrap;
+}
+.footer-links a {
+    color: #2891ff;
+    transition: color 0.3s;
+}
+.footer-links a:hover {
+    color: #005bff;
+}
+.footer p {
+    color: #666;
+    font-size: 0.85rem;
+}
+.footer p span {
+    color: #2891ff;
+    font-weight: 600;
 }
 
-.btn {
-    text-decoration: none;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 25px;
+/*Book now button */
+
+.content .btn {
     text-align: center;
-    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #005bff, #2891ff);
+    color: #ffffff;
+}
+.content .btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #2891ff, #005bff);
+}
+
+.content p{
+    margin-bottom: 1rem;
+}
+.location-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.swiper-slide .content .location-container .price {
+    color: #2891ff; /* Ensure direct targeting */
+    margin-left: auto;
+    font-size: 1rem;
     font-weight: bold;
-    transition: opacity 0.3s ease;
 }
 
-.btn.book-now {
-    background: #033649;
+.location-icon {
+    font-size: 20px; /* Adjust icon size */
+    color: #2891ff; /* Icon color */
+    margin-top: -18px;
+    align-items: center;
 }
 
-.btn.read-more {
-    background: #599db1;
-}
 
-.btn:hover {
-    opacity: 0.8;
-}
-
-@media screen and (max-width: 768px) {
-    .package-container {
-        grid-template-columns: 1fr;
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .nav-links ul {
+        display: none; /* Or turn into a mobile nav toggle if needed */
     }
-
-    .package {
-        max-width: 90%;
-        margin: 0 auto;
+    .navbar .search-bar {
+        display: none; /* Hide for smaller screens or build a collapsible menu */
+    }
+    .packages-hero {
+        height: 40vh;
+    }
+    .hero-content h1 {
+        font-size: 2rem;
     }
 }
-

@@ -88,7 +88,7 @@ class TravelPackageController extends Controller
     {
     }
 
-    public function getAllPaginated()
+    #[NoReturn] public function getAllPaginated(): void
     {
         $page = $_GET['page'] ?? 1;
         $limit = $_GET['limit'] ?? 10;
@@ -99,7 +99,7 @@ class TravelPackageController extends Controller
         exit;
     }
 
-    public function getTopPackages()
+    #[NoReturn] public function getTopPackages(): void
     {
         $limit = $_GET['limit'] ?? 5;
         $travelPackages = $this->travelPackage->getTopPackages($limit, ['travel_packages.id', 'travel_packages.name']);
@@ -161,6 +161,269 @@ class TravelPackageController extends Controller
             'totalPages' => $totalPages,
             'data' => $travelPackages
         ];
+
+        header('Content-Type: application/json');
+        echo json_encode($travelPackages);
+        exit;
+    }
+
+    #[NoReturn] public function getTopPackagesWithImagesPaginated(): void
+    {
+        $limit = $_GET['limit'] ?? 5;
+        $page = $_GET['page'] ?? 1;
+        $result = $this->travelPackage->getTopPackagesWithImagesPaginated($limit, $page);
+
+        $travelPackages = [];
+
+        while ($row = $result->fetch_assoc()){
+            $mainImage = [];
+
+            if (!empty($row['main_image_url'])){
+                $mainImage = [
+                    'image_url' => $row['main_image_url'],
+                    'alt_text' => $row['main_image_alt_text']
+                ];
+            }
+
+            $secondaryImages = [];
+
+            if (!empty($row['secondary_image_urls'])){
+                $secondaryImageUrls = explode(',', $row['secondary_image_urls']);
+                $secondaryImageAltTexts = explode(',', $row['secondary_image_alt_texts']);
+
+                foreach ($secondaryImageUrls as $key => $secondaryImageUrl){
+                    $secondaryImages[] = [
+                        'image_url' => $secondaryImageUrl,
+                        'alt_text' => $secondaryImageAltTexts[$key]
+                    ];
+                }
+            }
+
+            $travelPackages[] = [
+                'id' => $row['id'],
+                'name' => $row['name'],
+                'description' => $row['description'],
+                'location' => $row['location'],
+                'price' => $row['price'],
+                'start_date' => $row['start_date'],
+                'end_date' => $row['end_date'],
+                'free_seats' => $row['seats'] - $row['occupied_seats'],
+                'main_image' => $mainImage,
+                'secondary_images' => $secondaryImages,
+
+                'total_reviews' => intval($row['total_reviews']),
+                'average_rating' => $row['average_rating'] !== null ? floor($row['average_rating']) : 0
+            ];
+        }
+
+        $totalPages = $this->travelPackage->getTotalPages($limit);
+
+        $travelPackages = [
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'data' => $travelPackages
+        ];
+
+        header('Content-Type: application/json');
+        echo json_encode($travelPackages);
+        exit;
+    }
+
+    #[NoReturn] public function getLatestPackagesWithImagesPaginated(): void
+    {
+        $limit = $_GET['limit'] ?? 5;
+        $page = $_GET['page'] ?? 1;
+        $result = $this->travelPackage->getLatestPackagesWithImagesPaginated($limit, $page);
+
+        $travelPackages = [];
+
+        while ($row = $result->fetch_assoc()){
+            $mainImage = [];
+
+            if (!empty($row['main_image_url'])){
+                $mainImage = [
+                    'image_url' => $row['main_image_url'],
+                    'alt_text' => $row['main_image_alt_text']
+                ];
+            }
+
+            $secondaryImages = [];
+
+            if (!empty($row['secondary_image_urls'])){
+                $secondaryImageUrls = explode(',', $row['secondary_image_urls']);
+                $secondaryImageAltTexts = explode(',', $row['secondary_image_alt_texts']);
+
+                foreach ($secondaryImageUrls as $key => $secondaryImageUrl){
+                    $secondaryImages[] = [
+                        'image_url' => $secondaryImageUrl,
+                        'alt_text' => $secondaryImageAltTexts[$key]
+                    ];
+                }
+            }
+
+            $travelPackages[] = [
+                'id' => $row['id'],
+                'name' => $row['name'],
+                'description' => $row['description'],
+                'location' => $row['location'],
+                'price' => $row['price'],
+                'start_date' => $row['start_date'],
+                'end_date' => $row['end_date'],
+                'free_seats' => $row['seats'] - $row['occupied_seats'],
+                'main_image' => $mainImage,
+                'secondary_images' => $secondaryImages
+            ];
+        }
+
+        $totalPages = $this->travelPackage->getTotalPages($limit);
+
+        $travelPackages = [
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'data' => $travelPackages
+        ];
+
+        header('Content-Type: application/json');
+        echo json_encode($travelPackages);
+        exit;
+    }
+
+    #[NoReturn] public function getClosestPackagesWithImagesPaginated(): void
+    {
+        //Return the closest packages to the current date
+
+        $limit = $_GET['limit'] ?? 5;
+        $page = $_GET['page'] ?? 1;
+        $result = $this->travelPackage->getClosestPackagesWithImagesPaginated($limit, $page);
+
+        $travelPackages = [];
+
+        while ($row = $result->fetch_assoc()){
+            $mainImage = [];
+
+            if (!empty($row['main_image_url'])){
+                $mainImage = [
+                    'image_url' => $row['main_image_url'],
+                    'alt_text' => $row['main_image_alt_text']
+                ];
+            }
+
+            $secondaryImages = [];
+
+            if (!empty($row['secondary_image_urls'])){
+                $secondaryImageUrls = explode(',', $row['secondary_image_urls']);
+                $secondaryImageAltTexts = explode(',', $row['secondary_image_alt_texts']);
+
+                foreach ($secondaryImageUrls as $key => $secondaryImageUrl){
+                    $secondaryImages[] = [
+                        'image_url' => $secondaryImageUrl,
+                        'alt_text' => $secondaryImageAltTexts[$key]
+                    ];
+                }
+            }
+
+            $travelPackages[] = [
+                'id' => $row['id'],
+                'name' => $row['name'],
+                'description' => $row['description'],
+                'location' => $row['location'],
+                'price' => $row['price'],
+                'start_date' => $row['start_date'],
+                'end_date' => $row['end_date'],
+                'free_seats' => $row['seats'] - $row['occupied_seats'],
+                'main_image' => $mainImage,
+                'secondary_images' => $secondaryImages
+            ];
+        }
+
+        $totalPages = $this->travelPackage->getTotalPages($limit);
+
+        $travelPackages = [
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'data' => $travelPackages
+        ];
+
+        header('Content-Type: application/json');
+        echo json_encode($travelPackages);
+        exit;
+    }
+
+    #[NoReturn] public function getByIdWithImagesAndAgency(): void
+    {
+        $result = $this->travelPackage->getByIdWithImages($_GET['id']);
+
+        $travelPackages = [];
+        while ($row = $result->fetch_assoc()){
+            $mainImage = [];
+
+            if (!empty($row['main_image_url'])){
+                $mainImage = [
+                    'image_url' => $row['main_image_url'],
+                    'alt_text' => $row['main_image_alt_text']
+                ];
+            }
+
+            $secondaryImages = [];
+
+            if (!empty($row['secondary_image_urls'])){
+                $secondaryImageUrls = explode(',', $row['secondary_image_urls']);
+                $secondaryImageAltTexts = explode(',', $row['secondary_image_alt_texts']);
+
+                foreach ($secondaryImageUrls as $key => $secondaryImageUrl){
+                    $secondaryImages[] = [
+                        'image_url' => $secondaryImageUrl,
+                        'alt_text' => $secondaryImageAltTexts[$key]
+                    ];
+                }
+            }
+
+            $reviewsResult = $this->travelPackage->reviews($row['id']);
+
+            $reviews = [];
+            $averageRating = 0;
+            while ($review = $reviewsResult->fetch_assoc()){
+                $reviews[] = [
+                    'id' => $review['id'],
+                    'rating' => $review['rating'],
+                    'comment' => $review['comment'],
+                    'created_at' => $review['created_at'],
+                    'user' => [
+                        'id' => $review['user_id'],
+                        'name' => $review['name'],
+                        'email' => $review['email']
+                    ]
+                ];
+
+                $averageRating += $review['rating'];
+            }
+
+            $averageRating = count($reviews) > 0 ? $averageRating / count($reviews) : 0;
+
+            $agency = $this->travelPackage->agency($row['agency_id']) -> fetch_assoc();
+
+            $travelPackages = [
+                'id' => $row['id'],
+                'name' => $row['name'],
+                'description' => $row['description'],
+                'location' => $row['location'],
+                'price' => $row['price'],
+                'start_date' => $row['start_date'],
+                'end_date' => $row['end_date'],
+                'free_seats' => $row['seats'] - $row['occupied_seats'],
+                'main_image' => $mainImage,
+                'secondary_images' => $secondaryImages,
+                'agency' => [
+                    'id' => $agency['id'],
+                    'name' => $agency['name'],
+                    'email' => $agency['email'],
+                    'phone' => $agency['phone'],
+                    'address' => $agency['address']
+                ],
+                'reviews' => $reviews,
+                'average_rating' => $averageRating
+            ];
+        }
 
         header('Content-Type: application/json');
         echo json_encode($travelPackages);

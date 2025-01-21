@@ -36,6 +36,11 @@ class PaymentController extends Controller
       echo 'Database error';
       exit();
     }
+
+    if (session_status() == PHP_SESSION_NONE) {
+      session_start();
+    }
+
     // keto komente duhet te hiqen ne production
     // require_once app_path('models/User.php');
     // $userRepo = new User($conn);

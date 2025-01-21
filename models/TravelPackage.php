@@ -40,23 +40,24 @@ class TravelPackage extends Model
     }
 
     //Has many method for reviews
-    public function reviews(): array
+    public function reviews($id): false|mysqli_result
     {
-        $sql = "SELECT * FROM reviews WHERE travel_package_id = ?";
+        $sql = "SELECT * FROM reviews 
+                LEFT JOIN users ON reviews.user_id = users.id
+                WHERE travel_package_id = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('i', $this['id']);
+        $stmt->bind_param('i', $id);
         $stmt->execute();
         $result = $stmt->get_result();
-        $reviews = $result->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
 
-        return $reviews;
+        return $result;
     }
 
     //Has many method for images
-    public function images($id): array
+    public function secondaryImages($id): array
     {
-        $sql = "SELECT * FROM images WHERE travel_package_id = ?";
+        $sql = "SELECT * FROM images WHERE entity_id = ? AND entity_type = 'travel_package'";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('i', $id);
         $stmt->execute();
@@ -68,17 +69,18 @@ class TravelPackage extends Model
     }
 
     //Belongs to method for agency
-    public function agency(): array
+    public function agency($id): false|mysqli_result
     {
-        $sql = "SELECT * FROM agencies WHERE id = ?";
+        $sql = "SELECT * FROM agencies 
+                LEFT JOIN users ON agencies.user_id = users.id
+                WHERE agencies.id = ?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('i', $this['agency_id']);
+        $stmt->bind_param('i', $id);
         $stmt->execute();
         $result = $stmt->get_result();
-        $agency = $result->fetch_assoc();
         $stmt->close();
 
-        return $agency;
+        return $result;
     }
 
     public function paginate(int $page, int $limit, array $keys = ['*']): array
@@ -166,7 +168,7 @@ class TravelPackage extends Model
         return $data;
     }
 
-    public function paginateWithImages(mixed $page, mixed $limit)
+    public function paginateWithImages(mixed $page, mixed $limit): false|mysqli_result
     {
         //Get packages with their main and secondary images
         $offset = ($page - 1) * $limit;
@@ -203,4 +205,158 @@ class TravelPackage extends Model
         $totalRows = $this->conn->query("SELECT COUNT(*) FROM $this->table")->fetch_row()[0];
         return ceil($totalRows / $limit);
     }
+
+    public function getTopPackagesWithImagesPaginated(int $limit, int $page): false|mysqli_result
+    {
+        $offset = ($page - 1) * $limit;
+
+        // SQL Query to fetch top travel packages with images and review data
+        $queryString = "
+                        SELECT
+                            tp.*,
+                            mi.image_url AS main_image_url,
+                            mi.alt_text AS main_image_alt_text,
+                            GROUP_CONCAT(DISTINCT si.image_url SEPARATOR ',') AS secondary_image_urls,
+                            GROUP_CONCAT(DISTINCT si.alt_text SEPARATOR ',') AS secondary_image_alt_texts,
+                            COUNT(DISTINCT r.id) AS total_reviews,
+                            AVG(r.rating) AS average_rating
+                        FROM
+                            travel_packages tp
+                                LEFT JOIN images mi
+                                          ON tp.id = mi.entity_id
+                                              AND mi.entity_type = 'travel_package'
+                                              AND mi.type = 'main'
+                                LEFT JOIN images si
+                                          ON tp.id = si.entity_id
+                                              AND si.entity_type = 'travel_package'
+                                              AND si.type = 'secondary'
+                                LEFT JOIN reviews r
+                                          ON tp.id = r.travel_package_id
+                        GROUP BY
+                            tp.id
+                        ORDER BY
+                            total_reviews DESC,
+                            average_rating DESC
+                        LIMIT ? OFFSET ?;
+
+        ";
+
+        // Prepare the SQL statement
+        $getQuery = $this->conn->prepare($queryString);
+
+        if (!$getQuery) {
+            // Handle prepare error
+            die('Prepare failed: (' . $this->conn->errno . ') ' . $this->conn->error);
+        }
+
+        // Bind parameters: 'i' denotes two integers
+        $getQuery->bind_param('ii', $limit, $offset);
+
+        // Execute the query
+        if (!$getQuery->execute()) {
+            // Handle execute error
+            die('Execute failed: (' . $getQuery->errno . ') ' . $getQuery->error);
+        }
+
+        // Get the result set
+        return $getQuery->get_result();
+    }
+
+    public function getLatestPackagesWithImagesPaginated(mixed $limit, mixed $page): false|mysqli_result
+    {
+        $offset = ($page - 1) * $limit;
+
+        $queryString = "SELECT tp.*, mi.image_url AS main_image_url,
+                        mi.alt_text AS main_image_alt_text,
+                        GROUP_CONCAT(si.image_url) AS secondary_image_urls,
+                        GROUP_CONCAT(si.alt_text) AS secondary_image_alt_texts
+                        FROM travel_packages tp
+                        LEFT JOIN images mi 
+                        ON tp.id = mi.entity_id 
+                        AND mi.entity_type = 'travel_package' 
+                        AND mi.type = 'main'
+                        LEFT JOIN images si 
+                        ON tp.id = si.entity_id 
+                        AND si.entity_type = 'travel_package' 
+                        AND si.type = 'secondary'
+                        GROUP BY tp.id
+                        ORDER BY tp.created_at DESC
+                        LIMIT ? OFFSET ?;
+                        ";
+
+        $getQuery = $this->conn->prepare("$queryString");
+
+        $getQuery->bind_param('ii', $limit, $offset);
+
+        $getQuery->execute();
+
+        return $getQuery->get_result();
+    }
+
+    public function getClosestPackagesWithImagesPaginated(mixed $limit, mixed $page): false|mysqli_result
+    {
+        $offset = ($page - 1) * $limit;
+
+        $queryString = "SELECT tp.*, mi.image_url AS main_image_url,
+                        mi.alt_text AS main_image_alt_text,
+                        GROUP_CONCAT(si.image_url) AS secondary_image_urls,
+                        GROUP_CONCAT(si.alt_text) AS secondary_image_alt_texts
+                        FROM travel_packages tp
+                        LEFT JOIN images mi 
+                        ON tp.id = mi.entity_id 
+                        AND mi.entity_type = 'travel_package' 
+                        AND mi.type = 'main'
+                        LEFT JOIN images si 
+                        ON tp.id = si.entity_id 
+                        AND si.entity_type = 'travel_package' 
+                        AND si.type = 'secondary'
+                        GROUP BY tp.id
+                        ORDER BY ABS(DATEDIFF(tp.start_date, CURDATE()))
+                        LIMIT ? OFFSET ?;
+                        ";
+
+        $getQuery = $this->conn->prepare("$queryString");
+
+        $getQuery->bind_param('ii', $limit, $offset);
+
+        $getQuery->execute();
+
+        return $getQuery->get_result();
+    }
+
+    public function getByIdWithImages(mixed $id): false|mysqli_result
+    {
+        $queryString = "
+                        SELECT 
+                            tp.*, 
+                            mi.image_url AS main_image_url,
+                            mi.alt_text AS main_image_alt_text,
+                            GROUP_CONCAT(DISTINCT si.image_url SEPARATOR ',') AS secondary_image_urls,
+                            GROUP_CONCAT(DISTINCT si.alt_text SEPARATOR ',') AS secondary_image_alt_texts
+                        FROM 
+                            travel_packages tp
+                        LEFT JOIN images mi 
+                            ON tp.id = mi.entity_id 
+                            AND mi.entity_type = 'travel_package' 
+                            AND mi.type = 'main'
+                        LEFT JOIN images si 
+                            ON tp.id = si.entity_id 
+                            AND si.entity_type = 'travel_package' 
+                            AND si.type = 'secondary'
+                        WHERE 
+                            tp.id = ?
+                        GROUP BY 
+                            tp.id;
+        ";
+
+        $getQuery = $this->conn->prepare("$queryString");
+
+        $getQuery->bind_param('i', $id);
+
+        $getQuery->execute();
+
+        return $getQuery->get_result();
+    }
+
+
 }
