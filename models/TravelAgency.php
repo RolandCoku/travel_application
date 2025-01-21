@@ -181,4 +181,58 @@ class TravelAgency extends Model
             'data' => $data
         ];
     }
+
+    public function mainImage($id): array
+    {
+        $queryString = "SELECT * FROM images WHERE entity_id = ? AND entity_type = 'agency' AND type = 'main';";
+
+        $getQuery = $this->conn->prepare("$queryString");
+
+        $getQuery->bind_param('i', $id);
+
+        $getQuery->execute();
+
+        $result = $getQuery->get_result();
+
+        $mainImage = [];
+        while ($row = $result->fetch_assoc()) {
+            $mainImage = [
+                'image_url' => $row['image_url'],
+                'alt_text' => $row['alt_text']
+            ];
+        }
+
+        return $mainImage;
+    }
+
+    public function travelPackages($id): array
+    {
+        $queryString = "SELECT * FROM travel_packages WHERE agency_id = ?;";
+
+        $getQuery = $this->conn->prepare("$queryString");
+
+        $getQuery->bind_param('i', $id);
+
+        $getQuery->execute();
+
+        $result = $getQuery->get_result();
+
+        $data = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $data[] = [
+                'id' => $row['id'],
+                'name' => $row['name'],
+                'description' => $row['description'],
+                'location' => $row['location'],
+                'price' => $row['price'],
+                'start_date' => $row['start_date'],
+                'end_date' => $row['end_date'],
+                'seats' => $row['seats'],
+                'occupied_seats' => $row['occupied_seats'],
+            ];
+        }
+
+        return $data;
+    }
 }

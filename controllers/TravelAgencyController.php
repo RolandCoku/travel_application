@@ -17,14 +17,65 @@ class TravelAgencyController extends Controller
         $this->log = new Log($conn);
     }
 
-    public static function index(): void
+    public function index(): void
     {
-        self::loadView('user/travel-agency/index');
+        $agencies = $this->travelAgency->getAll();
+
+        foreach ($agencies as &$agency) {
+            $agency['main_image'] = $this->travelAgency->mainImage($agency['id']);
+        }
+
+        self::loadView('user/travel-agency/index', ['agencies' => $agencies]);
     }
 
-    public static function show(): void
+    public function show(): void
     {
-        self::loadView('user/travel-agency/show');
+        // Fetch agency details and all travel packages
+
+        global $conn;
+        $agency = $this->travelAgency->getById($_GET['id']);
+
+        if (!$agency) {
+            redirect('/travel-agencies', ['error' => 'Agency not found'], 'agencies');
+        }
+
+        $agency['main_image'] = $this->travelAgency->mainImage($agency['id']);
+
+        $travelPackages = $this->travelAgency->travelPackages($agency['id']);
+
+        foreach ($travelPackages as &$package) {
+            $package['main_image'] = (new TravelPackage($conn))->mainImage($package['id']);
+            $reviewResult = (new TravelPackage($conn))->reviews($package['id']);
+
+            $reviews = [];
+            $reviewsCount = 0;
+            while ($review = $reviewResult->fetch_assoc()) {
+                $reviews = [
+                    'id' => $review['id'],
+                    'rating' => $review['rating'],
+                    'created_at' => $review['created_at']
+                ];
+                $reviewsCount++;
+            }
+            $averageRating = $reviewsCount > 0 ? array_sum(array_column($reviews, 'rating')) / $reviewsCount : 0;
+
+            $reviews['average_rating'] = $averageRating;
+
+            $package['reviews'] = $reviews;
+        }
+
+        $agency = [
+            'id' => $agency['id'],
+            'name' => $agency['name'],
+            'description' => $agency['description'],
+            'address' => $agency['address'],
+            'phone' => $agency['phone'],
+            'website' => $agency['website'],
+            'main_image' => $agency['main_image'],
+            'travel_packages' => $travelPackages
+        ];
+
+        self::loadView('user/travel-agency/show', ['agency' => $agency]);
     }
 
     // Admin views
@@ -124,6 +175,19 @@ class TravelAgencyController extends Controller
         $page = $_GET['page'] ?? 1;
         $limit = $_GET['limit'] ?? 10;
         $agencies = $this->travelAgency->paginateWithImages($page, $limit, ['agencies.id', 'agencies.name', 'agencies.description', 'phone', 'address', 'image_url', 'alt_text']);
+        header('Content-Type: application/json');
+        echo json_encode($agencies);
+        exit;
+    }
+
+    #[NoReturn] public function getAll(): void
+    {
+        $agencies = $this->travelAgency->getAll();
+
+        foreach ($agencies as &$agency) {
+            $agency['main_image'] = $this->travelAgency->mainImage($agency['id']);
+        }
+
         header('Content-Type: application/json');
         echo json_encode($agencies);
         exit;

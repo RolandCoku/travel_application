@@ -255,6 +255,11 @@ class UserController extends Controller
         self::loadView('user/account-dashboard', ['user' => $user]);
     }
 
+    public function index()
+    {
+        self::loadView('user/index');
+    }
+
     // API endpoints
     #[NoReturn] public function paginateUsers(): void
     {

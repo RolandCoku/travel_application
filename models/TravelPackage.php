@@ -405,5 +405,28 @@ class TravelPackage extends Model
         return $getQuery->get_result();
     }
 
+    public function mainImage(mixed $id)
+    {
+        $queryString = "SELECT * FROM images WHERE entity_id = ? AND entity_type = 'travel_package' AND type = 'main';";
+
+        $getQuery = $this->conn->prepare("$queryString");
+
+        $getQuery->bind_param('i', $id);
+
+        $getQuery->execute();
+
+        $result = $getQuery->get_result();
+
+        $mainImage = [];
+        while ($row = $result->fetch_assoc()) {
+            $mainImage = [
+                'image_url' => $row['image_url'],
+                'alt_text' => $row['alt_text']
+            ];
+        }
+
+        return $mainImage;
+    }
+
 
 }

@@ -50,10 +50,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p>${agency.description}</p>
                 <p><strong>Address:</strong> ${agency.address}</p>
                 <p><strong>Phone:</strong> ${agency.phone}</p>
-                <a href="/agency/${agency.id}" class="btn btn-primary show-more-button">Show More</a>
+                <a href="/travel-agencies/show?id=${agency.id}" class="btn btn-primary show-more-button">Show More</a>
             </div>
         `;
-
             swiperContainer.appendChild(slide); // Add slide to the Swiper container
         });
 

@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p><strong>Duration:</strong> ${pkg.start_date} - ${pkg.end_date}</p>
                     <p><strong>Price:</strong> $${pkg.price}</p>
                     <p><strong>Free Seats:</strong> ${pkg.free_seats}</p>
-                    <a href="/package/${pkg.id}" class="btn btn-primary show-more-button">Book now</a>
+                    <a href="/bookings/create?travel_package_id=${pkg.id}" class="btn btn-primary show-more-button">Book now</a>
                 </div>
             `;
 
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p><strong>Duration:</strong> ${pkg.start_date} - ${pkg.end_date}</p>
                     <p><strong>Price:</strong> $${pkg.price}</p>
                     <p><strong>Free Seats:</strong> ${pkg.free_seats}</p>
-                    <a href="/package/${pkg.id}" class="btn btn-primary show-more-button">Book now</a>
+                    <a href="/bookings/create?travel_package_id=${pkg.id}" class="btn btn-primary show-more-button">Book now</a>
                 </div>
             `;
 
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p><strong>Duration:</strong> ${pkg.start_date} - ${pkg.end_date}</p>
                     <p><strong>Price:</strong> $${pkg.price}</p>
                     <p><strong>Free Seats:</strong> ${pkg.free_seats}</p>
-                    <a href="/package/${pkg.id}" class="btn btn-primary show-more-button">Book now</a>
+                    <a href="/bookings/create?travel_package_id=${pkg.id}" class="btn btn-primary show-more-button">Book now</a>
                 </div>
             `;
 

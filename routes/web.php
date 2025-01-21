@@ -37,9 +37,6 @@ $route = explode('?', $route)[0];
 // Remove trailing slash from route
 $route = rtrim($route, '/');
 
-// Get the query string
-// $queryString = $_SERVER['QUERY_STRING'];
-
 // Routing
 switch ($route) {
     // Public Routes
@@ -58,6 +55,9 @@ switch ($route) {
     case '/reset-password':
         $userController->resetPassword();
         break;
+    case '':
+        $userController->index();
+        break;
 
     // Protected Routes (Require Login)
     case '/account-dashboard':
@@ -70,7 +70,6 @@ switch ($route) {
 
     // Role-Based Routes (Admins Only) TODO: Add auth and role controller for verification
     case '/admin/dashboard':
-        //TODO: - Fetch the data for total income in 7 days
         $adminController->dashboard();
         break;
     case '/admin/profile':
@@ -118,6 +117,13 @@ switch ($route) {
         $travelAgencyController->reviews();
         break;
 
+        //Travel Agency Routes
+    case '/travel-agencies':
+        $travelAgencyController->index();
+        break;
+    case '/travel-agencies/show':
+        $travelAgencyController->show();
+        break;
 
     //Travel package routes
     case '/travel-packages':
@@ -177,7 +183,7 @@ switch ($route) {
     case '/payment/capture':
         require_once app_path('controllers/PaymentController.php');
         $paymentController = new PaymentController();
-        $paymentController->captureOrder(); // return a json, will be fetched from js
+        $paymentController->captureOrder();
         break;
     case '/payment/success':
         require_once app_path('controllers/PaymentController.php');
@@ -189,26 +195,23 @@ switch ($route) {
         $paymentController = new PaymentController();
         $paymentController->paymentFailure();
         break;
+
     // Admin Booking Routes
     case '/admin/bookings/show':
-        // TODO: Fetch booking details (Select client name, client email, travel package name, booking date, booking status, payment amount, payment status) from id
         $bookingController->adminShow();
         break;
     case '/admin/bookings/edit':
-        // TODO: Fetch booking details (Select client name, client email, travel package name, booking date, booking status, payment amount, payment status) from id
         $bookingController->edit();
         break;
     case '/admin/bookings/update':
-        // TODO: Handle form submission
         $bookingController->update();
         break;
     case '/admin/bookings/destroy':
-        // TODO: Delete booking
         $bookingController->destroy();
         break;
 
-    /* ADMIN API ROUTES TO FETCH DATA FOR DASHBOARD */
 
+    /* ADMIN API ROUTES TO FETCH DATA FOR DASHBOARD */
     // Users admin API Routes
     case '/api/admin/users':
         $action = $_GET['action'] ?? null;
@@ -225,7 +228,6 @@ switch ($route) {
 
             case 'search':
                 $userController->searchUsers();
-
 
             default:
                 header('Content-Type: application/json');
@@ -250,6 +252,7 @@ switch ($route) {
                 echo json_encode(['error' => 'Invalid action parameter']);
                 exit;
         }
+
     //Travel Agencies user API Routes
     case '/api/travel-agencies':
         $action = $_GET['action'] ?? null;
@@ -261,6 +264,9 @@ switch ($route) {
                 $travelAgencyController->getTopAgencies();
             case 'getPaginatedWithImages':
                 $travelAgencyController->getPaginatedWithImages();
+            case 'getAll':
+                $travelAgencyController->getAll();
+
             default:
                 header('Content-Type: application/json');
                 http_response_code(400);
@@ -302,7 +308,6 @@ switch ($route) {
             case 'getById':
                 $travelPackageController->getByIdWithImagesAndAgency();
 
-
             default:
                 header('Content-Type: application/json');
                 http_response_code(400);
@@ -328,6 +333,7 @@ switch ($route) {
                 echo json_encode(['error' => 'Invalid action parameter']);
                 exit;
         }
+
     // Bookings API Routes for Travel Agency
     case '/api/travel-agency/bookings':
         $action = $_GET['action'] ?? null;
@@ -345,8 +351,8 @@ switch ($route) {
                 echo json_encode(['error' => 'Invalid action parameter']);
                 exit;
         }
-    // Travel Package Api for Travel Agencies
 
+    // Travel Package Api for Travel Agencies
     case '/api/travel-agency/travel-packages':
         $action = $_GET['action'] ?? null;
 
@@ -362,6 +368,7 @@ switch ($route) {
                 echo json_encode(['error' => 'Invalid action parameter']);
                 exit;
         }
+
     // Reviews API Routes
     case '/api/admin/reviews':
         $action = $_GET['action'] ?? null;
@@ -380,7 +387,7 @@ switch ($route) {
                 exit;
         }
 
-    //Logs API Routes
+    //Logs admin API Routes
     case '/api/admin/logs':
         $action = $_GET['action'] ?? null;
 
@@ -394,7 +401,7 @@ switch ($route) {
                 exit;
         }
 
-    // Payment API Routes
+    // Payment admin API Routes
     case '/api/admin/payments':
         $action = $_GET['action'] ?? null;
 
@@ -425,8 +432,8 @@ switch ($route) {
         http_response_code(200);
         break;
 
-//     Default Route
+    // Default Route (404)
     default:
-        require_once app_path('views/user/index.php');
+        require_once app_path('views/errors/404.php');
         break;
 }
