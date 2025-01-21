@@ -27,7 +27,7 @@ class PaymentController extends Controller
     $travelPackage = $travelPackageRepo->getById($_POST['travel_package_id']);
     $nextSeats = $travelPackage['occupied_seats'] + 1;
     if ($nextSeats > $travelPackage['seats']) {
-      header('Location : /payment/error?message=' . urlencode("No more available seats"));
+      header('Location: /payment/error?message=' . urlencode("No more available seats"));
     }
 
     $agency = $agencyModel->getById($travelPackage['agency_id']);
@@ -95,7 +95,7 @@ class PaymentController extends Controller
       if ($link['rel'] === 'approve') {
         // $_SESSION['payment_id'] = $bookingIDs['paymentId']; // payment id ne databaze
         // $_SESSION['booking_id'] = $bookingIDs['bookingId'];
-        // $_SESSION['travel_package_id'] = $_POST['travel_package_id'];
+        $_SESSION['travel_package_id'] = $_POST['travel_package_id'];
         $approveUrl = $link['href'];
         header('Location: ' . $approveUrl); // Redirect to PayPal
         exit();
@@ -184,6 +184,10 @@ class PaymentController extends Controller
   }
   public function paymentCancel(): void
   { // do bej view tamam
+    require app_path('models/Payment.php');
+    global $conn;
+    $payments = new Payment($conn);
+    $payments->deleteAndReturnSeat($_SESSION['travel_package_id']);
     header('Location: /bookings/create?travel_package_id=' . $_SESSION['travel_package_id']);
     exit();
   }
