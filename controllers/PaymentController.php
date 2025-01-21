@@ -93,9 +93,9 @@ class PaymentController extends Controller
     // Find the "approve" link in the response
     foreach ($order['links'] as $link) {
       if ($link['rel'] === 'approve') {
-        $_SESSION['payment_id'] = $bookingIDs['paymentId']; // payment id ne databaze
-        $_SESSION['booking_id'] = $bookingIDs['bookingId'];
-        $_SESSION['travel_package_id'] = $_POST['travel_package_id'];
+        // $_SESSION['payment_id'] = $bookingIDs['paymentId']; // payment id ne databaze
+        // $_SESSION['booking_id'] = $bookingIDs['bookingId'];
+        // $_SESSION['travel_package_id'] = $_POST['travel_package_id'];
         $approveUrl = $link['href'];
         header('Location: ' . $approveUrl); // Redirect to PayPal
         exit();
@@ -147,9 +147,9 @@ class PaymentController extends Controller
     // require_once __DIR__ . '/../helpers/PayPalService.php';
     // //ktu do bejme get te dhenat e marra nga payment
     $bookingRepo = new Payment($this->conn);
-    $bookingRepo->finishBooking($_SESSION['booking_id'], $_SESSION['payment_id']);
-    unset($_SESSION['booking_id']);
-    unset($_SESSION['payment_id']);
+    $bookingRepo->finishBooking($token);
+    // unset($_SESSION['booking_id']);
+    // unset($_SESSION['payment_id']);
     // echo json_encode([
     //   'orderId' => $data['id'],
     //   'status' => $data['status'],          // COMPLETED, etc
