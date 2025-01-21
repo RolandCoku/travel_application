@@ -137,6 +137,7 @@ switch ($route) {
         break;
     case '/travel-agency/admin/travel-packages/store':
         //TODO: Handle form submission
+        error_log("So it did enter here");
         $travelPackageController->store();
         break;
     case '/travel-agency/admin/travel-packages/edit':
@@ -298,7 +299,7 @@ switch ($route) {
                 $travelPackageController->getLatestPackagesWithImagesPaginated();
             case 'closest':
                 $travelPackageController->getClosestPackagesWithImagesPaginated();
-                case 'getById':
+            case 'getById':
                 $travelPackageController->getByIdWithImagesAndAgency();
 
 
@@ -344,7 +345,23 @@ switch ($route) {
                 echo json_encode(['error' => 'Invalid action parameter']);
                 exit;
         }
+    // Travel Package Api for Travel Agencies
 
+    case '/api/travel-agency/travel-packages':
+        $action = $_GET['action'] ?? null;
+
+        switch ($action) {
+            case 'paginate':
+                $travelPackageController->getAllPaginatedForAgency();
+            case 'topPackages':
+                $bookingController->getTopDestinationsForAgency();
+
+            default:
+                header('Content-Type: application/json');
+                http_response_code(400);
+                echo json_encode(['error' => 'Invalid action parameter']);
+                exit;
+        }
     // Reviews API Routes
     case '/api/admin/reviews':
         $action = $_GET['action'] ?? null;

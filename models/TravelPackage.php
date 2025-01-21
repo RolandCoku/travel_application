@@ -6,7 +6,7 @@ require_once __DIR__ . '/../helpers/FileHelpers.php';
 
 class TravelPackage extends Model
 {
-    private const KEYS = ['name', 'description', 'price', 'start_date', 'end_date', 'agency_id'];
+    private const KEYS = ['name', 'description', 'location', 'price', 'start_date', 'end_date', 'agency_id'];
 
     public function __construct(mysqli $conn)
     {
@@ -129,6 +129,53 @@ class TravelPackage extends Model
             'data' => $data
         ];
     }
+
+    public function paginateForAgency(int $page, int $limit, int $agencyId, array $keys = []): array
+{
+    $offset = ($page - 1) * $limit;
+
+    // Use the provided keys or default to the specified columns
+    $columns = !empty($keys) ? implode(", ", $keys) : "
+        travel_packages.id AS travel_packages_id,
+        travel_packages.name AS travel_packages_name,
+        travel_packages.description AS travel_packages_description,
+        price,
+        start_date,
+        end_date,
+        seats,
+        occupied_seats
+    ";
+
+    $queryString = "SELECT $columns FROM travel_packages
+                    JOIN agencies ON travel_packages.agency_id = agencies.id
+                    WHERE travel_packages.agency_id = ?
+                    LIMIT ? OFFSET ?;
+                    ";
+
+    $getQuery = $this->conn->prepare($queryString);
+
+    $getQuery->bind_param('iii', $agencyId, $limit, $offset);
+
+    $getQuery->execute();
+
+    $result = $getQuery->get_result();
+
+    $data = [];
+    while ($row = $result->fetch_assoc()) {
+        // unset($row['travel_packages_id']); // Remove travel_packages_id from each row
+        $data[] = $row;
+    }
+
+
+    $currentPage = $page;
+    $totalPages = ceil($this->conn->query("SELECT COUNT(*) FROM travel_packages WHERE agency_id = $agencyId")->fetch_row()[0] / $limit);
+
+    return [
+        'currentPage' => $currentPage,
+        'totalPages' => $totalPages,
+        'data' => $data
+    ];
+}
 
     public function getTopPackages(int $limit, array $keys): array
     {

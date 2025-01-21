@@ -38,10 +38,12 @@ class TravelPackageController extends Controller
         $travelPackage = [
             'name' => $_POST['name'],
             'description' => $_POST['description'],
+            'location' => $_POST['location'],
+            'seats' => $_POST['seats'],
             'price' => $_POST['price'],
             'start_date' => $_POST['start_date'],
             'end_date' => $_POST['end_date'],
-            'agency_id' => $_POST['agency_id']
+            'agency_id' => $_POST['agency_id'] ?? $_SESSION['agency_id'] ?? 37
         ];
 
         if ($this->travelPackage->create($travelPackage)) {
@@ -53,11 +55,15 @@ class TravelPackageController extends Controller
 
     public function edit(): void
     {
-//        $travelPackage = $this->travelPackage->getById($_GET['id']);
-//        $travelPackage['images'] = $this->travelPackage->images($travelPackage['id']);
-//        $travelAgencies = $this->travelAgency->getAll();
-
-        self::loadView('admin/travel-agency/travel-package/edit');
+        $travelPackage = $this->travelPackage->getById($_GET['id']);
+        require_once app_path('models/Image.php');
+        // $travelPackage['images'] = $this->travelPackage->images($travelPackage['id']);
+        //  $travelAgencies = $this->travelAgency->getAll();
+        global $conn;
+        $imageR = new Image($conn);
+        $travelPackage['images'] = $imageR->getImagesByEntity('travel_package', $travelPackage['id'])->fetch_all();
+        error_log("HERE< HERE< HERE" . json_encode($travelPackage['images']));
+        self::loadView('admin/travel-agency/travel-package/edit', $travelPackage);
     }
 
     public function update(): void
@@ -66,10 +72,12 @@ class TravelPackageController extends Controller
             'id' => $_POST['id'],
             'name' => $_POST['name'],
             'description' => $_POST['description'],
+            'location' => $_POST['location'],
+            'seats' => $_POST['seats'],
             'price' => $_POST['price'],
             'start_date' => $_POST['start_date'],
             'end_date' => $_POST['end_date'],
-            'agency_id' => $_POST['agency_id']
+            'agency_id' => $_POST['agency_id'] ?? $_SESSION['agency_id'] ?? 37
         ];
 
         if ($this->travelPackage->update($travelPackage)) {
@@ -100,6 +108,7 @@ class TravelPackageController extends Controller
         exit;
     }
 
+
     #[NoReturn] public function getTopPackages(): void
     {
         $limit = $_GET['limit'] ?? 5;
@@ -117,10 +126,10 @@ class TravelPackageController extends Controller
 
         $travelPackages = [];
 
-        while ($row = $result->fetch_assoc()){
+        while ($row = $result->fetch_assoc()) {
             $mainImage = [];
 
-            if (!empty($row['main_image_url'])){
+            if (!empty($row['main_image_url'])) {
                 $mainImage = [
                     'image_url' => $row['main_image_url'],
                     'alt_text' => $row['main_image_alt_text']
@@ -129,11 +138,11 @@ class TravelPackageController extends Controller
 
             $secondaryImages = [];
 
-            if (!empty($row['secondary_image_urls'])){
+            if (!empty($row['secondary_image_urls'])) {
                 $secondaryImageUrls = explode(',', $row['secondary_image_urls']);
                 $secondaryImageAltTexts = explode(',', $row['secondary_image_alt_texts']);
 
-                foreach ($secondaryImageUrls as $key => $secondaryImageUrl){
+                foreach ($secondaryImageUrls as $key => $secondaryImageUrl) {
                     $secondaryImages[] = [
                         'image_url' => $secondaryImageUrl,
                         'alt_text' => $secondaryImageAltTexts[$key]
@@ -176,10 +185,10 @@ class TravelPackageController extends Controller
 
         $travelPackages = [];
 
-        while ($row = $result->fetch_assoc()){
+        while ($row = $result->fetch_assoc()) {
             $mainImage = [];
 
-            if (!empty($row['main_image_url'])){
+            if (!empty($row['main_image_url'])) {
                 $mainImage = [
                     'image_url' => $row['main_image_url'],
                     'alt_text' => $row['main_image_alt_text']
@@ -188,11 +197,11 @@ class TravelPackageController extends Controller
 
             $secondaryImages = [];
 
-            if (!empty($row['secondary_image_urls'])){
+            if (!empty($row['secondary_image_urls'])) {
                 $secondaryImageUrls = explode(',', $row['secondary_image_urls']);
                 $secondaryImageAltTexts = explode(',', $row['secondary_image_alt_texts']);
 
-                foreach ($secondaryImageUrls as $key => $secondaryImageUrl){
+                foreach ($secondaryImageUrls as $key => $secondaryImageUrl) {
                     $secondaryImages[] = [
                         'image_url' => $secondaryImageUrl,
                         'alt_text' => $secondaryImageAltTexts[$key]
@@ -238,10 +247,10 @@ class TravelPackageController extends Controller
 
         $travelPackages = [];
 
-        while ($row = $result->fetch_assoc()){
+        while ($row = $result->fetch_assoc()) {
             $mainImage = [];
 
-            if (!empty($row['main_image_url'])){
+            if (!empty($row['main_image_url'])) {
                 $mainImage = [
                     'image_url' => $row['main_image_url'],
                     'alt_text' => $row['main_image_alt_text']
@@ -250,11 +259,11 @@ class TravelPackageController extends Controller
 
             $secondaryImages = [];
 
-            if (!empty($row['secondary_image_urls'])){
+            if (!empty($row['secondary_image_urls'])) {
                 $secondaryImageUrls = explode(',', $row['secondary_image_urls']);
                 $secondaryImageAltTexts = explode(',', $row['secondary_image_alt_texts']);
 
-                foreach ($secondaryImageUrls as $key => $secondaryImageUrl){
+                foreach ($secondaryImageUrls as $key => $secondaryImageUrl) {
                     $secondaryImages[] = [
                         'image_url' => $secondaryImageUrl,
                         'alt_text' => $secondaryImageAltTexts[$key]
@@ -299,10 +308,10 @@ class TravelPackageController extends Controller
 
         $travelPackages = [];
 
-        while ($row = $result->fetch_assoc()){
+        while ($row = $result->fetch_assoc()) {
             $mainImage = [];
 
-            if (!empty($row['main_image_url'])){
+            if (!empty($row['main_image_url'])) {
                 $mainImage = [
                     'image_url' => $row['main_image_url'],
                     'alt_text' => $row['main_image_alt_text']
@@ -311,11 +320,11 @@ class TravelPackageController extends Controller
 
             $secondaryImages = [];
 
-            if (!empty($row['secondary_image_urls'])){
+            if (!empty($row['secondary_image_urls'])) {
                 $secondaryImageUrls = explode(',', $row['secondary_image_urls']);
                 $secondaryImageAltTexts = explode(',', $row['secondary_image_alt_texts']);
 
-                foreach ($secondaryImageUrls as $key => $secondaryImageUrl){
+                foreach ($secondaryImageUrls as $key => $secondaryImageUrl) {
                     $secondaryImages[] = [
                         'image_url' => $secondaryImageUrl,
                         'alt_text' => $secondaryImageAltTexts[$key]
@@ -363,10 +372,10 @@ class TravelPackageController extends Controller
         $result = $this->travelPackage->getByIdWithImages($_GET['id']);
 
         $travelPackages = [];
-        while ($row = $result->fetch_assoc()){
+        while ($row = $result->fetch_assoc()) {
             $mainImage = [];
 
-            if (!empty($row['main_image_url'])){
+            if (!empty($row['main_image_url'])) {
                 $mainImage = [
                     'image_url' => $row['main_image_url'],
                     'alt_text' => $row['main_image_alt_text']
@@ -375,11 +384,11 @@ class TravelPackageController extends Controller
 
             $secondaryImages = [];
 
-            if (!empty($row['secondary_image_urls'])){
+            if (!empty($row['secondary_image_urls'])) {
                 $secondaryImageUrls = explode(',', $row['secondary_image_urls']);
                 $secondaryImageAltTexts = explode(',', $row['secondary_image_alt_texts']);
 
-                foreach ($secondaryImageUrls as $key => $secondaryImageUrl){
+                foreach ($secondaryImageUrls as $key => $secondaryImageUrl) {
                     $secondaryImages[] = [
                         'image_url' => $secondaryImageUrl,
                         'alt_text' => $secondaryImageAltTexts[$key]
@@ -391,7 +400,7 @@ class TravelPackageController extends Controller
 
             $reviews = [];
             $averageRating = 0;
-            while ($review = $reviewsResult->fetch_assoc()){
+            while ($review = $reviewsResult->fetch_assoc()) {
                 $reviews[] = [
                     'id' => $review['id'],
                     'rating' => $review['rating'],
@@ -409,7 +418,7 @@ class TravelPackageController extends Controller
 
             $averageRating = count($reviews) > 0 ? $averageRating / count($reviews) : 0;
 
-            $agency = $this->travelPackage->agency($row['agency_id']) -> fetch_assoc();
+            $agency = $this->travelPackage->agency($row['agency_id'])->fetch_assoc();
 
             $travelPackages = [
                 'id' => $row['id'],
@@ -435,5 +444,18 @@ class TravelPackageController extends Controller
         }
 
         return $travelPackages;
+    }
+
+    // For specific agency now
+    public function getAllPaginatedForAgency()
+    {
+        $agency = $_SESSION['agency_id'] ?? 37;
+        $page = $_GET['page'] ?? 1;
+        $limit = $_GET['limit'] ?? 10;
+        $travelPackages = $this->travelPackage->paginateForAgency($page, $limit, $agency);
+
+        header('Content-Type: application/json');
+        echo json_encode($travelPackages);
+        exit;
     }
 }

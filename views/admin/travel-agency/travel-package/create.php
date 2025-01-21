@@ -20,7 +20,7 @@ require_once app_path('includes/layout-header.php'); ?>
 
         <!-- Add Travel Package Form -->
         <div class="form-container">
-            <form id="create-travel-package-form" action="/travel-packages/store" method="POST" enctype="multipart/form-data">
+            <form id="create-travel-package-form" action="/travel-agency/admin/travel-packages/store" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" class="form-control" required />
@@ -29,6 +29,15 @@ require_once app_path('includes/layout-header.php'); ?>
                 <div class="form-group">
                     <label for="description">Description</label>
                     <textarea id="description" name="description" rows="4" class="form-control" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" name="location" rows="4" class="form-control" required></input>
+                </div>
+                <div class="form-group">
+                    <label for="seats">Seat Number</label>
+                    <input type="text" id="seats" name="seats" rows="4" class="form-control" required></input>
                 </div>
 
                 <div class="form-group row">
