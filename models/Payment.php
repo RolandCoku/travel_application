@@ -17,12 +17,12 @@ class Payment extends Model
       $this->conn->begin_transaction();
 
       // Booking Insertion (SQL)
-      $bookingSql = "INSERT INTO bookings (user_id, travel_package_id, booking_date, booking_status) VALUES (?, ?, ?, 'pending')";
+      $bookingSql = "INSERT INTO bookings (user_id, travel_package_id, booking_date, booking_status, booked_seats) VALUES (?, ?, ?, 'pending', ?)";
       $bookingStmt = $this->conn->prepare($bookingSql);
       if (!$bookingStmt) {
         throw new Exception("Booking prepare statement failed: " . $this->conn->error);
       }
-      $bookingStmt->bind_param("iss", $obj['user_id'], $obj['travel_package_id'], $obj['booking_date']);
+      $bookingStmt->bind_param("issi", $obj['user_id'], $obj['travel_package_id'], $obj['booking_date'], $obj['booked_seats']);
       if (!$bookingStmt->execute()) {
         throw new Exception("Booking execute statement failed: " . $bookingStmt->error);
       }
@@ -49,12 +49,12 @@ class Payment extends Model
       }
 
       // Seats Update (SQL)
-      $travelPackageSql = "UPDATE travel_packages SET occupied_seats = occupied_seats + 1 WHERE id = ?";
+      $travelPackageSql = $travelPackageSql = "UPDATE travel_packages SET occupied_seats = occupied_seats + ? WHERE id = ? AND occupied_seats + ? <= seats";;
       $tpStmt = $this->conn->prepare($travelPackageSql);
       if (!$tpStmt) {
         throw new Exception("Payment prepare statement failed: " . $this->conn->error);
       }
-      $tpStmt->bind_param("i", $travelPackageId);
+      $tpStmt->bind_param("iii", $obj['booked_seats'], $travelPackageId, $obj['booked_seats']);
       if (!$tpStmt->execute()) {
         throw new Exception("Payment execute statement failed: " .  $tpStmt->error);
       }
@@ -87,7 +87,7 @@ class Payment extends Model
       $this->conn->begin_transaction();
 
       // Get travel_package_id (using FOR UPDATE to lock the row)
-      $agencyQuery = $this->conn->prepare("SELECT travel_package_id FROM bookings WHERE id = ? FOR UPDATE");
+      $agencyQuery = $this->conn->prepare("SELECT travel_package_id, booked_seats FROM bookings WHERE id = ? FOR UPDATE");
       if (!$agencyQuery) {
         throw new Exception("Agency query prepare failed: " . $this->conn->error);
       }
@@ -95,8 +95,15 @@ class Payment extends Model
       if (!$agencyQuery->execute()) {
         throw new Exception("Agency query execute failed: " . $agencyQuery->error);
       }
-      $travelPackageId = $agencyQuery->get_result()->fetch_column();
-      error_log("travel package id to return seats is: ". $travelPackageId);
+      $result = $agencyQuery->get_result()->fetch_assoc(); // Fetch associative array
+
+      if ($result === null) {
+        throw new Exception("Booking not found.");
+      }
+      $travelPackageId = $result['travel_package_id'];
+      $returnSeats = $result['booked_seats'];
+
+      error_log("travel package id to return seats is: " . $travelPackageId);
 
       if ($travelPackageId === null) {
         throw new Exception("Booking not found."); // Handle case where booking doesn't exist
@@ -111,14 +118,14 @@ class Payment extends Model
       if (!$deleteQuery->execute()) {
         throw new Exception("Delete query execute failed: " . $deleteQuery->error);
       }
-  
+
       // Seats Update
-      $travelPackageSql = "UPDATE travel_packages SET occupied_seats = occupied_seats - 1 WHERE id = ?";
+      $travelPackageSql = "UPDATE travel_packages SET occupied_seats = occupied_seats - ? WHERE id = ?";
       $tpStmt = $this->conn->prepare($travelPackageSql);
       if (!$tpStmt) {
         throw new Exception("Travel package update prepare failed: " . $this->conn->error);
       }
-      $tpStmt->bind_param("i", $travelPackageId);
+      $tpStmt->bind_param("ii", $returnSeats, $travelPackageId);
       if (!$tpStmt->execute()) {
         throw new Exception("Travel package update execute failed: " . $tpStmt->error);
       }
@@ -130,11 +137,11 @@ class Payment extends Model
       error_log("Transaction failed: " . $e->getMessage());
       return false;
     } finally {
-      if(isset($agencyQuery))
+      if (isset($agencyQuery))
         $agencyQuery->close();
-      if(isset($deleteQuery))
+      if (isset($deleteQuery))
         $deleteQuery->close();
-      if(isset($tpStmt))
+      if (isset($tpStmt))
         $tpStmt->close();
       $this->conn->close();
     }
@@ -185,7 +192,7 @@ class Payment extends Model
       error_log("Finish booking transaction failed: " . $e->getMessage());
       return false;
     } finally {
-      if(isset($findPaymentStmt)){
+      if (isset($findPaymentStmt)) {
         $findPaymentStmt->close();
       }
       if (isset($bookingStmt)) {
