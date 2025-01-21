@@ -24,7 +24,8 @@ class TravelPackageController extends Controller
 
     public function show(): void
     {
-        self::loadView('user/travel-package/show');
+        $package = $this->formatGetByIdWithImagesAndAgency($_GET['id']);
+        self::loadView('user/travel-package/show', ['package' => $package]);
     }
 
     public function create(): void
@@ -351,6 +352,14 @@ class TravelPackageController extends Controller
 
     #[NoReturn] public function getByIdWithImagesAndAgency(): void
     {
+        $travelPackages = $this->formatGetByIdWithImagesAndAgency($_GET['id']);
+        header('Content-Type: application/json');
+        echo json_encode($travelPackages);
+        exit;
+    }
+
+    private function formatGetByIdWithImagesAndAgency($id): array
+    {
         $result = $this->travelPackage->getByIdWithImages($_GET['id']);
 
         $travelPackages = [];
@@ -425,8 +434,6 @@ class TravelPackageController extends Controller
             ];
         }
 
-        header('Content-Type: application/json');
-        echo json_encode($travelPackages);
-        exit;
+        return $travelPackages;
     }
 }
