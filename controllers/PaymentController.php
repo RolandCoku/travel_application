@@ -94,7 +94,7 @@ class PaymentController extends Controller
     foreach ($order['links'] as $link) {
       if ($link['rel'] === 'approve') {
         // $_SESSION['payment_id'] = $bookingIDs['paymentId']; // payment id ne databaze
-        // $_SESSION['booking_id'] = $bookingIDs['bookingId'];
+        $_SESSION['booking_id'] = $bookingIDs['bookingId'];
         $_SESSION['travel_package_id'] = $_POST['travel_package_id'];
         $approveUrl = $link['href'];
         header('Location: ' . $approveUrl); // Redirect to PayPal
@@ -148,7 +148,8 @@ class PaymentController extends Controller
     // //ktu do bejme get te dhenat e marra nga payment
     $bookingRepo = new Payment($this->conn);
     $bookingRepo->finishBooking($token);
-    // unset($_SESSION['booking_id']);
+    unset($_SESSION['booking_id']);
+    unset($_SESSION['travel_package_id']);
     // unset($_SESSION['payment_id']);
     // echo json_encode([
     //   'orderId' => $data['id'],
@@ -187,8 +188,10 @@ class PaymentController extends Controller
     require app_path('models/Payment.php');
     global $conn;
     $payments = new Payment($conn);
-    $payments->deleteAndReturnSeat($_SESSION['travel_package_id']);
+    $payments->deleteAndReturnSeat($_SESSION['booking_id']);
     header('Location: /bookings/create?travel_package_id=' . $_SESSION['travel_package_id']);
+    unset($_SESSION['booking_id']);
+    unset($_SESSION['travel_package_id']);
     exit();
   }
 
