@@ -369,9 +369,9 @@ class TravelPackageController extends Controller
 
     private function formatGetByIdWithImagesAndAgency($id): array
     {
-        $result = $this->travelPackage->getByIdWithImages($_GET['id']);
+        $result = $this->travelPackage->getByIdWithImages($id);
 
-        $travelPackages = [];
+        $travelPackage = [];
         while ($row = $result->fetch_assoc()) {
             $mainImage = [];
 
@@ -420,7 +420,7 @@ class TravelPackageController extends Controller
 
             $agency = $this->travelPackage->agency($row['agency_id'])->fetch_assoc();
 
-            $travelPackages = [
+            $travelPackage = [
                 'id' => $row['id'],
                 'name' => $row['name'],
                 'description' => $row['description'],
@@ -443,7 +443,7 @@ class TravelPackageController extends Controller
             ];
         }
 
-        return $travelPackages;
+        return $travelPackage;
     }
 
     // For specific agency now

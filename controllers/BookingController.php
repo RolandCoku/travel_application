@@ -3,10 +3,7 @@
 // use JetBrains\PhpStorm\NoReturn;
 
 require_once __DIR__ . '/../models/Booking.php';
-// require_once __DIR__ . '/../models/Payment.php';
 require_once __DIR__ . '/../models/User.php';
-// require_once __DIR__ . '/../models/TravelPackage.php';
-// require_once __DIR__ . '/../helpers/PayPalService.php';
 
 use App\Helpers\PayPalService;
 use JetBrains\PhpStorm\NoReturn;
@@ -44,10 +41,60 @@ class BookingController extends Controller
     require_once app_path('models/TravelAgency.php');
     require_once app_path('models/TravelPackage.php');
     global $conn;
-    $travelAgencyRepo = new TravelAgency($conn);
     $travelPackageRepo = new TravelPackage($conn);
-    $travelInfo = $travelPackageRepo->getById($_GET['travel_package_id']);
-    $travelInfo['agency_name'] = $travelAgencyRepo->getById($travelInfo['agency_id'])['name'];
+
+    $travelPackageInfo = $travelPackageRepo->getByIdWithImages($_GET['travel_package_id']);
+
+    $travelInfo = [];
+    while ($row = $travelPackageInfo->fetch_assoc()) {
+
+        $mainImage = [];
+
+        if (!empty($row['main_image_url'])){
+            $mainImage = [
+                'image_url' => $row['main_image_url'],
+                'alt_text' => $row['main_image_alt_text']
+            ];
+        }
+
+        $reviewsResult = $travelPackageRepo->reviews($row['id']);
+        $reviews = [];
+        $averageRating = 0;
+        while ($review = $reviewsResult->fetch_assoc()) {
+            $reviews[] = [
+                'name' => $review['name'],
+                'rating' => $review['rating'],
+                'comment' => $review['comment']
+            ];
+            $averageRating += $review['rating'];
+        }
+        $averageRating = count($reviews) > 0 ? $averageRating / count($reviews) : 0;
+
+        $agency = $travelPackageRepo->agency($row['agency_id'])->fetch_assoc();
+
+        $agency = [
+            'id' => $agency['id'],
+            'name' => $agency['name'],
+            'email' => $agency['email'],
+            'phone' => $agency['phone'],
+            'address' => $agency['address'],
+        ];
+
+        $travelInfo = [
+            'id' => $row['id'],
+            'name' => $row['name'],
+            'description' => $row['description'],
+            'location' => $row['location'],
+            'start_date' => $row['start_date'],
+            'end_date' => $row['end_date'],
+            'price' => $row['price'],
+            'free_seats' => $row['seats'],
+            'main_image' => $mainImage,
+            'average_rating' => $averageRating,
+            'agency' => $agency,
+            'reviews' => $reviews
+        ];
+    }
 
     self::loadView('user/bookings/create', $travelInfo);
   }
