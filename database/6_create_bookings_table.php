@@ -24,6 +24,7 @@ function runMigration($conn): void
                 travel_package_id INT(6) UNSIGNED NOT NULL,
                 booking_date DATE NOT NULL,
                 booking_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+                booked_seats INT(6) UNSIGNED NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,

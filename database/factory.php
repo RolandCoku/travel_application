@@ -75,8 +75,8 @@ function seedBookingsTable($conn): void
         $bookingDate = date('Y-m-d', strtotime("+$i days"));
         $bookingStatus = ['pending', 'approved', 'rejected'][array_rand(['pending', 'approved', 'rejected'])];
 
-        $query = "INSERT INTO bookings (user_id, travel_package_id, booking_date, booking_status) 
-                  VALUES ($userId, $travelPackageId, '$bookingDate', '$bookingStatus')";
+        $query = "INSERT INTO bookings (user_id, travel_package_id, booking_date, booking_status, booked_seats) 
+                  VALUES ($userId, $travelPackageId, '$bookingDate', '$bookingStatus', 1)";
         $conn->query($query);
     }
 }
