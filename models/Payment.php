@@ -141,10 +141,20 @@ class Payment extends Model
   }
 
 
-  public function finishBooking(int $bookingId, int $paymentId): bool
+  public function finishBooking(string $token): bool
   {
     try {
       $this->conn->begin_transaction();
+      $findPaymentSql = "SELECT id, booking_id FROM payments WHERE paypal_order_id = ?";
+      $findPaymentStmt = $this->conn->prepare($findPaymentSql);
+      if (!$findPaymentStmt) {
+        throw new Exception("Booking prepare statement failed: " . $this->conn->error);
+      }
+      $findPaymentStmt->bind_param("s", $token);
+      if (!$findPaymentStmt->execute()) {
+        throw new Exception("Booking execute statement failed: " . $findPaymentStmt->error);
+      }
+      $bookingIds = $findPaymentStmt->get_result()->fetch_assoc();
 
       // Booking Update (SQL)
       $bookingSql = "UPDATE bookings SET booking_status = 'approved' WHERE id = ?";
@@ -152,7 +162,7 @@ class Payment extends Model
       if (!$bookingStmt) {
         throw new Exception("Booking prepare statement failed: " . $this->conn->error);
       }
-      $bookingStmt->bind_param("i", $bookingId);
+      $bookingStmt->bind_param("i", $bookingIds['booking_id']);
       if (!$bookingStmt->execute()) {
         throw new Exception("Booking execute statement failed: " . $bookingStmt->error);
       }
@@ -163,7 +173,7 @@ class Payment extends Model
       if (!$paymentStmt) {
         throw new Exception("Payment prepare statement failed: " . $this->conn->error);
       }
-      $paymentStmt->bind_param("i", $paymentId);
+      $paymentStmt->bind_param("i", $bookingIds['id']);
       if (!$paymentStmt->execute()) {
         throw new Exception("Payment execute statement failed: " . $paymentStmt->error);
       }
@@ -175,6 +185,9 @@ class Payment extends Model
       error_log("Finish booking transaction failed: " . $e->getMessage());
       return false;
     } finally {
+      if(isset($findPaymentStmt)){
+        $findPaymentStmt->close();
+      }
       if (isset($bookingStmt)) {
         $bookingStmt->close();
       }
