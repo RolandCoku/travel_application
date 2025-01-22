@@ -47,16 +47,17 @@ class UserController extends Controller
             $password = $_POST['password'] ?? '';
             $rememberMe = isset($_POST['remember-me']);
 
+            
+            if (!$this->user->emailExists($email)) {
+                redirect('/login', ['error' => 'Invalid email or password'], 'login');
+            }
+
             // Check if the user is locked out
             $user = $this->user->getByEmail($email);
             if ($this->loginAttempt->isLockedOut($user['id'])) {
                 //Get the time remaining until the lockout is lifted
                 $minutesRemaining = $this->loginAttempt->getMinutesRemaining($user['id']);
                 redirect('/login', ['error' => 'You are locked out. Please try again in ' . $minutesRemaining . ' minutes.'], 'login');
-            }
-
-            if (!$this->user->emailExists($email)) {
-                redirect('/login', ['error' => 'Invalid email or password'], 'login');
             }
 
             if (!$this->user->isConfirmed($email)) {

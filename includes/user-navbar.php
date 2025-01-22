@@ -21,11 +21,12 @@ if (isset($_SESSION['user_email'])) {
         </div>
 
         <!-- Search Bar -->
-        <div class="search-bar">
-            <label>
-                <input type="text" placeholder="search ..."/>
-            </label>
-        </div>
+        <!-- <div class="search-bar"> -->
+            <form action="/search" class="search-bar" method="GET">
+              <label for="travel-search"></label>
+                  <input name="travel-search" type="text" placeholder="search ..."/>
+            </form>
+        <!-- </div> -->
 
         <!-- Navigation Links -->
         <nav class="nav-links">
