@@ -14,8 +14,7 @@ class RoleMiddleware {
         $user = $user->getByEmail($_SESSION['user_email']);
 
         if ($user['role'] !== $requiredRole) {
-            header("Location: /login");
-            exit;
+            redirect('/login', ['error' => 'Unauthorized access'], 'login');
         }
     }
 }

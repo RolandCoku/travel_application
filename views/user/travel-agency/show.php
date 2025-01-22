@@ -72,6 +72,8 @@ require_once app_path('includes/layout-header.php');
     </div>
 </section>
 
+<?php require_once app_path('includes/user-footer.php'); ?>
+
 <!-- Footer -->
 <?php require_once app_path('includes/layout-footer.php'); ?>
 </body>

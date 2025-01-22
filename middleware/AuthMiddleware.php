@@ -12,13 +12,16 @@ class AuthMiddleware {
 
     public function handle(): void
     {
-        session_start();
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
 
         if (!isset($_SESSION['user_email']) && isset($_COOKIE['remember_me'])) {
             $user = $this->user->getUserByRememberToken($_COOKIE['remember_me']);
             if ($user) {
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_role'] = $user['role'];
             }
         }
 

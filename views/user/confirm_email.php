@@ -1,6 +1,8 @@
 <?php
 $title = 'Elite Travel - Email Confirmation';
-$cssFile = 'user/confirm-email.css?=v' . time();
+$cssFiles = [
+    'user/email-confirmation.css?=v' . time()
+];
 require_once app_path('includes/layout-header.php'); ?>
 
     <body class="email-confirmation-page">

@@ -70,6 +70,8 @@ require_once app_path('includes/layout-header.php');
     </div>
 </section>
 
+<?php require_once app_path('includes/user-footer.php'); ?>
+
 <script>
     function updateSeats(change) {
         const seatsInput = document.getElementById('seats_booked');

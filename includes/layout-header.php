@@ -5,17 +5,11 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<!--    <link rel="stylesheet" href="--><?php //= base_url("/css/style.css?v=" . time()); ?><!--">-->
 
     <?php if (isset($links)): ?>
         <?php foreach ($links as $link): ?>
             <link rel="stylesheet" href="<?= $link ?>">
         <?php endforeach; ?>
-    <?php endif; ?>
-
-    <!-- TODO: REMOVE THIS LATER TO LEAVE ONLY THE ARRAY -->
-    <?php if (isset($cssFile)): ?>
-        <link rel="stylesheet" href="<?= base_url("/css/$cssFile"); ?>">
     <?php endif; ?>
 
     <?php if (isset($cssFiles)): ?>

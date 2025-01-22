@@ -55,13 +55,26 @@ switch ($route) {
     case '/reset-password':
         $userController->resetPassword();
         break;
+    case '/about':
+        $userController->about();
+        break;
     case '':
         $userController->index();
         break;
 
+        //User profile routes
+    case '/user/update':
+        $authMiddleware->handle();
+        $userController->put();
+        break;
+    case '/user/change-password':
+        $authMiddleware->handle();
+        $userController->changePassword();
+        break;
+
     // Protected Routes (Require Login)
     case '/account-dashboard':
-        $authMiddleware->handle(); // Ensure user is logged in
+        $authMiddleware->handle();
         $userController->accountDashboard();
         break;
     case '/logout':
@@ -70,27 +83,43 @@ switch ($route) {
 
     // Role-Based Routes (Admins Only) TODO: Add auth and role controller for verification
     case '/admin/dashboard':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $adminController->dashboard();
         break;
     case '/admin/profile':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $adminController->profile();
         break;
     case '/admin/travel-agencies':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $adminController->agencies();
         break;
     case '/admin/travel-agencies/register':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $adminController->registerAgency();
         break;
     case '/admin/travel-agencies/store':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $travelAgencyController->store();
         break;
     case '/admin/bookings':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $adminController->bookings();
         break;
     case '/admin/reviews':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $adminController->reviews();
         break;
     case '/admin/travel-packages':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $adminController->travelPackages();
         break;
 
@@ -99,25 +128,71 @@ switch ($route) {
         //TODO: - Fetch the data, total income and fully booked packages
         //      - Fetch the latest updates
         //      - Fetch top destinations
+        $authMiddleware->handle();
+        RoleMiddleware::handle('agency_admin');
         $travelAgencyController->adminDashboard();
         break;
     case '/travel-agency/admin/bookings':
         //TODO: - Fetch bookings (Select client name, client email, travel package name, booking date, booking status, payment amount, payment status)
         //      - Fetch Top 5 bookings
+        $authMiddleware->handle();
+        RoleMiddleware::handle('agency_admin');
         $travelAgencyController->bookings();
         break;
     case '/travel-agency/admin/travel-packages':
         //TODO: - Fetch travel packages (Select name, description, price, date, duration, free seats)
         //      - Fetch Top 5 packages
+        $authMiddleware->handle();
+        RoleMiddleware::handle('agency_admin');
         $travelAgencyController->travelPackages();
         break;
     case '/travel-agency/admin/reviews':
         //TODO: - Fetch reviews (Select user name, package name, comment, rating)
         //      - Fetch latest reviews
+        $authMiddleware->handle();
+        RoleMiddleware::handle('agency_admin');
         $travelAgencyController->reviews();
         break;
 
-        //Travel Agency Routes
+    //Travel package admin routes
+    case '/travel-agency/admin/travel-packages/show':
+        //TODO: Fetch travel package details (Select name, description, price, date, duration, free seats) from id
+        $authMiddleware->handle();
+        RoleMiddleware::handle('agency_admin');
+        $travelPackageController->adminShow();
+        break;
+    case '/travel-agency/admin/travel-packages/create':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('agency_admin');
+        $travelPackageController->create();
+        break;
+    case '/travel-agency/admin/travel-packages/store':
+        //TODO: Handle form submission
+        $authMiddleware->handle();
+        RoleMiddleware::handle('agency_admin');
+        error_log("So it did enter here");
+        $travelPackageController->store();
+        break;
+    case '/travel-agency/admin/travel-packages/edit':
+        //TODO: Fetch travel package details (Select name, description, price, date, duration, free seats) from id
+        $authMiddleware->handle();
+        RoleMiddleware::handle('agency_admin');
+        $travelPackageController->edit();
+        break;
+    case '/travel-agency/admin/travel-packages/update':
+        //TODO: Handle form submission
+        $authMiddleware->handle();
+        RoleMiddleware::handle('agency_admin');
+        $travelPackageController->update();
+        break;
+    case '/travel-agency/admin/travel-packages/destroy':
+        //TODO: Delete travel package
+        $authMiddleware->handle();
+        RoleMiddleware::handle('agency_admin');
+        $travelPackageController->destroy();
+        break;
+
+    //Travel Agency Routes (Public)
     case '/travel-agencies':
         $travelAgencyController->index();
         break;
@@ -125,7 +200,7 @@ switch ($route) {
         $travelAgencyController->show();
         break;
 
-    //Travel package routes
+    //Travel package routes (Public)
     case '/travel-packages':
         $travelPackageController->index();
         break;
@@ -133,37 +208,13 @@ switch ($route) {
         $travelPackageController->show();
         break;
 
-    //Travel package admin routes
-    case '/travel-agency/admin/travel-packages/show':
-        //TODO: Fetch travel package details (Select name, description, price, date, duration, free seats) from id
-        $travelPackageController->adminShow();
-        break;
-    case '/travel-agency/admin/travel-packages/create':
-        $travelPackageController->create();
-        break;
-    case '/travel-agency/admin/travel-packages/store':
-        //TODO: Handle form submission
-        error_log("So it did enter here");
-        $travelPackageController->store();
-        break;
-    case '/travel-agency/admin/travel-packages/edit':
-        //TODO: Fetch travel package details (Select name, description, price, date, duration, free seats) from id
-        $travelPackageController->edit();
-        break;
-    case '/travel-agency/admin/travel-packages/update':
-        //TODO: Handle form submission
-        $travelPackageController->update();
-        break;
-    case '/travel-agency/admin/travel-packages/destroy':
-        //TODO: Delete travel package
-        $travelPackageController->destroy();
-        break;
-
     // Booking Routes
     case '/bookings/create':
+        $authMiddleware->handle();
         $bookingController->create();
         break;
     case '/bookings/store': // also starts the payment
+        $authMiddleware->handle();
         require_once app_path('controllers/PaymentController.php');
         $paymentController = new PaymentController();
         $paymentController->store();
@@ -171,26 +222,31 @@ switch ($route) {
 
     // Payment processing routes
     case '/payment/processing':
+        $authMiddleware->handle();
         require_once app_path('controllers/PaymentController.php');
         $paymentController = new PaymentController();
         $paymentController->paypalReturn();
         break;
     case '/payment/cancel':
+        $authMiddleware->handle();
         require_once app_path('controllers/PaymentController.php');
         $paymentController = new PaymentController();
         $paymentController->paymentCancel();
         break;
     case '/payment/capture':
+        $authMiddleware->handle();
         require_once app_path('controllers/PaymentController.php');
         $paymentController = new PaymentController();
         $paymentController->captureOrder();
         break;
     case '/payment/success':
+        $authMiddleware->handle();
         require_once app_path('controllers/PaymentController.php');
         $paymentController = new PaymentController();
         $paymentController->paymentSuccess();
         break;
     case '/payment/error':
+        $authMiddleware->handle();
         require_once app_path('controllers/PaymentController.php');
         $paymentController = new PaymentController();
         $paymentController->paymentFailure();
@@ -198,15 +254,23 @@ switch ($route) {
 
     // Admin Booking Routes
     case '/admin/bookings/show':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $bookingController->adminShow();
         break;
     case '/admin/bookings/edit':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $bookingController->edit();
         break;
     case '/admin/bookings/update':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $bookingController->update();
         break;
     case '/admin/bookings/destroy':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $bookingController->destroy();
         break;
 
@@ -214,6 +278,8 @@ switch ($route) {
     /* ADMIN API ROUTES TO FETCH DATA FOR DASHBOARD */
     // Users admin API Routes
     case '/api/admin/users':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
@@ -238,6 +304,8 @@ switch ($route) {
 
     // Travel Agencies admin API Routes
     case '/api/admin/travel-agencies':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
@@ -276,6 +344,8 @@ switch ($route) {
 
     // Travel Packages admin API Routes
     case '/api/admin/travel-packages':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
@@ -317,6 +387,8 @@ switch ($route) {
 
     // Bookings API Routes
     case '/api/admin/bookings':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
@@ -336,6 +408,8 @@ switch ($route) {
 
     // Bookings API Routes for Travel Agency
     case '/api/travel-agency/bookings':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('agency_admin');
         $action = $_GET['action'] ?? null;
         switch ($action) {
             case 'paginate':
@@ -354,6 +428,8 @@ switch ($route) {
 
     // Travel Package Api for Travel Agencies
     case '/api/travel-agency/travel-packages':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('agency_admin');
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
@@ -371,6 +447,8 @@ switch ($route) {
 
     // Reviews API Routes
     case '/api/admin/reviews':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
@@ -389,6 +467,8 @@ switch ($route) {
 
     //Logs admin API Routes
     case '/api/admin/logs':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $action = $_GET['action'] ?? null;
 
         switch ($action) {
@@ -403,6 +483,8 @@ switch ($route) {
 
     // Payment admin API Routes
     case '/api/admin/payments':
+        $authMiddleware->handle();
+        RoleMiddleware::handle('admin');
         $action = $_GET['action'] ?? null;
 
         switch ($action):

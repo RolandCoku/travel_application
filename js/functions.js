@@ -1,14 +1,39 @@
 // General fetch function
-const fetchData = async (url, method = "GET", headers = { "Content-Type": "application/json" }) => {
+const fetchData = async (
+    url,
+    method = "GET",
+    headers = { "Content-Type": "application/json" },
+    credentials = "include"
+) => {
     try {
-        const response = await fetch(url, { method, headers });
-        if (!response.ok) throw new Error(`Failed to fetch data from ${url}`);
+        // Prepare fetch options
+        const options = {
+            method,
+            headers,
+            credentials
+        };
+
+        // Include the body for POST/PUT requests
+        if (body && (method === "POST" || method === "PUT")) {
+            options.body = JSON.stringify(body);
+        }
+
+        // Perform the fetch request
+        const response = await fetch(url, options);
+
+        // Handle non-OK responses
+        if (!response.ok) {
+            throw new Error(`Failed to fetch data from ${url}: ${response.statusText}`);
+        }
+
+        // Parse and return JSON response
         return await response.json();
     } catch (error) {
         console.error(`Error fetching data from ${url}:`, error);
-        throw error;
+        throw error; // Re-throw the error for caller to handle
     }
 };
+
 
 // Highlight active sidebar link
 const highlightActiveSidebarLink = (sidebarSelector) => {

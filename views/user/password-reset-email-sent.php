@@ -1,6 +1,8 @@
 <?php
 $title = 'Elite Travel - Reset Password Email Sent';
-$cssFile = 'user/reset-password-email-sent.css?=v' . time();
+$cssFiles = [
+    'user/reset-password-email-sent.css?=v' . time()
+];
 require_once app_path('includes/layout-header.php'); ?>
 
 <body class="reset-password-email-page">

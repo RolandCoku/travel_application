@@ -142,6 +142,96 @@ NAVBAR
     gap: 1rem;
 }
 
+/* Profile Dropdown Container */
+.profile-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-left: 1rem;
+}
+
+.profile-dropdown .profile-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    width: 50px;
+    height: 50px;
+    border-radius: 20px;
+    background: rgba(212, 233, 255, 0.8);
+    backdrop-filter: blur(8px);
+    transition: width 0.3s ease;
+}
+
+.profile-dropdown:hover .profile-wrapper {
+    width: 150px;
+}
+
+.profile-wrapper .profile-picture {
+    width: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.profile-wrapper .user-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #2891ff;
+    margin-left: -1.5rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.profile-dropdown:hover .profile-wrapper .user-name {
+    opacity: 1;
+}
+
+.profile-dropdown:hover .profile-wrapper .profile-picture {
+    transform: translateX(-50px); /* Slide left to reveal name */
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    top: 110%;
+    right: 0;
+    background: rgba(212, 233, 255, 0.8);
+
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.profile-dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Dropdown Menu Links */
+.dropdown-menu a {
+    display: block;
+    font-weight: 600;
+    padding: 0.8rem 1.2rem;
+    text-decoration: none;
+    color: #2891ff;
+    font-size: 0.9rem;
+    transition: background 0.3s, color 0.3s;
+}
+
+.dropdown-menu a:hover {
+    color: #005bff;
+}
+
 .btn {
     display: inline-block;
     text-align: center;
@@ -175,6 +265,63 @@ NAVBAR
     background: #2891ff;
     color: #fff;
     transform: translateY(-2px);
+}
+
+/*
+  ========================================
+  FOOTER
+  ========================================
+*/
+.footer {
+    background: #f5f9ff;
+    padding: 2rem;
+    border-top: 1px solid #eee;
+}
+
+.footer .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.footer-content .logo img {
+    height: 50px;
+    object-fit: contain;
+}
+
+.footer-links {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+    color: #2891ff;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #005bff;
+}
+
+.footer p {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.footer p span {
+    color: #2891ff;
+    font-weight: 600;
 }
 
 @keyframes slideInLogo1 {

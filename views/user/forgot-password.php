@@ -1,6 +1,8 @@
 <?php
 $title = 'Elite Travel | Forgot Password';
-$cssFile = 'user/forgot_password.css?=v' . time();
+$cssFiles = [
+    'user/forgot-password.css?=v' . time()
+];
 require_once app_path('includes/layout-header.php');
 ?>
 

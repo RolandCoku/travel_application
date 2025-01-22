@@ -1,3 +1,4 @@
+@import "../style.css";
 /* Email Confirmation Page Styles */
 body.email-confirmation-page {
     background: url('/img/assets/login-background.jpg') no-repeat center center/cover;

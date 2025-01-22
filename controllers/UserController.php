@@ -31,7 +31,13 @@ class UserController extends Controller
         }
 
         if (isset($_SESSION['user_email'])) {
-            redirect('/account-dashboard');
+            if ($_SESSION['user_role'] === 'admin') {
+                redirect('/admin/dashboard');
+            } else if ($_SESSION['user_role'] === 'user') {
+                redirect('/account-dashboard');
+            } else if ($_SESSION['user_role'] === 'agency_admin') {
+                redirect('/travel-agency/admin/dashboard');
+            }
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -63,6 +69,7 @@ class UserController extends Controller
             if ($this->user->authenticate($email, $password)) {
                 $_SESSION['user_email'] = $email;
                 $_SESSION['user_id'] = $this->user->getByEmail($email)['id'];
+                $_SESSION['user_role'] = $this->user->getByEmail($email)['role'];
 
                 // Reset the failed login attempts
                 $this->loginAttempt->resetFailedAttempts($this->user->getByEmail($email)['id']);
@@ -163,8 +170,6 @@ class UserController extends Controller
             session_start();
         }
 
-        session_destroy();
-
         // Clear the Remember Me cookie
         setcookie('remember_me', '', time() - 3600, '/', '', true, true);
 
@@ -174,6 +179,8 @@ class UserController extends Controller
             $this->user->clearRememberMeToken($userEmail);
         }
 
+        session_unset();
+        session_destroy();
         redirect('/login');
     }
 
@@ -190,8 +197,8 @@ class UserController extends Controller
 
             $this->user->confirmEmail($user['email']);
             $this->log->log($user['id'], 'Email confirmed');
+            $this->user->clearEmailConfirmationToken($user['email']);
             redirect('/login', ['success' => 'Email confirmed successfully. Please login to your account!'], 'login');
-
         } elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $email = $_GET['email'] ?? null;
             self::loadView('user/confirm_email', ['email' => $email]);
@@ -251,14 +258,94 @@ class UserController extends Controller
 
     public function accountDashboard(): void
     {
+        global $conn;
         $user = $this->user->getByEmail($_SESSION['user_email']);
-        self::loadView('user/account-dashboard', ['user' => $user]);
+        $profilePicture = $this->user->profilePicture($user['id']) ?? [];
+        $bookingResult = $this->user->bookings($user['id']);
+        $reviewsResult = $this->user->reviews($user['id']);
+
+        if (!empty($profilePicture)) {
+            $profilePicture = [
+                'image_url' => $profilePicture['image_url'],
+                'alt_text' => $profilePicture['alt_text'],
+            ];
+        }
+
+        $user = [
+            'id' => $user['id'],
+            'name' => $user['name'],
+            'email' => $user['email'],
+            'profile_picture' => $profilePicture,
+        ];
+
+        $bookings = [];
+        while ($row = $bookingResult->fetch_assoc()) {
+            $travelPackage = (new Booking($conn))->travelPackage($row['travel_package_id']);
+            $travelPackageImg = (new TravelPackage($conn))->mainImage($row['travel_package_id']);
+            $bookings[] = [
+                'id' => $row['id'],
+                'booking_date' => $row['booking_date'],
+                'status' => $row['booking_status'],
+                'travel_package' => [
+                    'id' => $travelPackage['id'],
+                    'name' => $travelPackage['name'],
+                    'main_image' => $travelPackageImg,
+                ],
+            ];
+        }
+
+        $reviews = [];
+        while ($row = $reviewsResult->fetch_assoc()) {
+            $reviews[] = [
+                'id' => $row['id'],
+                'travel_package_id' => $row['travel_package_id'],
+                'rating' => $row['rating'],
+                'comment' => $row['comment'],
+            ];
+        }
+
+        $user['bookings'] = $bookings;
+        $user['reviews'] = $reviews;
+
+        self::loadView('user/account-dashboard', ['user_profile_data' => $user]);
     }
 
-    public function index()
+    public function index(): void
     {
         self::loadView('user/index');
     }
+
+    public function about(): void
+    {
+        self::loadView('user/about-us');
+    }
+
+    #[NoReturn] public function put(): void
+    {
+        $oldData = $this->user->getByEmail($_SESSION['user_email']);
+
+        $name = $_POST['name'] ?? $oldData['name'];
+        $email = $_POST['email'] ?? $oldData['email'];
+
+        $data = [
+            'name' => $name,
+            'email' => $email
+        ];
+
+        $this->user->updateUserInfoById($oldData['id'], $data);
+        $this->log->log($oldData['id'], 'Profile updated');
+
+        $profilePicture = $_FILES['profile_picture'] ?? null;
+
+        if ($profilePicture) {
+            $imgName = FileHelpers::uploadImage($profilePicture);
+
+            $this->user->updateProfilePicture($oldData['id'], $imgName);
+        }
+
+        redirect('/account-dashboard', ['success' => 'Profile updated successfully'], 'account-dashboard');
+    }
+
 
     // API endpoints
     #[NoReturn] public function paginateUsers(): void
@@ -308,5 +395,32 @@ class UserController extends Controller
         echo json_encode($users);
         exit;
     }
+
+    public function changePassword(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $oldPassword = $_POST['current_password'] ?? '';
+            $newPassword = $_POST['new_password'] ?? '';
+            $confirmPassword = $_POST['confirm_password'] ?? '';
+
+            $user = $this->user->getByEmail($_SESSION['user_email']);
+
+            if (!password_verify($oldPassword, $user['password'])) {
+                redirect('/user/change-password', ['error' => 'Invalid old password'], 'change-password');
+            }
+
+            if ($newPassword !== $confirmPassword) {
+                redirect('/user/change-password', ['error' => 'Passwords do not match'], 'change-password');
+            }
+
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+            $this->user->resetPassword($user['email'], $hashedPassword);
+            $this->log->log($user['id'], 'Password changed');
+
+            redirect('/account-dashboard', ['success' => 'Password changed successfully'], 'account-dashboard');
+        }
+    }
+
 
 }

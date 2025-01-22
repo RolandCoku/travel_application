@@ -186,4 +186,15 @@ class Booking extends Model
 
       return $result->fetch_row()[0];
   }
+
+    public function travelPackage(mixed $travel_package_id): false|array|null
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM travel_packages WHERE id = ?");
+        $stmt->bind_param('i', $travel_package_id);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        return $result->fetch_assoc();
+    }
 }

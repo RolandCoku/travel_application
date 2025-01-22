@@ -1,6 +1,8 @@
 <?php
 $title = 'Elite Travel | Login';
-$cssFile = 'user/login.css?=v' . time();
+$cssFiles = [
+    'user/login.css?=v' . time()
+];
 require_once app_path('includes/layout-header.php');
 ?>
 

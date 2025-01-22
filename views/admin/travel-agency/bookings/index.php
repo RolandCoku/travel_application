@@ -1,9 +1,10 @@
 <?php
 $title = 'Admin Dashboard';
-$cssFile = '/admin/adminDashboard.css?v=' . time();
+$cssFiles = [
+    'admin/adminDashboard.css?v=' . time(),
+];
 require_once app_path('includes/layout-header.php'); ?>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet"/>
-
 
 <div class="container">
     <!-- Sidebar -->

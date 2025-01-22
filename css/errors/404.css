@@ -1,0 +1,61 @@
+@import "../style.css";
+
+/* Error Page Styling */
+.error-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background: linear-gradient(135deg, #005bff, #2891ff);
+    color: #fff;
+}
+
+.error-content {
+    max-width: 600px;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
+    animation: fadeIn 1s ease-in-out;
+}
+
+.error-content h1 {
+    font-size: 6rem;
+    margin-bottom: 1rem;
+    color: #ffd700;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.error-content h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #ffffff;
+    text-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+.error-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #ffffff;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.error-content .btn-primary {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    color: #005bff;
+    background: #fff;
+    border-radius: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.5);
+}
+
+.error-content .btn-primary:hover {
+    background: #ffd700;
+    color: #005bff;
+    transform: translateY(-3px);
+}

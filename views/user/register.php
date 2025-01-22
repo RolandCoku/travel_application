@@ -1,6 +1,8 @@
 <?php
 $title = 'Elite Travel - Register';
-$cssFile = 'user/register.css?=v' . time();
+$cssFiles = [
+    'user/register.css?=v' . time()
+];
 require_once app_path('includes/layout-header.php'); ?>
 
     <body class="register-page">

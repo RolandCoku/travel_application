@@ -11,6 +11,23 @@ class User extends Model
         parent::__construct($conn, "users", User::KEYS);
     }
 
+    public function profilePicture($id): array|false|null
+    {
+        $sql_select = "SELECT * FROM images WHERE images.entity_id = ? AND images.entity_type = 'user'";
+
+        $stmt = $this->conn->prepare($sql_select);
+
+        $stmt->bind_param("i", $id);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        $image = $result->fetch_assoc();
+
+        return $image;
+    }
+
     public function authenticate($email, $password): bool
     {
         // Prepare SQL query to prevent SQL injection
@@ -182,5 +199,66 @@ class User extends Model
         $stmt->execute();
 
         return $stmt->get_result();
+    }
+
+    public function clearEmailConfirmationToken(mixed $email): void
+    {
+        $sql_update = "UPDATE users SET email_confirmation_token = NULL WHERE email = ?";
+        $stmt = $this->conn->prepare($sql_update);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+    }
+
+    public function bookings(mixed $id): false|mysqli_result
+    {
+        $sql_select = "SELECT * FROM bookings WHERE user_id = ?";
+
+        $stmt = $this->conn->prepare($sql_select);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+
+        return $stmt->get_result();
+    }
+
+    public function reviews(mixed $id): false|mysqli_result
+    {
+        $sql_select = "SELECT * FROM reviews WHERE user_id = ?";
+
+        $stmt = $this->conn->prepare($sql_select);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+
+        return $stmt->get_result();
+    }
+
+    public function updateProfilePicture(mixed $id, mixed $profilePicture): void
+    {
+        $sql_select = "SELECT * FROM images WHERE entity_id = ? AND entity_type = 'user'";
+
+        $stmt = $this->conn->prepare($sql_select);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $image = $result->fetch_assoc();
+
+        if ($image) {
+            $sql_update = "UPDATE images SET image_url = ? WHERE entity_id = ? AND entity_type = 'user'";
+            $stmt = $this->conn->prepare($sql_update);
+        } else {
+            $sql_insert = "INSERT INTO images (image_url, entity_id, entity_type) VALUES (?, ?, 'user')";
+            $stmt = $this->conn->prepare($sql_insert);
+        }
+
+        $stmt->bind_param("si", $profilePicture, $id);
+        $stmt->execute();
+    }
+
+    public function updateUserInfoById(int $id, array $data): void
+    {
+        $sql_update = "UPDATE users SET name = ?, email = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($sql_update);
+        $stmt->bind_param("ssi", $data['name'], $data['email'], $id);
+        $stmt->execute();
     }
 }
