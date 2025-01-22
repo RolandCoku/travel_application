@@ -274,6 +274,11 @@ switch ($route) {
         $bookingController->destroy();
         break;
 
+    case '/search':
+        require app_path('controllers/SearchController.php');
+        $searchController = new SearchController();
+        $searchController->search();
+        break;
 
     /* ADMIN API ROUTES TO FETCH DATA FOR DASHBOARD */
     // Users admin API Routes
