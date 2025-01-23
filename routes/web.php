@@ -125,30 +125,21 @@ switch ($route) {
 
     // Role-Based Routes (Travel Agencies Only)
     case '/travel-agency/admin/dashboard':
-        //TODO: - Fetch the data, total income and fully booked packages
-        //      - Fetch the latest updates
-        //      - Fetch top destinations
         $authMiddleware->handle();
         RoleMiddleware::handle('agency_admin');
         $travelAgencyController->adminDashboard();
         break;
     case '/travel-agency/admin/bookings':
-        //TODO: - Fetch bookings (Select client name, client email, travel package name, booking date, booking status, payment amount, payment status)
-        //      - Fetch Top 5 bookings
         $authMiddleware->handle();
         RoleMiddleware::handle('agency_admin');
         $travelAgencyController->bookings();
         break;
     case '/travel-agency/admin/travel-packages':
-        //TODO: - Fetch travel packages (Select name, description, price, date, duration, free seats)
-        //      - Fetch Top 5 packages
         $authMiddleware->handle();
         RoleMiddleware::handle('agency_admin');
         $travelAgencyController->travelPackages();
         break;
     case '/travel-agency/admin/reviews':
-        //TODO: - Fetch reviews (Select user name, package name, comment, rating)
-        //      - Fetch latest reviews
         $authMiddleware->handle();
         RoleMiddleware::handle('agency_admin');
         $travelAgencyController->reviews();
@@ -156,7 +147,6 @@ switch ($route) {
 
     //Travel package admin routes
     case '/travel-agency/admin/travel-packages/show':
-        //TODO: Fetch travel package details (Select name, description, price, date, duration, free seats) from id
         $authMiddleware->handle();
         RoleMiddleware::handle('agency_admin');
         $travelPackageController->adminShow();
@@ -167,26 +157,22 @@ switch ($route) {
         $travelPackageController->create();
         break;
     case '/travel-agency/admin/travel-packages/store':
-        //TODO: Handle form submission
         $authMiddleware->handle();
         RoleMiddleware::handle('agency_admin');
         error_log("So it did enter here");
         $travelPackageController->store();
         break;
     case '/travel-agency/admin/travel-packages/edit':
-        //TODO: Fetch travel package details (Select name, description, price, date, duration, free seats) from id
         $authMiddleware->handle();
         RoleMiddleware::handle('agency_admin');
         $travelPackageController->edit();
         break;
     case '/travel-agency/admin/travel-packages/update':
-        //TODO: Handle form submission
         $authMiddleware->handle();
         RoleMiddleware::handle('agency_admin');
         $travelPackageController->update();
         break;
     case '/travel-agency/admin/travel-packages/destroy':
-        //TODO: Delete travel package
         $authMiddleware->handle();
         RoleMiddleware::handle('agency_admin');
         $travelPackageController->destroy();
