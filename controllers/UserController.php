@@ -90,7 +90,13 @@ class UserController extends Controller
 
                 // Redirect based on user role
                 $user = $this->user->getByEmail($email);
-                redirect($user['role'] === 'admin' ? '/admin/dashboard' : '/account-dashboard');
+                if ($user['role'] === 'admin') {
+                    redirect('/admin/dashboard');
+                } else if ($user['role'] === 'user') {
+                    redirect('/account-dashboard');
+                } else if ($user['role'] === 'agency_admin') {
+                    redirect('/travel-agency/admin/dashboard');
+                }
             } else {
                 if ($this->user->emailExists($email)) {
                     $this->log->log($this->user->getByEmail($email)['id'], 'Login failed');
