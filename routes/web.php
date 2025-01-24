@@ -269,8 +269,8 @@ switch ($route) {
     /* ADMIN API ROUTES TO FETCH DATA FOR DASHBOARD */
     // Users admin API Routes
     case '/api/admin/users':
-        $authMiddleware->handle();
-        RoleMiddleware::handle('admin');
+       $authMiddleware->handle();
+       RoleMiddleware::handle('admin');
         $action = $_GET['action'] ?? null;
 
         switch ($action) {

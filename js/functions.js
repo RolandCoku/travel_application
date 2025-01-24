@@ -1,22 +1,16 @@
 // General fetch function
 const fetchData = async (
     url,
-    method = "GET",
     headers = { "Content-Type": "application/json" },
     credentials = "include"
 ) => {
     try {
         // Prepare fetch options
         const options = {
-            method,
+            method: "GET",
             headers,
             credentials
         };
-
-        // Include the body for POST/PUT requests
-        if (body && (method === "POST" || method === "PUT")) {
-            options.body = JSON.stringify(body);
-        }
 
         // Perform the fetch request
         const response = await fetch(url, options);
@@ -33,7 +27,6 @@ const fetchData = async (
         throw error; // Re-throw the error for caller to handle
     }
 };
-
 
 // Highlight active sidebar link
 const highlightActiveSidebarLink = (sidebarSelector) => {

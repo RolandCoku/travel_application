@@ -137,52 +137,49 @@ function seedImagesTable($conn): void
         'agency-9.webp',
     ];
 
-    for ($i = 0; $i < 50; $i++) {
-        $entityType = 'agency';
-        $entityId = mt_rand(1, 50);
-        $imageUrl = $images[array_rand($images)];
-        $altText = "Image $i";
-        $type = 'main';
+    // Add images for agencies
+    $agencyCount = $conn->query("SELECT COUNT(*) as count FROM agencies")->fetch_assoc()['count'];
 
+    for ($agencyId = 1; $agencyId <= $agencyCount; $agencyId++) {
+        // Add main image
+        $mainImageUrl = $images[($agencyId - 1) % count($images)];
+        $mainAltText = "Main image for Agency $agencyId";
         $query = "INSERT INTO images (entity_type, entity_id, image_url, alt_text, type) 
-                  VALUES ('$entityType', $entityId, '$imageUrl', '$altText', '$type')";
+                  VALUES ('agency', $agencyId, '$mainImageUrl', '$mainAltText', 'main')";
         $conn->query($query);
+
+        // Add four secondary images
+        for ($j = 1; $j <= 4; $j++) {
+            $secondaryImageUrl = $images[($agencyId + $j - 1) % count($images)];
+            $secondaryAltText = "Secondary image $j for Agency $agencyId";
+            $query = "INSERT INTO images (entity_type, entity_id, image_url, alt_text, type) 
+                      VALUES ('agency', $agencyId, '$secondaryImageUrl', '$secondaryAltText', 'secondary')";
+            $conn->query($query);
+        }
     }
 
-    for ($i = 0; $i < 50; $i++) {
-        $entityType = 'travel_package';
-        $entityId = mt_rand(1, 50);
-        $imageUrl = $images[array_rand($images)];
-        $altText = "Image $i";
-        $type = 'main';
+    // Add images for travel packages
+    $packageCount = $conn->query("SELECT COUNT(*) as count FROM travel_packages")->fetch_assoc()['count'];
 
+    for ($packageId = 1; $packageId <= $packageCount; $packageId++) {
+        // Add main image
+        $mainImageUrl = $images[($packageId - 1) % count($images)];
+        $mainAltText = "Main image for Travel Package $packageId";
         $query = "INSERT INTO images (entity_type, entity_id, image_url, alt_text, type) 
-                  VALUES ('$entityType', $entityId, '$imageUrl', '$altText', '$type')";
+                  VALUES ('travel_package', $packageId, '$mainImageUrl', '$mainAltText', 'main')";
         $conn->query($query);
 
-        $entityType = 'travel_package';
-        $entityId = mt_rand(1, 50);
-        $imageUrl = $images[array_rand($images)];
-        $altText = "Image $i";
-        $type = 'secondary';
-
-        $query = "INSERT INTO images (entity_type, entity_id, image_url, alt_text, type) 
-                  VALUES ('$entityType', $entityId, '$imageUrl', '$altText', '$type')";
-
-        $conn->query($query);
-
-        $entityType = 'travel_package';
-        $entityId = mt_rand(1, 50);
-        $imageUrl = $images[array_rand($images)];
-        $altText = "Image $i";
-        $type = 'secondary';
-
-        $query = "INSERT INTO images (entity_type, entity_id, image_url, alt_text, type) 
-                  VALUES ('$entityType', $entityId, '$imageUrl', '$altText', '$type')";
-
-        $conn->query($query);
+        // Add four secondary images
+        for ($j = 1; $j <= 4; $j++) {
+            $secondaryImageUrl = $images[($packageId + $j - 1) % count($images)];
+            $secondaryAltText = "Secondary image $j for Travel Package $packageId";
+            $query = "INSERT INTO images (entity_type, entity_id, image_url, alt_text, type) 
+                      VALUES ('travel_package', $packageId, '$secondaryImageUrl', '$secondaryAltText', 'secondary')";
+            $conn->query($query);
+        }
     }
 
+    echo PHP_EOL . "Seeding images table complete.";
 }
 
 function seedPaymentsTable($conn): void
