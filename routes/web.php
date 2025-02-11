@@ -419,8 +419,8 @@ switch ($route) {
 
     // Travel Package Api for Travel Agencies
     case '/api/travel-agency/travel-packages':
-        $authMiddleware->handle();
-        RoleMiddleware::handle('agency_admin');
+//        $authMiddleware->handle();
+//        RoleMiddleware::handle('agency_admin');
         $action = $_GET['action'] ?? null;
 
         switch ($action) {

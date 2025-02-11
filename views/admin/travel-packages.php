@@ -16,7 +16,7 @@ require_once app_path('includes/layout-header.php'); ?>
         <div class="header">
             <h1>Travel Packages</h1>
         </div>
-        <!-- Registered users  -->
+        <!-- Travel Packages  -->
         <div class="recent-orders">
             <table>
                 <thead>
@@ -61,24 +61,6 @@ require_once app_path('includes/layout-header.php'); ?>
 
         <div class="sales-analytics">
             <h2>Top Packages</h2>
-            <div class="item">
-                <div>
-                    <h3>Paris</h3>
-                    <p>250 bookings</p>
-                </div>
-            </div>
-            <div class="item">
-                <div>
-                    <h3>Bali</h3>
-                    <p>200 bookings</p>
-                </div>
-            </div>
-            <div class="item">
-                <div>
-                    <h3>New York</h3>
-                    <p>180 bookings</p>
-                </div>
-            </div>
         </div>
     </div>
 </div>

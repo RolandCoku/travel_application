@@ -14,15 +14,15 @@ class SearchController extends Controller
     $packages = $travelPackageRepo->searchInColumns($input, ['name', 'description', 'location']);
 
     // $imageRepo = new Image($conn);
-    foreach( $agencies as &$agency){  //images
-      // $primaryImage = $imageRepo->getImagesByEntity('agency', $agency['id'])->fetch_assoc()['image_url'];
+    foreach( $agencies as &$agency){
+        $mainImage = $travelAgencyRepo->mainImage($agency['id']);
       $primaryImage = 'assets/placeholder-image.webp';
-      $agency['image_url'] = $primaryImage;
+      $agency['image_url'] = $mainImage['image_url'] ?? $primaryImage;
     }
     foreach( $packages as &$package){
-      // $primaryImage = $imageRepo->getImagesByEntity('travel_package', $package['id'])->fetch_assoc()['image_url'];
+        $mainImage = $travelPackageRepo->mainImage($package['id']);
       $primaryImage = 'assets/placeholder-image.webp';
-      $package['image_url'] = $primaryImage;
+      $package['image_url'] = $mainImage['image_url'] ?? $primaryImage;
     }
     $this->loadView('user/search', ['agencies' => $agencies, 'packages' => $packages]);
   }

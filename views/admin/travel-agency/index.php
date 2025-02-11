@@ -129,7 +129,9 @@ require_once app_path('includes/layout-header.php'); ?>
 </div>
 
 <?php
-$jsFile = '/adminDashboard.js';
+$jsFiles = [
+    'admin/travel-agency/index.js',
+];
 require_once app_path('includes/layout-footer.php');
 ?>
 

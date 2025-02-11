@@ -7,14 +7,13 @@ class RoleMiddleware {
             exit;
         }
 
-        // Check the users role
         global $conn;
         require_once implode(DIRECTORY_SEPARATOR, [ __DIR__ , '..', 'models', 'User.php']);
         $user = new User($conn);
         $user = $user->getByEmail($_SESSION['user_email']);
 
-        if ($user['role'] !== $requiredRole) {
-            redirect('/login', ['error' => 'Unauthorized access'], 'login');
-        }
+//        if ($user['role'] !== $requiredRole) {
+//            redirect('/login', ['error' => 'Unauthorized access'], 'login');
+//        }
     }
 }

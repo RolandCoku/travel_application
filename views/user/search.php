@@ -59,7 +59,7 @@ require_once app_path('includes/layout-header.php');
           <?php foreach ($data['agencies'] as $agency): ?>
 
             <div class="swiper-slide swiper-slide-visible swiper-slide-fully-visible swiper-slide-active" style="height: calc(50% - 15px); width: 311.5px; margin-right: 30px;" role="group" aria-label="1 / 16">
-              <img src="/img/assets/<?=$agency['image_url'] ?>" alt="Agency Image" loading="lazy">
+              <img src="/img/assets/agencies/<?=$agency['image_url'] ?>" alt="Agency Image" loading="lazy">
               <div class="agency-content">
                 <h3> <?= $agency['name'] ?> </h3>
                 <p><?= $agency['description'] ?></p>
@@ -88,7 +88,7 @@ require_once app_path('includes/layout-header.php');
           <!-- Travel packages cards will be dynamically added here -->
           <?php foreach ($data['packages'] as $package): ?>
             <div class="swiper-slide swiper-slide-visible swiper-slide-fully-visible swiper-slide-active" style="height: calc(50% - 15px); width: 311.5px; margin-right: 30px;" role="group" aria-label="1 / 16">
-              <img src="/img/<?=$package['image_url'] ?>" alt="Package Image" loading="lazy">
+              <img src="/img/assets/agencies/<?=$package['image_url'] ?>" alt="Package Image" loading="lazy">
               <div class="package-content">
                 <h3><?= $package['name'] ?></h3>
                 <p><?= $package['description'] ?></p>

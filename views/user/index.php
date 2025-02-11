@@ -102,7 +102,7 @@ require_once app_path('includes/layout-header.php');
                     alt="Land Johnson"
             />
             <div class="card-content">
-                <span><i class="ri-double-quotes-l"></i></span>
+
                 <div class="card-details">
                     <p>
                         "User-friendly and efficient! The Elite Travel Agency made booking my trip a breeze. It’s easy to navigate, offers
