@@ -2,5 +2,4 @@
 .env
 /vendor/
 
-index.php
 composer.phar/
